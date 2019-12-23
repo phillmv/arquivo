@@ -1,0 +1,15 @@
+<div class="col-3 p-2 float-left">
+  <%= form_with url: search_path, local: true do |form| %>
+    <div class="form-group">
+      <%= form.text_field :query, class: "form-control input-block", value: params[:query] %>
+      <%= form.hidden_field :entry_id, value: @entry&.id %>
+    </div>
+  <% end %>
+  <ul>
+    <% (@search_entries || @entries).each do |entry| %>
+      <li>
+        <%= link_to entry.body.slice(0, 80), timeline_show_path(entry, query: params[:query]) %>
+      </li>
+    <% end %>
+  </ul>
+</div>

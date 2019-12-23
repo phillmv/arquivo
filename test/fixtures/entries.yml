@@ -1,0 +1,9 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  body: MyText
+  occurred_at: 2019-12-22 16:55:02
+
+two:
+  body: MyText
+  occurred_at: 2019-12-22 16:55:02
