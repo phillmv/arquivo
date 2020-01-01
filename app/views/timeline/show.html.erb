@@ -2,7 +2,9 @@
   <%= render partial: "timeline/search" %>
  
   <div class="col-6 p-2 pl-4 float-left border-left">
-    <%= render partial: "timeline/new_entry", locals: { entry: @entry } %>
+    <% if @entry %>
+      <%= render partial: "timeline/new_entry", locals: { entry: @entry } %>
+    <% end %>
   </div>
 </div>
 

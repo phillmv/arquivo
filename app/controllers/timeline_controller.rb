@@ -1,10 +1,5 @@
 class TimelineController < ApplicationController
 
-  def populate_search
-    @search_query = session[:search_query]
-    @search_results = Search.find(query: @search_query)
-  end
-
   def index
     @entries = Entry.order(occurred_at: :desc)
     @search_results = @entries
@@ -12,7 +7,13 @@ class TimelineController < ApplicationController
   end
 
   def show
-    populate_search
+    @search_query = session[:search_query]
+    if @search_query.present?
+      @search_results = Search.find(query: @search_query)
+    else
+      @search_results = Entry.order(occurred_at: :desc)
+    end
+
     @entry = Entry.find(params[:id])
 
     render :show
@@ -20,10 +21,12 @@ class TimelineController < ApplicationController
 
   def search
     session[:search_query] = params[:searchfield]
-    if session[:search_query].present?
-      search_results = populate_search
 
-      @entry = search_results.first
+    if session[:search_query].present?
+      @search_query = session[:search_query]
+      @search_results = Search.find(query: @search_query)
+
+      @entry = @search_results.first
       render :show
     else
       redirect_to timeline_path

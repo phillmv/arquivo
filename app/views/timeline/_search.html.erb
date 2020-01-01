@@ -1,14 +1,20 @@
 <div class="col-3 p-2 pr-4 float-left">
-  <%= form_with url: search_path, local: true, html: { name: "searchform" } do |form| %>
+  <%= form_with url: search_path, local: true, method: :get, html: { name: "searchform" } do |form| %>
     <div class="form-group">
-      <%= form.text_field :search_query, class: "form-control input-block", value: session[:search_query], name: "searchfield" %>
+      <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "searchfield" %>
     </div>
   <% end %>
-  <ul>
-    <% @search_results.each do |entry| %>
-      <li>
-        <%= link_to entry.body.slice(0, 80), timeline_show_path(entry) %>
-      </li>
-    <% end %>
-  </ul>
+  <% if @search_results.any? %>
+    <ul>
+      <% @search_results.each do |entry| %>
+        <li>
+          <%= link_to entry.body.slice(0, 80), timeline_show_path(entry) %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <ul>
+      <li>Nothing found!</li>
+    </ul>
+  <% end %>
 </div>
