@@ -5,10 +5,11 @@
     </div>
   <% end %>
   <% if @search_results.any? %>
-    <ul>
+    <ul style="list-style-type: none;">
       <% @search_results.each do |entry| %>
         <li>
-          <%= link_to entry.body.slice(0, 80), timeline_show_path(entry) %>
+          <a href="<%= timeline_show_path(entry) %>"><b><%= entry.occurred_at.strftime("%Y-%m-%d")%></b><br/><%= entry.body.lines&.first&.slice(0,50) %></a>
+          <%# <%= link_to entry.body.slice(0, 80), timeline_show_path(entry) %>
         </li>
       <% end %>
     </ul>
