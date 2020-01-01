@@ -1,17 +1,12 @@
 <div class="container-lg clearfix">
-
-  <div class="col-6 p-2 mx-auto">
-    <h1><a href="/timeline">Timeline#index</a></h1>
-  </div>
-
   <%= render partial: "timeline/search" %>
  
-  <div class="col-6 p-2 float-left">
-    <% entry = @entry || Entry.new %>
-    <%= render partial: "entries/form", locals: { entry: entry } %>
+  <div class="col-6 p-2 pl-4 float-left border-left">
+    <% entry = Entry.new %>
+    <%= render partial: "timeline/new_entry", locals: { entry: entry } %>
 
-    <% @entries && @entries.each do |entry| %>
-      <%= render partial: "entries/form", locals: { entry: entry } %>
+    <% @entries&.each do |entry| %>
+      <%= render partial: "timeline/entry", locals: { entry: entry } %>
     <% end %>
   </div>
 </div>

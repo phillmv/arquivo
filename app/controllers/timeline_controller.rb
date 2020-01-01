@@ -1,29 +1,32 @@
 class TimelineController < ApplicationController
+
+  def populate_search
+    @search_query = session[:search_query]
+    @search_results = Search.find(query: @search_query)
+  end
+
   def index
     @entries = Entry.order(occurred_at: :desc)
+    @search_results = @entries
+    session[:search_query] = nil
   end
 
   def show
+    populate_search
     @entry = Entry.find(params[:id])
-    populate_search(params[:query])
 
-    render :index
+    render :show
   end
 
   def search
-    @entries = []
-    populate_search(params[:query])
-    if params[:entry_id].present?
-      @entry = Entry.find(params[:entry_id])
-    end
-    render :index
-  end
+    session[:search_query] = params[:searchfield]
+    if session[:search_query].present?
+      search_results = populate_search
 
-  def populate_search(query)
-    if query.present?
-      @search_entries = Entry.where("body like ?", "%#{query}%")
+      @entry = search_results.first
+      render :show
     else
-      @search_entries = Entry.order(occurred_at: :desc)
+      redirect_to timeline_path
     end
   end
 end

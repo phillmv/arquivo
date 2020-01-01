@@ -1,3 +1,13 @@
+document.onkeyup = function(e) { 
+  if(e.ctrlKey && e.which == 76) { 
+    document.searchform.searchfield.focus()
+  }
+  if(e.ctrlKey && e.which == 76) { 
+    document.searchform.searchfield.focus()
+  }
+}
+
+
 // import Turbolinks from 'turbolinks';
 // 
 // document.addEventListener('turbolinks:load', function(event) {

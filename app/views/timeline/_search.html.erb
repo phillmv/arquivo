@@ -1,14 +1,13 @@
-<div class="col-3 p-2 float-left">
-  <%= form_with url: search_path, local: true do |form| %>
+<div class="col-3 p-2 pr-4 float-left">
+  <%= form_with url: search_path, local: true, html: { name: "searchform" } do |form| %>
     <div class="form-group">
-      <%= form.text_field :query, class: "form-control input-block", value: params[:query] %>
-      <%= form.hidden_field :entry_id, value: @entry&.id %>
+      <%= form.text_field :search_query, class: "form-control input-block", value: session[:search_query], name: "searchfield" %>
     </div>
   <% end %>
   <ul>
-    <% (@search_entries || @entries).each do |entry| %>
+    <% @search_results.each do |entry| %>
       <li>
-        <%= link_to entry.body.slice(0, 80), timeline_show_path(entry, query: params[:query]) %>
+        <%= link_to entry.body.slice(0, 80), timeline_show_path(entry) %>
       </li>
     <% end %>
   </ul>
