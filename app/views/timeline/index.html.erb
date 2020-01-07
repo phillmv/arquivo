@@ -5,8 +5,11 @@
     <% entry = Entry.new %>
     <%= render partial: "timeline/new_entry", locals: { entry: entry } %>
 
-    <% @entries&.each do |entry| %>
-      <%= render partial: "timeline/entry", locals: { entry: entry } %>
+    <% @entries&.each do |day, entries| %>
+      <h3><%= day %></h3>
+      <% entries.each do |entry| %>
+        <%= render partial: "timeline/entry", locals: { entry: entry } %>
+      <% end %>
     <% end %>
   </div>
 </div>

@@ -12,7 +12,8 @@
   <% end %>
 
     <div class="form-group">
-      <%= form.text_area :body, class: "form-control input-block" %>
+      <%= form.text_area :body, class: "form-control input-block", style: "display: none" %>
+      <div id="entry_content" contenteditable=true style="width: 100%; height: 300px; outline: 0px solid transparent; "><%= entry.body&.html_safe %></div>
     </div>
 
   <% if false #unless entry.new_record? %>

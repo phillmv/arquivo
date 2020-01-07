@@ -7,6 +7,19 @@ document.onkeyup = function(e) {
   }
 }
 
+var editableFormHandler = function(event, f) {
+  event.srcElement.querySelector("#entry_body").innerHTML = 
+    event.srcElement.querySelector("#entry_content").innerHTML
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+  pageForms = document.getElementsByTagName("form")
+
+  for(i = 0; i < pageForms.length; i++) {
+    currentForm = pageForms[i]
+    currentForm.addEventListener('submit', editableFormHandler)
+  }
+})
 
 // import Turbolinks from 'turbolinks';
 // 

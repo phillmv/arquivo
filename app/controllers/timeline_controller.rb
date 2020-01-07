@@ -1,9 +1,14 @@
 class TimelineController < ApplicationController
 
   def index
-    @entries = Entry.order(occurred_at: :desc)
-    @search_results = @entries
+    entries = Entry.order(occurred_at: :desc)
+    @search_results = entries
     session[:search_query] = nil
+
+
+    @entries = entries.group_by do |e|
+      e.created_at.strftime("%Y-%m-%d")
+    end
   end
 
   def show
