@@ -1,3 +1,11 @@
 // Place all the styles related to the Entries controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
+
+#entry_content {
+  border: 1px grey solid;
+  width: 100%;
+  min-height: 300px;
+  outline: 0px solid transparent; 
+  overflow: scroll;
+}

@@ -19,6 +19,16 @@ document.addEventListener("DOMContentLoaded", function(){
     currentForm = pageForms[i]
     currentForm.addEventListener('submit', editableFormHandler)
   }
+
+  document.searchform.addEventListener("keydown", function(e) {
+    console.log(e.which);
+    if(e.which == 9) {
+      document.querySelector("#entry_content.new").focus();
+      e.preventDefault();
+    }
+  });
+
+
 })
 
 // import Turbolinks from 'turbolinks';
