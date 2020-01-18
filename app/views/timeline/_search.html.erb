@@ -1,21 +1,5 @@
-<div class="col-3 p-2 pr-4 float-left">
+<div class="offset-1 col-10 p-2 pb-4">
   <%= form_with url: search_path, local: true, method: :get, html: { name: "searchform" } do |form| %>
-    <div class="form-group">
-      <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "searchfield" %>
-    </div>
-  <% end %>
-  <% if @search_results.any? %>
-    <ul style="list-style-type: none;">
-      <% @search_results.each do |entry| %>
-        <li>
-          <a href="<%= timeline_show_path(entry) %>"><b><%= entry.occurred_at.strftime("%Y-%m-%d")%></b><br/><%= entry.body.lines&.first&.slice(0,50) %></a>
-          <%# <%= link_to entry.body.slice(0, 80), timeline_show_path(entry) %>
-        </li>
-      <% end %>
-    </ul>
-  <% else %>
-    <ul>
-      <li>Nothing found!</li>
-    </ul>
+    <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "searchfield" %>
   <% end %>
 </div>

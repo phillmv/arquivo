@@ -1,0 +1,15 @@
+<div class="offset-1 col-4 p-2 pr-4 float-left border-right">
+  <% if results.any? %>
+    <ul style="list-style-type: none;">
+      <% results.each do |entry| %>
+        <li>
+          <a href="<%= timeline_show_path(entry) %>"><b><%= entry.occurred_at.strftime("%Y-%m-%d")%></b><br/><%= entry.body.lines&.first&.slice(0,50) %></a>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <ul>
+      <li>Nothing found!</li>
+    </ul>
+  <% end %>
+</div>

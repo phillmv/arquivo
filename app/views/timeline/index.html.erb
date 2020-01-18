@@ -1,7 +1,9 @@
 <div class="container-lg clearfix">
   <%= render partial: "timeline/search" %>
- 
-  <div class="col-6 p-2 pl-4 float-left border-left">
+
+  <%= render partial: "timeline/sidebar", locals: { results: @search_results } %>
+
+  <div class="col-6 p-2 pl-4 float-left">
     <% entry = Entry.new %>
     <%= render partial: "timeline/new_entry", locals: { entry: entry } %>
 
