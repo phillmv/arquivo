@@ -1,4 +1,7 @@
-<%= form_with(model: entry, local: true) do |form| %>
+<% klass = "" %>
+<% klass = "new_entry" if new_form %>
+
+<%= form_with(model: entry, local: true, html: {class: klass}) do |form| %>
   <% if entry.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(entry.errors.count, "error") %> prohibited this entry from being saved:</h2>

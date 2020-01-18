@@ -12,26 +12,36 @@ var editableFormHandler = function(event, f) {
   event.srcElement.querySelector("#entry_body").innerHTML = 
     event.srcElement.querySelector("#entry_content").innerHTML
 }
-
+*/
 document.addEventListener("DOMContentLoaded", function(){
-  pageForms = document.getElementsByTagName("form")
+  // pageForms = document.getElementsByTagName("form")
 
-  for(i = 0; i < pageForms.length; i++) {
-    currentForm = pageForms[i]
-    currentForm.addEventListener('submit', editableFormHandler)
-  }
+  // for(i = 0; i < pageForms.length; i++) {
+  //   currentForm = pageForms[i]
+  //   currentForm.addEventListener('submit', editableFormHandler)
+  // }
 
   document.searchform.addEventListener("keydown", function(e) {
-    console.log(e.which);
     if(e.which == 9) {
-      document.querySelector("#entry_content.new").focus();
+      
+      new_entry_input = document.querySelector("form.new_entry textarea");
+      if (new_entry_input) {
+        new_entry_input.focus();
+      }
+
       e.preventDefault();
     }
   });
 
-
+  if (new_entry_input = document.querySelector("form.new_entry textarea")) {
+    new_entry_input.addEventListener("keydown", function(e) {
+      if (event.shiftKey && event.keyCode == 9) {
+        document.searchform.searchfield.focus();
+        e.preventDefault();
+      }
+    });
+  }
 })
-*/
 
 // import Turbolinks from 'turbolinks';
 // 
