@@ -12,8 +12,11 @@
   <% end %>
 
     <div class="form-group">
-      <%= form.text_area :body, class: "form-control input-block", style: "display: none" %>
-      <div id="entry_content" contenteditable=true style="" class="p-2 <%= "new" if new_form %>" tabindex=0><%= entry.body&.html_safe %></div>
+      <%= form.text_area :body, class: "form-control input-block" %>
+
+      <% if false %>
+        <div id="entry_content" contenteditable=true style="" class="p-2 <%= "new" if new_form %>" tabindex=0><%= entry.body&.html_safe %></div>
+      <% end %>
     </div>
 
   <% if false #unless entry.new_record? %>

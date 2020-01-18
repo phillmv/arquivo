@@ -7,6 +7,7 @@ document.onkeyup = function(e) {
   }
 }
 
+/*
 var editableFormHandler = function(event, f) {
   event.srcElement.querySelector("#entry_body").innerHTML = 
     event.srcElement.querySelector("#entry_content").innerHTML
@@ -30,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
 })
+*/
 
 // import Turbolinks from 'turbolinks';
 // 
