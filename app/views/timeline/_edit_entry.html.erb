@@ -1,0 +1,39 @@
+<%= form_with(model: entry, local: true) do |form| %>
+  <% if entry.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(entry.errors.count, "error") %> prohibited this entry from being saved:</h2>
+
+      <ul>
+        <% entry.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-actions">
+    <div>
+      <h3 class="d-inline"><%= entry.created_at&.strftime("%Y-%m-%d") %></h3>
+      <%= form.submit class: "btn btn-primary" %>
+    </div>
+    <div>
+      <p>Occurred <%= time_ago_in_words(entry.occurred_at) %> ago.</p>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= form.text_area :body, class: "form-control input-block" %>
+    <% if false %>
+      <div id="entry_content" contenteditable=true style="" class="p-2 <%= "new" if new_form %>" tabindex=0><%= entry.body&.html_safe %></div>
+    <% end %>
+  </div>
+
+  <% if false #unless entry.new_record? %>
+    <div class="form-group">
+      <%= form.label :occurred_at %>
+      <%= form.text_field :occurred_at, class: "form-control input-sm" %>
+    </div>
+  <% end %>
+
+<% end %>
+
