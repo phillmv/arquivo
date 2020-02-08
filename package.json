@@ -2,6 +2,7 @@
   "name": "archive",
   "private": true,
   "dependencies": {
+    "@github/textarea-autosize": "^0.2.0",
     "@primer/css": "primer/css",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",

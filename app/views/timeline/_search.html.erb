@@ -1,5 +1,0 @@
-<div class="offset-1 col-10 p-2 pb-4">
-  <%= form_with url: search_path, local: true, method: :get, html: { name: "searchform" } do |form| %>
-    <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "searchfield" %>
-  <% end %>
-</div>

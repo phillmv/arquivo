@@ -14,8 +14,8 @@
   <tbody>
     <% @entries.each do |entry| %>
       <tr>
-        <td><%= entry.body %></td>
-        <td><%= entry.occurred_at %></td>
+        <td class="body"><%= entry.body[0..140] %></td>
+        <td class="occurred"><%= entry.occurred_at %></td>
         <td><%= link_to 'Show', entry %></td>
         <td><%= link_to 'Edit', edit_entry_path(entry) %></td>
         <td><%= link_to 'Destroy', entry, method: :delete, data: { confirm: 'Are you sure?' } %></td>

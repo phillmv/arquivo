@@ -9,3 +9,12 @@
   // outline: 0px solid transparent; 
   overflow: scroll;
 }
+
+table {
+  td.body {
+    width: 50%;
+  }
+  td.occurred { 
+    text-align: center;
+  }
+}

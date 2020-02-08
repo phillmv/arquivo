@@ -3,6 +3,17 @@
 <% form_klass = "d-none" unless new_form %>
 
 <%= form_with(model: entry, local: true, html: {class: klass}) do |form| %>
+  <div class="pb-5">
+    <details class="details-reset float-left">
+      <summary class="btn mr-2">Metadata</summary>
+      <dl class="form-group">
+        <dt><%= form.label :occurred_at %></dt>
+        <dd><%= form.text_field :occurred_at, class: "form-control input-sm" %></dd>
+      </dl>
+    </details>
+
+  </div>
+
   <% if entry.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(entry.errors.count, "error") %> prohibited this entry from being saved:</h2>
@@ -25,14 +36,8 @@
     <% end %>
   </div>
 
-  <% if false #unless entry.new_record? %>
-    <div class="form-group">
-      <%= form.label :occurred_at %>
-      <%= form.text_field :occurred_at, class: "form-control input-sm" %>
-    </div>
-  <% end %>
-
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>
+    <%= link_to 'Cancel', timeline_path, class: "btn btn-danger float-left" %>
   </div>
 <% end %>

@@ -1,23 +1,20 @@
-<div class="container-lg clearfix">
+<div class="col-8 pt-2 pb-4 float-left">
+  <%= render partial: "timeline/search_bar" %>
 
-   <!-- <nav class="menu col&#45;1 float&#45;left"> -->
-  <!--   <a class="menu&#45;item" href="">lol</a> -->
-  <!--   <a class="menu&#45;item" href="">lol</a> -->
-  <!--   <a class="menu&#45;item" href="">lol</a> -->
-  <!-- </nav> -->
-    
-  <%= render partial: "timeline/search" %>
-  <%= render partial: "timeline/sidebar", locals: { results: @search_results } %>
-
-  <div class="col-6 p-2 pl-4 float-left">
-    <% entry = Entry.new %>
-    <%= render partial: "timeline/new_entry", locals: { entry: entry } %>
-
+  <div class="pt-4">
     <% @entries&.each do |day, entries| %>
       <h3><%= day %></h3>
+
       <% entries.each do |entry| %>
-        <%= render partial: "timeline/entry", locals: { entry: entry } %>
+        <%= render partial: "timeline/list_entry", locals: { entry: entry } %>
       <% end %>
     <% end %>
   </div>
 </div>
+
+
+<%# <%= render partial: "timeline/sidebar", locals: { results: @search_results } %>
+
+<%# <% entry = Entry.new %>
+<%# <%= render partial: "timeline/new_entry", locals: { entry: entry } %>
+

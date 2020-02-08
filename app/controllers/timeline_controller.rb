@@ -32,7 +32,7 @@ class TimelineController < ApplicationController
       @search_results = Search.find(query: @search_query)
 
       @entry = @search_results.first
-      render :show
+      render :search
     else
       redirect_to timeline_path
     end

@@ -1,3 +1,7 @@
+import autosize from '@github/textarea-autosize';
+
+
+
 document.onkeyup = function(e) { 
   if(e.ctrlKey && e.which == 76) { 
     document.searchform.searchfield.focus()
@@ -21,25 +25,28 @@ document.addEventListener("DOMContentLoaded", function(){
   //   currentForm.addEventListener('submit', editableFormHandler)
   // }
 
-  document.searchform.addEventListener("keydown", function(e) {
-    if(e.which == 9) {
-      
-      new_entry_input = document.querySelector("form.new_entry textarea");
-      if (new_entry_input) {
-        new_entry_input.focus();
-      }
+  autosize(document.querySelector('textarea'));
 
-      e.preventDefault();
-    }
-  });
+  if (document.searchform) {
+    document.searchform.addEventListener("keydown", function(e) {
+      if(e.which == 9) {
 
-  if (new_entry_input = document.querySelector("form.new_entry textarea")) {
-    new_entry_input.addEventListener("keydown", function(e) {
-      if (event.shiftKey && event.keyCode == 9) {
-        document.searchform.searchfield.focus();
-        e.preventDefault();
+        new_entry_input = document.querySelector("form.new_entry textarea");
+        if (new_entry_input) {
+          new_entry_input.focus();
+          e.preventDefault();
+        }
       }
     });
+
+    if (new_entry_input = document.querySelector("form.new_entry textarea")) {
+      new_entry_input.addEventListener("keydown", function(e) {
+        if (event.shiftKey && event.keyCode == 9) {
+          document.searchform.searchfield.focus();
+          e.preventDefault();
+        }
+      });
+    }
   }
 })
 
