@@ -29,9 +29,12 @@ class TimelineController < ApplicationController
 
     if session[:search_query].present?
       @search_query = session[:search_query]
-      @search_results = Search.find(query: @search_query)
+      entries = Search.find(query: @search_query)
 
-      @entry = @search_results.first
+      @entries = entries.group_by do |e|
+        e.created_at.strftime("%Y-%m-%d")
+      end
+
       render :search
     else
       redirect_to timeline_path

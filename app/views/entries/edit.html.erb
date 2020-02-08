@@ -1,6 +1,9 @@
-<h1>Editing Entry</h1>
+<div class="offset-2 col-7 pt-2 pb-4 float-left">
+  <div class="pagehead">
+    <h1>Editing Entry</h1>
+  </div>
 
-<%= render 'form', entry: @entry %>
 
-<%= link_to 'Show', @entry %> |
-<%= link_to 'Back', entries_path %>
+  <%= render 'form', entry: @entry, new_form: true %>
+
+</div>

@@ -3,11 +3,24 @@
 
   <div class="pt-4">
     <% @entries&.each do |day, entries| %>
-      <h3><%= day %></h3>
+      <div class="Box mb-2">
+        <div class="Box-header">
+          <h3 class="Box-title">
+            <h3><%= day %></h3>
+          </h3>
+        </div>
 
-      <% entries.each do |entry| %>
-        <%= render partial: "timeline/list_entry", locals: { entry: entry } %>
-      <% end %>
+        <% entries.each do |entry| %>
+          <div class="Box-body">
+            <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
+              <%= octicon("pencil") %>
+            </a>
+
+            <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
+            <%# <%= render partial: "timeline/list_entry", locals: { entry: entry } %>
+          </div>
+        <% end %>
+      </div>
     <% end %>
   </div>
 </div>

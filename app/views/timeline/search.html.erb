@@ -1,3 +1,13 @@
 <div class="col-8 pt-2 pb-4 float-left">
   <%= render partial: "timeline/search_bar" %>
+
+  <div class="pt-4">
+    <% @entries&.each do |day, entries| %>
+      <h3><%= day %></h3>
+
+      <% entries.each do |entry| %>
+        <%= render partial: "timeline/list_entry", locals: { entry: entry } %>
+      <% end %>
+    <% end %>
+  </div>
 </div>
