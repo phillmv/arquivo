@@ -1,8 +1,4 @@
-<% klass, hide_form = nil %>
-<% klass = "new_entry" if new_form %>
-<% form_klass = "d-none" unless new_form %>
-
-<%= form_with(model: entry, local: true, html: {class: klass}) do |form| %>
+<%= form_with(model: entry, local: true) do |form| %>
   <div class="pb-5">
     <details class="details-reset float-left">
       <summary class="btn mr-2">Metadata</summary>
@@ -27,13 +23,7 @@
   <% end %>
 
   <div class="form-group">
-
-    <%= form.text_area :body, class: "form-control input-block #{form_klass}" %>
-    <%= CommonMarker.render_html(entry.body).html_safe if entry.body && !new_form %>
-
-    <% if false %>
-      <div id="entry_content" contenteditable=true style="" class="p-2 <%= "new" if new_form %>" tabindex=0><%= entry.body&.html_safe %></div>
-    <% end %>
+    <%= form.text_area :body, class: "form-control input-block" %>
   </div>
 
   <div class="form-actions">

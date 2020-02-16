@@ -1,33 +1,24 @@
 import autosize from '@github/textarea-autosize';
 
 
-
+// press control L to get to the search field
 document.onkeyup = function(e) { 
   if(e.ctrlKey && e.which == 76) { 
     document.searchform.searchfield.focus()
   }
-  if(e.ctrlKey && e.which == 76) { 
-    document.searchform.searchfield.focus()
-  }
 }
 
-/*
-var editableFormHandler = function(event, f) {
-  event.srcElement.querySelector("#entry_body").innerHTML = 
-    event.srcElement.querySelector("#entry_content").innerHTML
-}
-*/
 document.addEventListener("DOMContentLoaded", function(){
-  // pageForms = document.getElementsByTagName("form")
+  var existing_textareas, new_entry_input;
 
-  // for(i = 0; i < pageForms.length; i++) {
-  //   currentForm = pageForms[i]
-  //   currentForm.addEventListener('submit', editableFormHandler)
-  // }
-
-  autosize(document.querySelector('textarea'));
+  if(existing_textareas = document.querySelector("textarea")) {
+    autosize(existing_textareas);
+  }
 
   if (document.searchform) {
+    // pressing tab from the search form should move to the new entry form
+    // if it exists.
+    // currently deprecated
     document.searchform.addEventListener("keydown", function(e) {
       if(e.which == 9) {
 
@@ -39,6 +30,9 @@ document.addEventListener("DOMContentLoaded", function(){
       }
     });
 
+    // if we're on a page with a new entry text area, pressing shift-tab
+    // should move back to the search form.
+    // current deprecated
     if (new_entry_input = document.querySelector("form.new_entry textarea")) {
       new_entry_input.addEventListener("keydown", function(e) {
         if (event.shiftKey && event.keyCode == 9) {
