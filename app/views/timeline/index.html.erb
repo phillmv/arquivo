@@ -3,13 +3,14 @@
 
   <div class="pt-4">
     <% @entries&.each do |day, entries| %>
-      <div class="Box mb-2">
-        <div class="Box-header">
-          <h3 class="Box-title">
-            <h3><%= day %></h3>
-          </h3>
-        </div>
 
+      <div class="TimelineItem">
+        <div class="TimelineItem-badge bg-blue text-white">
+          <%= octicon("flame") %>
+        </div>
+        <h3><%= day %></h3>
+      </div>
+      <div class="Box">
         <% entries.each do |entry| %>
           <div class="Box-body">
             <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
@@ -17,17 +18,9 @@
             </a>
 
             <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
-            <%# <%= render partial: "timeline/list_entry", locals: { entry: entry } %>
           </div>
         <% end %>
       </div>
     <% end %>
   </div>
 </div>
-
-
-<%# <%= render partial: "timeline/sidebar", locals: { results: @search_results } %>
-
-<%# <% entry = Entry.new %>
-<%# <%= render partial: "timeline/new_entry", locals: { entry: entry } %>
-

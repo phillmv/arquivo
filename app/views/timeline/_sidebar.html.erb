@@ -3,7 +3,7 @@
     <ul style="list-style-type: none;">
       <% results.each do |entry| %>
         <li>
-          <a href="<%= timeline_show_path(entry) %>"><b><%= entry.occurred_at.strftime("%Y-%m-%d")%></b><br/><%= entry.body.lines&.first&.slice(0,50) %></a>
+          <a href="<%= entry_path(entry) %>"><b><%= entry.occurred_at.strftime("%Y-%m-%d")%></b><br/><%= entry.body.lines&.first&.slice(0,50) %></a>
         </li>
       <% end %>
     </ul>

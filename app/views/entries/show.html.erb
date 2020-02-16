@@ -1,14 +1,24 @@
-<p id="notice"><%= notice %></p>
+<div class="offset-2 col-7 pt-2 pb-4 float-left">
+  <div class="pagehead">
+    <h1><%= "#{@entry.occurred_at.strftime("%Y-%m-%d")}/#{@entry.id}" %></h1>
+  </div>
 
-<p>
-  <strong>Body:</strong>
-  <%= @entry.body %>
-</p>
 
-<p>
-  <strong>Occurred at:</strong>
-  <%= @entry.occurred_at %>
-</p>
 
-<%= link_to 'Edit', edit_entry_path(@entry) %> |
-<%= link_to 'Back', entries_path %>
+  <div class="form-group">
+    <%= CommonMarker.render_html(@entry.body).html_safe if @entry.body %>
+  </div>
+
+  <div class="form-actions mt-4 pt-3 border-top">
+    <a href="<%= edit_entry_path(@entry) %>" class="btn btn-primary">Edit</a>
+    <%= link_to 'Back', timeline_path, class: "btn float-left" %>
+  </div>
+
+  <details class="details-reset mt-3">
+    <summary class="btn mr-2">Metadata</summary>
+    <dl class="form-group">
+      <dt><label>occurred_at</label></dt>
+      <dd><span><%= @entry.occurred_at %></dd>
+      </dl>
+    </details>
+</div>
