@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get 'timeline', to: "timeline#index", as: :timeline
   post 'timeline', to: "timeline#index"
   get 'timeline/search', to: "timeline#search", as: :search
+  get 'timeline/calendar', to: "timeline#calendar", as: :calendar
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

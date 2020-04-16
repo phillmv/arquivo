@@ -47,6 +47,7 @@ group :development do
 end
 
 gem 'pry-rails'
+gem 'simple_calendar'
 
 group :test do
   # Adds support for Capybara system testing and selenium driver
