@@ -1,10 +1,4 @@
-<div class="col-3 pt-2 float-left">
-  <h4><%= octicon "calendar" %> Calendar</h4>
-  <h4><%= octicon "gear" %> Settings</h4>
-  <!-- <ul style="list&#45;style&#45;type: none;"> -->
-  <!--   <li>#dev</li> -->
-  <!-- </ul> -->
-</div>
+<%= render partial: "shared/sidebar" %>
 
 <div class="col-8 pt-2 pb-4 float-left">
   <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
