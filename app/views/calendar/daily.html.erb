@@ -1,0 +1,27 @@
+<div class="col-3 pt-2 float-left">
+  <h4><%= octicon "calendar" %> Calendar</h4>
+  <h4><%= octicon "gear" %> Settings</h4>
+  <!-- <ul style="list&#45;style&#45;type: none;"> -->
+  <!--   <li>#dev</li> -->
+  <!-- </ul> -->
+</div>
+
+<div class="col-8 pt-2 pb-4 float-left">
+  <h1>Entries for <%= @date %></h1>
+  <div class="pt-4">
+
+    <div class="Box">
+      <% @entries&.each do |entry| %>
+        <div class="Box-body">
+          <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
+            <%= octicon("pencil") %>
+          </a>
+
+          <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+</div>
+

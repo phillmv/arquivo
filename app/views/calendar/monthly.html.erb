@@ -7,12 +7,16 @@
 </div>
 
 <div class="col-8 pt-2 pb-4 float-left">
-  <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries| %>
-    <%= date.day %>
+  <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
-      <div>
-        <%= entries.count %> entries
-      </div>
+      <a href="<%= calendar_daily_path(date) %>" style="width: 100%; display: block">
+        <%= date.day %>
+        <div>
+          <%= entries.count %> entries
+        </div>
+      </a>
+    <% else %>
+      <%= date.day %>
     <% end %>
   <% end %>
 </div>

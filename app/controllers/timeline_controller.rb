@@ -27,13 +27,4 @@ class TimelineController < ApplicationController
       redirect_to timeline_path
     end
   end
-
-  def calendar
-    query_date = params[:start_date]&.to_date || Time.zone.now
-
-    start_date = query_date.beginning_of_month
-    end_date = query_date.end_of_month
-
-    @entries = Entry.order(occurred_at: :desc).where("occurred_at >= ? and occurred_at <= ?", start_date, end_date)
-  end
 end
