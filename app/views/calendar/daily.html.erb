@@ -1,21 +1,10 @@
 <%= render partial: "shared/sidebar" %>
 
-<div class="col-8 pt-2 pb-4 float-left">
-  <h1>Entries for <%= @date %></h1>
-  <div class="pt-4">
-
-    <div class="Box">
-      <% @entries&.each do |entry| %>
-        <div class="Box-body">
-          <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
-            <%= octicon("pencil") %>
-          </a>
-
-          <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
-        </div>
-      <% end %>
-    </div>
+<div class="content-container">
+  <div class="pagehead">
+    <h1>Entries for <%= @date %></h1>
   </div>
-
+  <% @entries&.each do |entry| %>
+    <%= render partial: "entries/list_entry", locals: { entry: entry } %>
+  <% end %>
 </div>
-

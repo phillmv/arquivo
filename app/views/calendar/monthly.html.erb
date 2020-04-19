@@ -1,6 +1,9 @@
 <%= render partial: "shared/sidebar" %>
 
-<div class="col-8 pt-2 pb-4 float-left">
+<div class="content-container">
+  <div class="pagehead">
+    <h1>Calendar</h1>
+  </div>
   <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
       <a href="<%= calendar_daily_path(date) %>" style="width: 100%; display: block">
