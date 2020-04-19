@@ -1,9 +1,10 @@
 <%= render partial: "shared/sidebar" %>
 
-<div class="col-8 pt-2 pb-4 float-left">
+<div class="content-container">
   <%= render partial: "timeline/search_bar" %>
 
   <div class="pt-4">
+    <h1>Timeline</h1>
     <% @entries&.each do |day, entries| %>
 
       <div class="TimelineItem">
@@ -12,17 +13,9 @@
         </div>
         <h3><%= day %></h3>
       </div>
-      <div class="Box">
-        <% entries.each do |entry| %>
-          <div class="Box-body">
-            <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
-              <%= octicon("pencil") %>
-            </a>
-
-            <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
-          </div>
-        <% end %>
-      </div>
+      <% entries.each do |entry| %>
+        <%= render partial: "entries/list_entry", locals: { entry: entry } %>
+      <% end %>
     <% end %>
   </div>
 </div>

@@ -1,11 +1,13 @@
-<%= form_with url: search_path, local: true, method: :get, html: { name: "searchform" } do |form| %>
-  <div class="form-actions">
-    <div class="col-10 float-left">
-      <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "searchfield" %>
-    </div>
+<div class="pt-2">
+  <%= form_with url: search_path, local: true, method: :get, html: { name: "searchform" } do |form| %>
+    <div class="form-actions">
+      <div class="col-10 float-left pr-3">
+        <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "searchfield" %>
+      </div>
 
-    <div class="col-2 float-left">
-      <a href="/entries/new" class="btn">New Entry</a>
+      <div class="col-2 float-left">
+        <a href="/entries/new" class="btn"><%= octicon "pencil" %> New Entry</a>
+      </div>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

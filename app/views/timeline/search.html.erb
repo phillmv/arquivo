@@ -1,12 +1,16 @@
-<div class="col-8 pt-2 pb-4 float-left">
+<%= render partial: "shared/sidebar" %>
+
+<div class="content-container">
   <%= render partial: "timeline/search_bar" %>
 
   <div class="pt-4">
     <% @entries&.each do |day, entries| %>
-      <h3><%= day %></h3>
+      <div class="pagehead">
+        <h3><%= day %></h3>
+      </div>
 
       <% entries.each do |entry| %>
-        <%= render partial: "timeline/list_entry", locals: { entry: entry } %>
+        <%= render partial: "entries/list_entry", locals: { entry: entry } %>
       <% end %>
     <% end %>
   </div>

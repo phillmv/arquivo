@@ -1,8 +1,16 @@
-<div class="offset-2 col-7 pt-2 pb-4 float-left">
+<%= render partial: "shared/sidebar" %>
+
+<div class="content-container">
   <div class="pagehead">
     <h1><%= "#{@entry.occurred_at.strftime("%Y-%m-%d")}/#{@entry.id}" %></h1>
   </div>
-
+  <details class="details-reset mt-3">
+    <summary class="btn mr-2">Metadata</summary>
+    <dl class="form-group">
+      <dt><label>occurred_at</label></dt>
+      <dd><span><%= @entry.occurred_at %></dd>
+      </dl>
+    </details>
 
 
   <div class="form-group">
@@ -13,12 +21,4 @@
     <a href="<%= edit_entry_path(@entry) %>" class="btn btn-primary">Edit</a>
     <%= link_to 'Back', timeline_path, class: "btn float-left" %>
   </div>
-
-  <details class="details-reset mt-3">
-    <summary class="btn mr-2">Metadata</summary>
-    <dl class="form-group">
-      <dt><label>occurred_at</label></dt>
-      <dd><span><%= @entry.occurred_at %></dd>
-      </dl>
-    </details>
 </div>

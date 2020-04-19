@@ -1,0 +1,16 @@
+<div class="Box">
+  <div class="Box-header">
+    <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon">
+      <%= octicon("pencil") %>&nbsp;
+    </a>
+
+    <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
+
+      <%= entry.occurred_at %>
+      <%= octicon "link" %>
+    </a>
+  </div>
+  <div class="Box-body">
+    <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
+  </div>
+</div>
