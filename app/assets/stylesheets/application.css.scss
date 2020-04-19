@@ -9,3 +9,13 @@
     margin-bottom: 24px;
     border-bottom: 1px solid #e1e4e8;
 }
+
+
+.content-container {
+  @extend .col-8, .float-left;
+}
+
+// used for rendering entry bodies
+.Box-body p:last-of-type {
+  margin-bottom: 0px;
+}

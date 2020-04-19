@@ -8,6 +8,14 @@ document.onkeyup = function(e) {
   }
 }
 
+document.addEventListener("turbolinks:load", function(){
+  var existing_textareas;
+
+  if(existing_textareas = document.querySelector("textarea")) {
+    autosize(existing_textareas);
+  }
+});
+
 document.addEventListener("DOMContentLoaded", function(){
   var existing_textareas, new_entry_input;
 
