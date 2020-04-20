@@ -4,14 +4,21 @@
   <%= render partial: "timeline/search_bar" %>
 
   <div class="pt-4">
+    <h1>Search</h1>
+    <div class="TimelineItem-start"></div>
     <% @entries&.each do |day, entries| %>
-      <div class="pagehead">
-        <h3><%= day %></h3>
+      <div>
+        <div class="TimelineItem">
+          <div class="TimelineItem-badge bg-blue text-white">
+            <%= octicon("calendar") %>
+          </div>
+          <h3><a href="<%= calendar_daily_path(day)%>"><%= day %></a></h3>
+        </div>
+        <% entries.each do |entry| %>
+          <%= render partial: "entries/list_entry", locals: { entry: entry } %>
+        <% end %>
       </div>
-
-      <% entries.each do |entry| %>
-        <%= render partial: "entries/list_entry", locals: { entry: entry } %>
-      <% end %>
     <% end %>
+
   </div>
 </div>

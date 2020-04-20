@@ -19,3 +19,15 @@
 .Box-body p:last-of-type {
   margin-bottom: 0px;
 }
+
+.entry-box {
+  @extend .Box, .mb-2;
+  &:last-of-type {
+    margin-bottom: 0px !important;
+  }
+}
+
+.TimelineItem-start {
+  @extend .TimelineItem-break;
+  border: none;
+}

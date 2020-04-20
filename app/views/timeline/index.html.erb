@@ -5,17 +5,21 @@
 
   <div class="pt-4">
     <h1>Timeline</h1>
+    <div class="TimelineItem-start"></div>
+    
     <% @entries&.each do |day, entries| %>
 
-      <div class="TimelineItem">
-        <div class="TimelineItem-badge bg-blue text-white">
-          <%= octicon("flame") %>
+      <div>
+        <div class="TimelineItem">
+          <div class="TimelineItem-badge bg-blue text-white">
+            <%= octicon("calendar") %>
+          </div>
+          <h3><a href="<%= calendar_daily_path(day)%>"><%= day %></a></h3>
         </div>
-        <h3><%= day %></h3>
+        <% entries.each do |entry| %>
+          <%= render partial: "entries/list_entry", locals: { entry: entry } %>
+        <% end %>
       </div>
-      <% entries.each do |entry| %>
-        <%= render partial: "entries/list_entry", locals: { entry: entry } %>
-      <% end %>
     <% end %>
   </div>
 </div>
