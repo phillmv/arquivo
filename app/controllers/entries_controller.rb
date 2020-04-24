@@ -25,11 +25,12 @@ class EntriesController < ApplicationController
   # POST /entries.json
   def create
     @entry = Entry.new(entry_params)
+    @entry.notebook = current_notebook
     @entry.occurred_at ||= Time.now
 
     respond_to do |format|
       if @entry.save
-        format.html { redirect_to timeline_path, notice: 'Entry was successfully created.' }
+        format.html { redirect_to timeline_path(notebook: current_notebook), notice: 'Entry was successfully created.' }
         format.json { render :show, status: :created, location: @entry }
       else
         format.html { render :new }
@@ -70,6 +71,6 @@ class EntriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
-      params.require(:entry).permit(:body, :occurred_at)
+      params.require(:entry).permit(:body, :occurred_at, :files)
     end
 end

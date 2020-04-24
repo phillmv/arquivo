@@ -31,3 +31,11 @@
   @extend .TimelineItem-break;
   border: none;
 }
+
+summary::marker {
+  padding-bottom: 4px;
+}
+
+summary::-webkit-details-marker {
+  padding-bottom: 4px;
+}

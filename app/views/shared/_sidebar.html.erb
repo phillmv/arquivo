@@ -1,10 +1,20 @@
 <div class="col-2 float-left">
   <div class="mb-4">
-    <h1><u><a href="<%= timeline_path %>">Archive</u></h1>
+    <h1><u><a href="<%= timeline_path %>">Archive</a></u></h1>
+    <details>
+      <summary><h2 style="display: inline"><%= octicon "book", height: 24 %> <%= @current_notebook.name %> </h2></summary>
+      <ul style="list-style: none">
+        <% Notebook.all.each do |notebook| %>
+          <% next if notebook == @current_notebook %>
+          <li><h4 class="ml-1"><a href="<%= timeline_path(notebook: notebook) %>" type="button" role="menuitem" data-menu-button-text><%= octicon "book", height: 16 %> <%= notebook.name %></a></h4></li>
+        <% end %>
+      </ul>
+    </details>
   </div>
 
-  <h4><a href="<%= new_entry_path %>"><%= octicon "pencil" %> New Entry</a></h4>
-  <h4><a href="<%= timeline_path %>"><%= octicon "note" %> Timeline</a></h4>
-  <h4><a href="<%= calendar_path %>"><%= octicon "calendar" %> Calendar</a></h4>
+
+  <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4>
+  <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
+  <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> Calendar</a></h4>
   <h4><%= octicon "gear" %> Settings</h4>
 </div>

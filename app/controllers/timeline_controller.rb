@@ -1,10 +1,6 @@
 class TimelineController < ApplicationController
-
   def index
-    entries = Entry.order(occurred_at: :desc)
-    @search_results = entries
-    session[:search_query] = nil
-
+    entries = Entry.for_notebook(current_notebook).order(occurred_at: :desc)
 
     @entries = entries.group_by do |e|
       e.created_at.strftime("%Y-%m-%d")
@@ -12,11 +8,11 @@ class TimelineController < ApplicationController
   end
 
   def search
-    session[:search_query] = params[:searchfield]
+    @search_query = params[:searchfield]
 
-    if session[:search_query].present?
-      @search_query = session[:search_query]
-      entries = Search.find(query: @search_query)
+    if @search_query.present?
+      entries = Search.find(notebook: current_notebook,
+                            query: @search_query)
 
       @entries = entries.group_by do |e|
         e.created_at.strftime("%Y-%m-%d")
@@ -24,7 +20,7 @@ class TimelineController < ApplicationController
 
       render :search
     else
-      redirect_to timeline_path
+      redirect_to timeline_path(notebook: current_notebook)
     end
   end
 end

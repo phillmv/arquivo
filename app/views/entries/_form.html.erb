@@ -1,4 +1,4 @@
-<%= form_with(model: entry, local: true) do |form| %>
+<%= form_with(model: entry, url: entries_path(notebook: @current_notebook), local: true) do |form| %>
   <div class="pb-5">
     <details class="details-reset float-left">
       <summary class="btn mr-2">Metadata</summary>
@@ -28,6 +28,6 @@
 
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>
-    <%= link_to 'Cancel', timeline_path, class: "btn btn-danger float-left" %>
+    <%= link_to 'Cancel', timeline_path(@current_notebook), class: "btn btn-danger float-left" %>
   </div>
 <% end %>
