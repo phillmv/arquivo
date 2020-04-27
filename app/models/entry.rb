@@ -1,4 +1,5 @@
 class Entry < ApplicationRecord
+  has_many_attached :files
 
   scope :for_notebook, -> (notebook) { where(notebook: notebook.name) }
 

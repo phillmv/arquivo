@@ -2,7 +2,7 @@
 
 <div class="content-container">
   <div class="pagehead">
-    <h1><%= "#{@entry.occurred_at.strftime("%Y-%m-%d")}/#{@entry.id}" %></h1>
+    <h1>Entry <%= "#{@entry.occurred_at.strftime("%Y-%m-%d")}/#{@entry.id}" %></h1>
   </div>
   <details class="details-reset mt-3">
     <summary class="btn mr-2">Metadata</summary>
@@ -17,8 +17,17 @@
     <%= CommonMarker.render_html(@entry.body).html_safe if @entry.body %>
   </div>
 
-  <div class="form-actions mt-4 pt-3 border-top">
-    <a href="<%= edit_entry_path(@entry) %>" class="btn btn-primary">Edit</a>
-    <%= link_to 'Back', timeline_path, class: "btn float-left" %>
+  <% if @entry.files.attached? %>
+    <div class="border-top pt-2">
+      <h4>Attached files:</h4>
+      <% @entry.files.each do |file| %>
+        <p><A href="<%= url_for(file)%>"><%= file.filename %></a></p>
+      <% end %>
+    </div>
+    <% end %>
+
+  <div class="form-actions mt-2 pt-3 border-top">
+    <a href="<%= edit_entry_path(@entry, notebook: @current_notebook) %>" class="btn btn-primary">Edit</a>
+    <%= link_to 'Back', timeline_path(notebook: @current_notebook), class: "btn float-left" %>
   </div>
 </div>

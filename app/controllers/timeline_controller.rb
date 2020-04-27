@@ -3,7 +3,7 @@ class TimelineController < ApplicationController
     entries = Entry.for_notebook(current_notebook).order(occurred_at: :desc)
 
     @entries = entries.group_by do |e|
-      e.created_at.strftime("%Y-%m-%d")
+      e.occurred_at.strftime("%Y-%m-%d")
     end
   end
 

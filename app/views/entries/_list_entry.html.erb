@@ -1,10 +1,10 @@
 <div class="entry-box">
   <div class="Box-header">
-    <a href="<%= edit_entry_path(entry)%>" class="Box-btn-octicon btn-octicon float-right">
+    <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon float-right">
       <%= octicon("pencil") %>&nbsp;
     </a>
 
-    <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon">
+    <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon">
       <%= octicon "link" %>
       <%= entry.occurred_at %>
     </a>

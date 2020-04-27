@@ -1,5 +1,6 @@
 import autosize from '@github/textarea-autosize';
-
+// import '@github/file-attachment-element';
+import { DirectUpload} from "@rails/activestorage";
 
 // press control L to get to the search field
 document.onkeyup = function(e) { 
@@ -9,11 +10,24 @@ document.onkeyup = function(e) {
 }
 
 document.addEventListener("turbolinks:load", function(){
-  var existing_textareas;
+  var existing_textareas, file_input;
 
   if(existing_textareas = document.querySelector("textarea")) {
     autosize(existing_textareas);
   }
+
+  file_input = document.querySelector('input[type=file]');
+
+  // handling uploads
+  // Bind to normal file selection
+  if(file_input) {
+    file_input.addEventListener('change', (event) => {
+      Array.from(file_input.files).forEach(file => uploadFile(file, file_input))
+      // you might clear the selected files from the input
+      file_input.value = null
+    })
+  }
+
 });
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -50,7 +64,37 @@ document.addEventListener("DOMContentLoaded", function(){
       });
     }
   }
-})
+});
+
+const uploadFile = (file, file_input) => {
+  // your form needs the file_field direct_upload: true, which
+  //  provides data-direct-upload-url
+  const url = file_input.dataset.directUploadUrl
+  const upload = new DirectUpload(file, url)
+
+  upload.create((error, blob) => {
+    if (error) {
+      alert(error);
+    } else {
+
+      var form = file_input.closest("form");
+      var textarea = form.querySelector("textarea");
+      // TODO: get this to distinguish between
+      // images and non-images.
+      textarea.setRangeText(`\n![${blob.filename}](${blob.blob_path})`);
+
+      // Add an appropriately-named hidden input to the form with a
+      //  value of blob.signed_id so that the blob ids will be
+      //  transmitted in the normal upload flow
+      const hiddenField = document.createElement('input');
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("value", blob.signed_id);
+      hiddenField.name = file_input.name;
+      form.appendChild(hiddenField);
+    }
+  })
+}
+
 
 // import Turbolinks from 'turbolinks';
 // 
@@ -67,3 +111,8 @@ document.addEventListener("DOMContentLoaded", function(){
 // });
 // 
 // console.log("what")
+//
+//
+//
+//
+// --------

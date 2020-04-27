@@ -1,4 +1,9 @@
-<%= form_with(model: entry, url: entries_path(notebook: @current_notebook), local: true) do |form| %>
+<% if entry.new_record? %>
+  <% url = entries_path(notebook: @current_notebook) %>
+<% else %>
+  <% url = entry_path(entry, notebook: @current_notebook) %>
+<% end %>
+<%= form_with(model: entry, url: url, local: true) do |form| %>
   <div class="pb-5">
     <details class="details-reset float-left">
       <summary class="btn mr-2">Metadata</summary>
@@ -24,6 +29,26 @@
 
   <div class="form-group">
     <%= form.text_area :body, class: "form-control input-block" %>
+    <%= form.file_field :files, multiple: true, direct_upload: true %>
+
+    <% if @entry.files.attached? %>
+      <div class="pt-2">
+        <h4>Attached files:</h4>
+        <table class="col-12">
+          <% @entry.files.each do |file| %>
+            <tr>
+              <td class="col-10">
+                <%= form.hidden_field :files, multiple: true, value: file.signed_id %>
+              <a href="<%= url_for(file)%>"><%= file.filename %></a></td>
+              <td>
+                <a href="">delete</a>
+              </td>
+
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    <% end %>
   </div>
 
   <div class="form-actions">
