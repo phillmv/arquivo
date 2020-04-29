@@ -692,6 +692,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha512-5a6wqoJV/xEdbRNKVo6I4hO3VjyDq//8q2f9I6PBAvMesJHFauXDorcNCsr9RzvsZnaWi5NYCcfyqP1QeFHFbw==
 
+"@github/file-attachment-element@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@github/file-attachment-element/-/file-attachment-element-1.0.2.tgz#7cfeefb62eb2053df9734d4b964eac653968ae0a"
+  integrity sha512-5YBPGQEkZ6t4uosF3KCnFfQT/XZcBLiAw6sFvXINjyytzyacj7B2alzeQmTDO3Au/n4MubQLQMtNrQgIOj/SbQ==
+
 "@github/textarea-autosize@^0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@github/textarea-autosize/-/textarea-autosize-0.2.0.tgz#5d1bccf3513cc64e48a427d9f6c29a7ce06a3f06"

@@ -2,6 +2,7 @@
   "name": "archive",
   "private": true,
   "dependencies": {
+    "@github/file-attachment-element": "^1.0.2",
     "@github/textarea-autosize": "^0.2.0",
     "@primer/css": "primer/css",
     "@rails/actioncable": "^6.0.0",
