@@ -9,7 +9,7 @@
       <%= entry.occurred_at %>
     </a>
   </div>
-  <div class="Box-body">
-    <%= CommonMarker.render_html(entry.body).html_safe if entry.body %>
+  <div class="Box-body markdown-body">
+    <%= EntryRenderer.new(@current_notebook, entry).to_html %>
   </div>
 </div>

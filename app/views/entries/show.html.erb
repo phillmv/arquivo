@@ -13,8 +13,8 @@
     </details>
 
 
-  <div class="form-group">
-    <%= CommonMarker.render_html(@entry.body).html_safe if @entry.body %>
+  <div class="form-group markdown-body">
+    <%= EntryRenderer.new(@current_notebook, @entry).to_html %>
   </div>
 
   <% if @entry.files.attached? %>

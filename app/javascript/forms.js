@@ -5,7 +5,7 @@ import { DirectUpload} from "@rails/activestorage";
 // press control L to get to the search field
 document.onkeyup = function(e) { 
   if(e.ctrlKey && e.which == 76) { 
-    document.searchform.searchfield.focus()
+    document.searchform.query.focus()
   }
 }
 
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if (new_entry_input = document.querySelector("form.new_entry textarea")) {
       new_entry_input.addEventListener("keydown", function(e) {
         if (event.shiftKey && event.keyCode == 9) {
-          document.searchform.searchfield.focus();
+          document.searchform.query.focus();
           e.preventDefault();
         }
       });

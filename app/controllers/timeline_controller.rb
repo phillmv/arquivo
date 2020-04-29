@@ -8,7 +8,7 @@ class TimelineController < ApplicationController
   end
 
   def search
-    @search_query = params[:searchfield]
+    @search_query = params[:query]
 
     if @search_query.present?
       entries = Search.find(notebook: current_notebook,
