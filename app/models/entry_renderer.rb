@@ -18,18 +18,16 @@ class EntryRenderer
       # pipeline. first we render the markdown
       html_from_md = CommonMarker.render_html(body, CMARK_OPT, CMARK_EXT)
 
+      # then we render hashtags
       final_html = render_hashtags(html_from_md)
       final_html.html_safe
     end
   end
 
   def render_hashtags(str)
-    str.scan(HASHTAG_REGEX).each do |(match)|
-      ahref = "<a href=\"#{search_url(match)}\">#{match}</a>"
-      str = str.gsub(match, ahref)
+    str.gsub(HASHTAG_REGEX) do |match|
+      "<a href=\"#{search_url(match)}\">#{match}</a>"
     end
-
-    str
   end
 
   def search_url(str)
