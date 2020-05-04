@@ -2,6 +2,18 @@ class Entry < ApplicationRecord
   has_many_attached :files
 
   scope :for_notebook, -> (notebook) { where(notebook: notebook.name) }
+  scope :hitherto, -> { where("occurred_at <= ? ", Time.now) }
+  scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
+
+  before_create :set_identifier
+
+  def set_identifier
+    self.identifier ||= Time.current.strftime("%Y-%m-%d-%H%M%S%L")
+  end
+
+  def calendar?
+    kind == "calendar"
+  end
 
   # this is actually pretty complicated to do properly?
   # https://github.com/middleman/middleman/blob/master/middleman-core/lib/middleman-core/util/data.rb
@@ -15,5 +27,9 @@ class Entry < ApplicationRecord
                           "occurred_at",
                           "created_at",
                           "updated_at")
+  end
+
+  def to_param
+    identifier
   end
 end

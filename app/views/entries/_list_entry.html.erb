@@ -1,15 +1,65 @@
-<div class="entry-box">
-  <div class="Box-header">
-    <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon float-right">
-      <%= octicon("pencil") %>&nbsp;
-    </a>
+<% if entry.calendar? %>
+  <div class="TimelineItem">
+    <div class="TimelineItem-badge">
+      <%= octicon("organization") %>
+    </div>
 
-    <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon">
-      <%= octicon "link" %>
-      <%= entry.occurred_at %>
-    </a>
+    <div class="TimelineItem-body">
+        <div>
+          <a class="" href="<%= entry_path(entry, notebook: @current_notebook) %>" class="link-gray"><%= entry.occurred_at.strftime("@%H:%M") %></a> &mdash;
+          <h4 class="d-inline"><%= entry.subject %></h4>
+        </div>
+
+      <% if false %>
+        <div class="entry-box">
+          <!-- <div class="Box&#45;header"> -->
+          <!--   <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon float&#45;right"> -->
+          <!--     <%= octicon("pencil") %>&#38;nbsp; -->
+          <!--   </a> -->
+          <!--  -->
+          <!--   <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon"> -->
+          <!--     <%= octicon "link" %> -->
+          <!--     <%= entry.occurred_at %> -->
+          <!--   </a> -->
+          <!-- </div> -->
+          <div class="Box-body markdown-body">
+            <a class="float-right" href="<%= entry_path(entry, notebook: @current_notebook) %>" class="link-gray"><%= time_ago_in_words(entry.occurred_at) %> ago</a>
+            <h4 class="d-inline"><%= entry.subject %></h4>
+            <details>
+              <%= EntryRenderer.new(@current_notebook, entry).to_html %>
+            </details>
+          </div>
+        </div>
+      <% end %>
+    </div>
   </div>
-  <div class="Box-body markdown-body">
-    <%= EntryRenderer.new(@current_notebook, entry).to_html %>
+
+  <% if false %>
+  <div class="entry-box">
+     <div class="Box-body markdown-body">
+      <a class="float-right" href="<%= entry_path(entry, notebook: @current_notebook) %>" class="link-gray"><%= time_ago_in_words(entry.occurred_at) %> ago</a>
+      <%= EntryRenderer.new(@current_notebook, entry).to_html %>
+      <a href="#" class="link-gray"><%= time_ago_in_words(entry.occurred_at) %> ago</a>
+    </div>
   </div>
-</div>
+<% end %>
+
+
+
+<% else %>
+  <div class="entry-box">
+    <div class="Box-header">
+      <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon float-right">
+        <%= octicon("pencil") %>&nbsp;
+      </a>
+
+      <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon">
+        <%= octicon "link" %>
+        <%= entry.occurred_at %>
+      </a>
+    </div>
+    <div class="Box-body markdown-body">
+      <%= EntryRenderer.new(@current_notebook, entry).to_html %>
+    </div>
+  </div>
+<% end %>

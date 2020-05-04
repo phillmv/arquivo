@@ -1,6 +1,7 @@
 class TimelineController < ApplicationController
   def index
-    entries = Entry.for_notebook(current_notebook).order(occurred_at: :desc)
+    entries = Entry.for_notebook(current_notebook).hitherto.
+      order(occurred_at: :desc)
 
     @entries = entries.group_by do |e|
       e.occurred_at.strftime("%Y-%m-%d")

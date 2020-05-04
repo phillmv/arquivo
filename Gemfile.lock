@@ -90,6 +90,9 @@ GEM
       activesupport (>= 4.2.0)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
+    icalendar (2.6.1)
+      ice_cube (~> 0.16)
+    ice_cube (0.16.3)
     jbuilder (2.9.1)
       activesupport (>= 4.2.0)
     listen (3.1.5)
@@ -230,6 +233,7 @@ DEPENDENCIES
   commonmarker
   factory_bot_rails
   faker
+  icalendar
   jbuilder (~> 2.7)
   listen (>= 3.0.5, < 3.2)
   octicons

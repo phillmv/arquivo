@@ -1,6 +1,5 @@
 class EntryRenderer
   attr_accessor :entry, :current_notebook
-  delegate :body, to: :entry
   CMARK_OPT = [:GITHUB_PRE_LANG, :HARDBREAKS]
   CMARK_EXT = [:table, :tasklist, :autolink, :strikethrough]
 
@@ -11,12 +10,13 @@ class EntryRenderer
     @current_notebook = current_notebook
   end
 
-  def to_html
-    if !body
+  def to_html(attribute_name = "body")
+    attribute = entry.attributes[attribute_name]
+    if !attribute
       ""
     else
       # pipeline. first we render the markdown
-      html_from_md = CommonMarker.render_html(body, CMARK_OPT, CMARK_EXT)
+      html_from_md = CommonMarker.render_html(attribute, CMARK_OPT, CMARK_EXT)
 
       # then we render hashtags
       final_html = render_hashtags(html_from_md)

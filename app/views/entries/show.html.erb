@@ -2,19 +2,34 @@
 
 <div class="content-container">
   <div class="pagehead">
-    <h1>Entry <%= "#{@entry.occurred_at.strftime("%Y-%m-%d")}/#{@entry.id}" %></h1>
+    <h1>Entry <%= @entry.identifier %></h1>
   </div>
   <details class="details-reset mt-3">
     <summary class="btn mr-2">Metadata</summary>
     <dl class="form-group">
       <dt><label>occurred_at</label></dt>
       <dd><span><%= @entry.occurred_at %></dd>
-      </dl>
-    </details>
+    </dl>
+  </details>
 
 
   <div class="form-group markdown-body">
-    <%= EntryRenderer.new(@current_notebook, @entry).to_html %>
+    <% if @entry.calendar? %>
+      <%= EntryRenderer.new(@current_notebook, @entry).to_html("subject") %>
+
+      <% if @entry.to.present? %>
+        Attendees: <%= EntryRenderer.new(@current_notebook, @entry).to_html("to") %>
+      <% end %>
+
+      <% if @entry.from.present? %>
+        From: <%= EntryRenderer.new(@current_notebook, @entry).to_html("from") %>
+      <% end %>
+
+      <%= EntryRenderer.new(@current_notebook, @entry).to_html %>
+
+    <% else %>
+      <%= EntryRenderer.new(@current_notebook, @entry).to_html %>
+    <% end %>
   </div>
 
   <% if @entry.files.attached? %>
@@ -24,7 +39,7 @@
         <p><A href="<%= url_for(file)%>"><%= file.filename %></a></p>
       <% end %>
     </div>
-    <% end %>
+  <% end %>
 
   <div class="form-actions mt-2 pt-3 border-top">
     <a href="<%= edit_entry_path(@entry, notebook: @current_notebook) %>" class="btn btn-primary">Edit</a>
