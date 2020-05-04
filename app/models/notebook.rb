@@ -1,4 +1,8 @@
 class Notebook < ApplicationRecord
+  def self.default
+    "journal"
+  end
+
   def to_s
     name
   end
