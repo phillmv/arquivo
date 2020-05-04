@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   end
 
   def current_notebook
-    @current_notebook ||= Notebook.find_by!(name: params[:notebook])
+    notebook = params[:notebook] || session[:notebook] || Notebook.default
+
+    @current_notebook = Notebook.find_by!(name: notebook).tap do
+      session[:notebook] = notebook
+    end
   end
 end
