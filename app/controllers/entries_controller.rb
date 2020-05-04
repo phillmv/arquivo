@@ -64,9 +64,23 @@ class EntriesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_entry
-      @entry = Entry.find(params[:id])
+      # quick terrible hack for routing ical uuids
+      # that are email addresses
+      if params[:format]
+        identifier = "#{params[:id]}.#{params[:format]}"
+        @entry = Entry.find_by(identifier: identifier, notebook: current_notebook.to_s)
+
+        # if an entry exists, great!
+        if @entry
+          return
+        end
+
+        # but if it doesn't, we should try again with just the
+        # id params, so we can throw a 404
+      end
+
+      @entry = Entry.find_by!(identifier: params[:id], notebook: current_notebook.to_s)
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
