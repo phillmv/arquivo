@@ -1,0 +1,2 @@
+class CalendarImport < ApplicationRecord
+end

@@ -6,7 +6,7 @@
   </div>
   <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
-      <a href="<%= calendar_daily_path(date) %>" style="width: 100%; display: block">
+      <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block">
         <%= date.day %>
         <div class="pt-2">
           <%= entries.count %> entries

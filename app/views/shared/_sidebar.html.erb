@@ -1,5 +1,5 @@
-<div class="col-2 float-left">
-  <div class="mb-4">
+<div class="col-3 float-left">
+  <div class="mb-3">
     <h1><u><a href="<%= timeline_path(notebook: @current_notebook) %>">Archive</a></u></h1>
     <details>
       <summary><h2 style="display: inline"><%= octicon "book", height: 24 %> <%= @current_notebook.name %> </h2></summary>
@@ -12,9 +12,27 @@
     </details>
   </div>
 
-
   <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4>
   <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
   <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> Calendar</a></h4>
-  <h4><%= octicon "gear" %> Settings</h4>
+  <h4 class="mb-3"><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
+
+  <h4>Recent Tags</h4>
+  <ul class="list-style-none">
+    <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(8).each do |topic| %>
+      <li><a href="<%= search_path(query: topic, notebook: @current_notebook)%>"><%=topic%></a></li>
+    <% end %>
+  </ul>
+
+  <hr class="col-10">
+
+  <h4>Recent Entries</h4>
+  <ul class="list-style-none">
+    <% Entry.hitherto.order(occurred_at: :desc).limit(10).each do |entry| %>
+      <li><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= entry.identifier %></a></li>
+    <% end %>
+  </ul>
+
+
+
 </div>

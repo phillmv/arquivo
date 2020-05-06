@@ -6,9 +6,14 @@ class Entry < ApplicationRecord
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
 
   before_create :set_identifier
+  after_save :process_tags
 
   def set_identifier
     self.identifier ||= Time.current.strftime("%Y-%m-%d-%H%M%S%L")
+  end
+
+  def process_tags
+    EntryTagger.new(self).process!
   end
 
   def calendar?

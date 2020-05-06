@@ -16,7 +16,7 @@ class TimelineController < ApplicationController
                             query: @search_query)
 
       @entries = entries.group_by do |e|
-        e.created_at.strftime("%Y-%m-%d")
+        e.occurred_at.strftime("%Y-%m-%d")
       end
 
       render :search

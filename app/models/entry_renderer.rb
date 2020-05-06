@@ -16,12 +16,16 @@ class EntryRenderer
       ""
     else
       # pipeline. first we render the markdown
-      html_from_md = CommonMarker.render_html(attribute, CMARK_OPT, CMARK_EXT)
+      html_from_md = render_markdown(attribute)
 
       # then we render hashtags
       final_html = render_hashtags(html_from_md)
       final_html.html_safe
     end
+  end
+
+  def render_markdown(str)
+    CommonMarker.render_html(str, CMARK_OPT, CMARK_EXT)
   end
 
   def render_hashtags(str)
