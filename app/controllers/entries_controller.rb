@@ -10,6 +10,7 @@ class EntriesController < ApplicationController
   # GET /entries/1
   # GET /entries/1.json
   def show
+    @renderer = EntryRenderer.new(@entry)
   end
 
   # GET /entries/new

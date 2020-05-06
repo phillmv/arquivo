@@ -1,13 +1,13 @@
 class EntryRenderer
-  attr_accessor :entry, :current_notebook
+  attr_accessor :entry, :notebook
   CMARK_OPT = [:GITHUB_PRE_LANG, :HARDBREAKS]
   CMARK_EXT = [:table, :tasklist, :autolink, :strikethrough]
 
   HASHTAG_REGEX = /\B(#[A-Za-z0-9\-\.\_]+)/
 
-  def initialize(current_notebook, entry)
+  def initialize(entry)
     @entry = entry
-    @current_notebook = current_notebook
+    @notebook = entry.notebook
   end
 
   def to_html(attribute_name = "body")
@@ -31,6 +31,6 @@ class EntryRenderer
   end
 
   def search_url(str)
-    Rails.application.routes.url_helpers.search_path(notebook: current_notebook, query: str)
+    Rails.application.routes.url_helpers.search_path(notebook: notebook, query: str)
   end
 end

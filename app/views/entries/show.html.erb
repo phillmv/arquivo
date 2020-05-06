@@ -15,20 +15,20 @@
 
   <div class="form-group markdown-body">
     <% if @entry.calendar? %>
-      <%= EntryRenderer.new(@current_notebook, @entry).to_html("subject") %>
+      <%= @renderer.to_html("subject") %>
 
       <% if @entry.to.present? %>
-        Attendees: <%= EntryRenderer.new(@current_notebook, @entry).to_html("to") %>
+        Attendees: <%= @renderer.to_html("to") %>
       <% end %>
 
       <% if @entry.from.present? %>
-        From: <%= EntryRenderer.new(@current_notebook, @entry).to_html("from") %>
+        From: <%= @renderer.to_html("from") %>
       <% end %>
 
-      <%= EntryRenderer.new(@current_notebook, @entry).to_html %>
+      <%= @renderer.to_html %>
 
     <% else %>
-      <%= EntryRenderer.new(@current_notebook, @entry).to_html %>
+      <%= @renderer.to_html %>
     <% end %>
   </div>
 
@@ -42,7 +42,7 @@
   <% end %>
 
   <div class="form-actions mt-2 pt-3 border-top">
-    <a href="<%= edit_entry_path(@entry, notebook: @current_notebook) %>" class="btn btn-primary">Edit</a>
+    <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook) %>" class="btn btn-primary">Edit</a>
     <%= link_to 'Back', timeline_path(notebook: @current_notebook), class: "btn float-left" %>
   </div>
 </div>
