@@ -1,6 +1,6 @@
 <div class="col-3 float-left">
   <div class="mb-3">
-    <h1><u><a href="<%= timeline_path(notebook: @current_notebook) %>">Archive</a></u></h1>
+    <h1><u><a href="<%= timeline_path(notebook: @current_notebook) %>">Arquivo</a></u></h1>
     <details>
       <summary><h2 style="display: inline"><%= octicon "book", height: 24 %> <%= @current_notebook.name %> </h2></summary>
       <ul style="list-style: none">
@@ -28,7 +28,7 @@
 
   <h4>Recent Entries</h4>
   <ul class="list-style-none">
-    <% Entry.hitherto.order(occurred_at: :desc).limit(10).each do |entry| %>
+    <% Entry.hitherto.where(notebook: @current_notebook.name).order(occurred_at: :desc).limit(10).each do |entry| %>
       <li><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= entry.identifier %></a></li>
     <% end %>
   </ul>
