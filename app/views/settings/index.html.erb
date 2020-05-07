@@ -1,0 +1,21 @@
+<%= render partial: "shared/sidebar" %>
+<div class="content-container">
+  <div class="pagehead">
+    <h1>Settings for <%= octicon "book", height: 32 %> <%= @current_notebook %></h1>
+  </div>
+
+  <h2>Importers</h2>
+  <hr>
+  <h3>Calendar</h3>
+  <div>
+    <%= form_for(@new_calendar_import, url: add_calendar_path(notebook: @current_notebook)) do |form| %>
+
+      <div class="form-group">
+        <%= form.label :url, "URL" %>
+        <%= form.text_field :url, class: "form-control input-sm" %>
+        <%= form.submit "Create", class: "btn btn-primary" %>
+      </div>
+
+    <% end %>
+  </div>
+</div>

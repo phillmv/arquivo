@@ -7,6 +7,9 @@ Rails.application.routes.draw do
     get '/timeline/search', to: "timeline#search", as: :search
     get '/calendar', to: "calendar#monthly", as: :calendar
     get '/calendar/:date', to: "calendar#daily", as: :calendar_daily
+
+    get "/settings", to: "settings#index", as: :settings
+    post "/settings/add_calendar", to: "settings#add_calendar", as: :add_calendar
   end
 
   root to: "timeline#index"
