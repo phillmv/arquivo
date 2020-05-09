@@ -17,17 +17,27 @@
 
 <% else %>
   <div class="entry-box">
-    <div class="Box-header">
-      <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon float-right">
-        <%= octicon("pencil") %>&nbsp;
-      </a>
-
-      <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="Box-btn-octicon btn-octicon">
-        <%= octicon "link" %>
-        <%= entry.occurred_at %>
-      </a>
-    </div>
+    <!-- <div class="Box&#45;header"> -->
+      <!-- <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon float&#45;right"> -->
+      <!--   <%= octicon("pencil") %>&#38;nbsp; -->
+      <!-- </a> -->
+    <!--  -->
+      <!-- <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon"> -->
+    <!--     <%= octicon "link" %> -->
+    <!--     <%= entry.occurred_at %> -->
+    <!--   </a> -->
+    <!-- </div> -->
     <div class="Box-body markdown-body">
+      <div class="entry-list-header">
+        <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
+          <%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %>
+        </a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
+          <%= octicon("pencil") %> edit
+        </a><a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable">
+          <%= octicon("fold") %> fold
+        </a>
+      </div>
+
       <%= EntryRenderer.new(entry).to_html %>
     </div>
   </div>
