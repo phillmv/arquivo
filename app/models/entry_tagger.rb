@@ -7,7 +7,7 @@ class EntryTagger
   end
 
   def process!
-    extract_tags.each do |name|
+    renderer.extract_tags.each do |name|
       Tag.transaction do
         tag = Tag.find_by(notebook: entry.notebook,
                           name: name)
@@ -23,12 +23,5 @@ class EntryTagger
         end
       end
     end
-  end
-
-  # for now, let's only look at the body for tags?
-  # probably will want to skip non web entries
-  def extract_tags
-    renderer.to_html("body").
-      scan(EntryRenderer::HASHTAG_REGEX).flatten
   end
 end

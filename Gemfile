@@ -31,6 +31,10 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem "commonmarker"
 gem "octicons"
 gem "octicons_helper"
+gem "html-pipeline"
+gem "sanitize", '~> 4.6'
+gem "escape_utils", '~> 1.0'
+gem 'deckar01-task_list'
 
 gem 'icalendar'
 

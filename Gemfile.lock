@@ -77,7 +77,10 @@ GEM
       ruby-enum (~> 0.5)
     concurrent-ruby (1.1.5)
     crass (1.0.5)
+    deckar01-task_list (2.3.1)
+      html-pipeline
     erubi (1.9.0)
+    escape_utils (1.2.1)
     factory_bot (5.1.2)
       activesupport (>= 4.2.0)
     factory_bot_rails (5.1.1)
@@ -88,6 +91,9 @@ GEM
     ffi (1.11.3)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    html-pipeline (2.12.3)
+      activesupport (>= 2)
+      nokogiri (>= 1.4)
     i18n (1.7.0)
       concurrent-ruby (~> 1.0)
     icalendar (2.6.1)
@@ -115,6 +121,8 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
+    nokogumbo (1.5.0)
+      nokogiri
     octicons (9.4.0)
       nokogiri (>= 1.6.3.1)
     octicons_helper (9.4.0)
@@ -168,6 +176,10 @@ GEM
       i18n
     ruby_dep (1.5.0)
     rubyzip (2.0.0)
+    sanitize (4.6.6)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.4.4)
+      nokogumbo (~> 1.4)
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
     sassc (2.2.1)
@@ -231,8 +243,11 @@ DEPENDENCIES
   byebug
   capybara (>= 2.15)
   commonmarker
+  deckar01-task_list
+  escape_utils (~> 1.0)
   factory_bot_rails
   faker
+  html-pipeline
   icalendar
   jbuilder (~> 2.7)
   listen (>= 3.0.5, < 3.2)
@@ -241,6 +256,7 @@ DEPENDENCIES
   pry-rails
   puma (~> 4.1)
   rails (~> 6.0.2, >= 6.0.2.1)
+  sanitize (~> 4.6)
   sass-rails (>= 6)
   selenium-webdriver
   simple_calendar
