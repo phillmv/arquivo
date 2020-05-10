@@ -6,6 +6,9 @@ class Entry < ApplicationRecord
   scope :hitherto, -> { where("occurred_at <= ? ", Time.now) }
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
 
+  has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
+  belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
+
   before_create :set_identifier
   after_save :process_tags
 
@@ -32,6 +35,10 @@ class Entry < ApplicationRecord
 
   def fold?
     self.body.size > 500
+  end
+
+  def reply?
+    in_reply_to.presence
   end
 
   # this is actually pretty complicated to do properly?

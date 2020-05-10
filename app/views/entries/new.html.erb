@@ -5,6 +5,9 @@
     <h1>New entry</h1>
   </div>
 
-  <%= render 'form', entry: @entry %>
+  <% if @parent_entry %>
+    <%= render partial: "entries/list_entry", locals: { entry: @parent_entry } %>
+  <% end %>
 
+  <%= render 'form', entry: @entry %>
 </div>

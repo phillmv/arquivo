@@ -1,0 +1,2 @@
+class ViewPreference < ApplicationRecord
+end

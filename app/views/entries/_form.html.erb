@@ -4,6 +4,9 @@
   <% url = entry_path(entry, notebook: @current_notebook) %>
 <% end %>
 <%= form_with(model: entry, url: url, local: true) do |form| %>
+  <% if @parent_entry %>
+    <%= form.hidden_field :in_reply_to,  value: @parent_entry.identifier %>
+  <% end %>
   <div class="pb-5">
     <details class="details-reset float-left">
       <summary class="btn mr-2">Metadata</summary>

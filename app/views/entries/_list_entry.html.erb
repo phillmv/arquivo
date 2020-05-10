@@ -10,7 +10,7 @@
         <span><%= octicon("watch") %> <%= entry.occurred_at.strftime("%H:%M") %></span>&nbsp;&nbsp;
         <span><%= octicon("mail-read") %> <%= entry.from %></span>&nbsp;&nbsp;
         <span><%= octicon("person") %> <%= entry.to.split(", ").count %> attendees</span>&nbsp;&nbsp;
-        <a href="" class="btn btn-sm">Add notes </a>
+        <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="btn btn-sm"><%= octicon("reply") %> Add note</a>
       </div>
     </div>
   </div>
@@ -47,9 +47,10 @@
           <%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %>
         </a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
           <%= octicon("pencil") %> edit
-        </a><a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable">
+        </a><a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
           <%= octicon("fold") %> fold
-        </a>
+        </a><% if entry.reply? %><a href="<%= entry_path(entry.in_reply_to, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable">
+          <%= octicon("telescope") %> parent</a><%end%>
       </div>
 
       <%= EntryRenderer.new(entry).to_html %>

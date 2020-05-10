@@ -4,6 +4,11 @@
   <div class="pagehead">
     <h1>Entry <%= @entry.identifier %></h1>
   </div>
+
+  <% if @entry.parent %>
+    <%= render partial: "entries/list_entry", locals: { entry: @entry.parent } %>
+  <% end %>
+
   <details class="details-reset mt-3">
     <summary class="btn mr-2">Metadata</summary>
     <dl class="form-group">

@@ -15,6 +15,10 @@ class EntriesController < ApplicationController
 
   # GET /entries/new
   def new
+    if parent_identifier = params["in_reply_to"]
+      @parent_entry = Entry.find_by!(notebook: @current_notebook.name, identifier: parent_identifier)
+    end
+
     @entry = Entry.new(occurred_at: Time.now)
   end
 
@@ -86,6 +90,6 @@ class EntriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
-      params.require(:entry).permit(:body, :occurred_at, files: [])
+      params.require(:entry).permit(:body, :occurred_at, :in_reply_to, files: [])
     end
 end
