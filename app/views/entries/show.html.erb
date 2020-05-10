@@ -43,6 +43,6 @@
 
   <div class="form-actions mt-2 pt-3 border-top">
     <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook) %>" class="btn btn-primary">Edit</a>
-    <%= link_to 'Back', timeline_path(notebook: @current_notebook), class: "btn float-left" %>
+    <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(notebook: @current_notebook), class: "btn float-left" %>
   </div>
 </div>

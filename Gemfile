@@ -36,6 +36,8 @@ gem "sanitize", '~> 4.6'
 gem "escape_utils", '~> 1.0'
 gem 'deckar01-task_list'
 
+gem "will_paginate"
+
 gem 'icalendar'
 
 group :development, :test do

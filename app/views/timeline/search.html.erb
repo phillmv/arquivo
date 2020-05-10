@@ -12,13 +12,14 @@
           <div class="TimelineItem-badge bg-blue text-white">
             <%= octicon("calendar") %>
           </div>
-          <h3><a href="<%= calendar_daily_path(day)%>"><%= day %></a></h3>
+          <h3><a href="<%= calendar_daily_path(day, notebook: @current_notebook)%>"><%= day %></a></h3>
         </div>
         <% entries.each do |entry| %>
           <%= render partial: "entries/list_entry", locals: { entry: entry } %>
         <% end %>
       </div>
     <% end %>
-
   </div>
+
+  <%= will_paginate @all_entries, class: "pagination mt-4 mb-4"%>
 </div>

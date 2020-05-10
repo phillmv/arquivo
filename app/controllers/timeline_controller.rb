@@ -1,9 +1,9 @@
 class TimelineController < ApplicationController
   def index
-    entries = Entry.for_notebook(current_notebook).hitherto.
-      order(occurred_at: :desc)
+    @all_entries = Entry.for_notebook(current_notebook).visible.hitherto.
+      order(occurred_at: :desc).paginate(page: params[:page])
 
-    @entries = entries.group_by do |e|
+    @entries = @all_entries.group_by do |e|
       e.occurred_at.strftime("%Y-%m-%d")
     end
   end
@@ -12,10 +12,10 @@ class TimelineController < ApplicationController
     @search_query = params[:query]
 
     if @search_query.present?
-      entries = Search.find(notebook: current_notebook,
-                            query: @search_query)
+      @all_entries = Search.find(notebook: current_notebook,
+                            query: @search_query).paginate(page: params[:page])
 
-      @entries = entries.group_by do |e|
+      @entries = @all_entries.group_by do |e|
         e.occurred_at.strftime("%Y-%m-%d")
       end
 
