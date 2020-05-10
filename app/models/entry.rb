@@ -1,6 +1,7 @@
 class Entry < ApplicationRecord
   has_many_attached :files
 
+  scope :visible, -> { where(hide: false) }
   scope :for_notebook, -> (notebook) { where(notebook: notebook.name) }
   scope :hitherto, -> { where("occurred_at <= ? ", Time.now) }
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
@@ -8,8 +9,13 @@ class Entry < ApplicationRecord
   before_create :set_identifier
   after_save :process_tags
 
+  # TODO: issue here is i want a uniq id that
+  # while not impervious is pretty resistant
+  # to random collisions. but at time of writing
+  # using occurred_at won't always have sub second
+  # resolution, making this not work super well
   def set_identifier
-    self.identifier ||= Time.current.strftime("%Y-%m-%d-%H%M%S%L")
+    self.identifier ||= occurred_at.strftime("%Y-%m-%d-%H%M%S%L")
   end
 
   def process_tags
@@ -18,6 +24,14 @@ class Entry < ApplicationRecord
 
   def calendar?
     kind == "calendar"
+  end
+
+  def bookmark?
+    kind == "pinboard"
+  end
+
+  def fold?
+    self.body.size > 500
   end
 
   # this is actually pretty complicated to do properly?

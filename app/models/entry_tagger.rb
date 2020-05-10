@@ -14,7 +14,7 @@ class EntryTagger
 
         if tag
           if tag.updated_at < entry.updated_at
-            tag.update_attributes(updated_at: entry.updated_at)
+            tag.update(updated_at: entry.updated_at)
           end
         else
           Tag.create(notebook: entry.notebook,
