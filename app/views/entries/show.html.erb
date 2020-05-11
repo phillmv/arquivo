@@ -1,24 +1,34 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
-  <div class="pagehead">
-    <h1>Entry <%= @entry.identifier %></h1>
+  <div class="border-bottom mb-2">
+    <h4>
+    <nav aria-label="Breadcrumb" class="mb-1">
+  <ol>
+    <li class="breadcrumb-item"><a href="">Timeline</a></li>
+    <li class="breadcrumb-item"><a href="https://github.com/business/customers"><%= @entry.occurred_at.strftime("%Y-%m-%d") %></a></li>
+    <li class="breadcrumb-item" aria-current="page"><%= @entry.identifier %></li>
+  </ol>
+    </h4>
+</nav>
   </div>
+
+  <div class="">
 
   <% if @entry.parent %>
     <%= render partial: "entries/list_entry", locals: { entry: @entry.parent } %>
   <% end %>
 
-  <details class="details-reset mt-3">
-    <summary class="btn mr-2">Metadata</summary>
-    <dl class="form-group">
-      <dt><label>occurred_at</label></dt>
-      <dd><span><%= @entry.occurred_at %></dd>
-    </dl>
-  </details>
 
+  <div class="markdown-body pr-4">
+    <div class="entry-list-header">
+      <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
+        <%= octicon "link", class: "mr-1" %><%= @entry.occurred_at %>
+      </a><a href="<%= edit_entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
+          <%= octicon("pencil") %> edit
+        </a>
+    </div>
 
-  <div class="form-group markdown-body">
     <% if @entry.calendar? %>
       <%= @renderer.to_html("subject") %>
 
@@ -45,9 +55,10 @@
       <% end %>
     </div>
   <% end %>
+  </div>
 
   <div class="form-actions mt-2 pt-3 border-top">
-    <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook) %>" class="btn btn-primary">Edit</a>
+    <a href="<%= new_entry_path(@entry, notebook: @entry.notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Add note</a>
     <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(notebook: @current_notebook), class: "btn float-left" %>
   </div>
 </div>

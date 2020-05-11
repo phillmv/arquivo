@@ -7,7 +7,7 @@ class Entry < ApplicationRecord
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
 
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
-  belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
+  belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
   before_create :set_identifier
   after_save :process_tags
