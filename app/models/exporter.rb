@@ -33,7 +33,7 @@ class Exporter
 
         entry_blob_path = File.join(entry_files_folder,
                                     entry_blob_filename)
-        File.write(entry_blob_path, entry_blob_filename)
+        File.write(entry_blob_path, entry_blob.to_yaml)
 
         # don't forget the actual file
 
