@@ -11,6 +11,7 @@ class EntriesController < ApplicationController
   # GET /entries/1.json
   def show
     @renderer = EntryRenderer.new(@entry)
+    @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
   end
 
   # GET /entries/new

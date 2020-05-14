@@ -5,8 +5,8 @@
     <h4>
     <nav aria-label="Breadcrumb" class="mb-1">
   <ol>
-    <li class="breadcrumb-item"><a href="">Timeline</a></li>
-    <li class="breadcrumb-item"><a href="https://github.com/business/customers"><%= @entry.occurred_at.strftime("%Y-%m-%d") %></a></li>
+    <li class="breadcrumb-item"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></li>
+    <li class="breadcrumb-item"><a href="<%= calendar_daily_path(@current_date, notebook: @entry.notebook) %>"><%= @current_date %></a></li>
     <li class="breadcrumb-item" aria-current="page"><%= @entry.identifier %></li>
   </ol>
     </h4>
