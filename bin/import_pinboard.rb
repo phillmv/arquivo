@@ -12,7 +12,7 @@ end
 
 def mark_attr(mark)
   {
-    notebook: "life",
+    notebook: "work",
     identifier: mark["hash"],
     url: mark["href"],
     subject: mark["description"],
@@ -29,7 +29,7 @@ end
 bookmarks.each do |mark|
   Entry.transaction do
     next if skip?(mark)
-    if e = Entry.find_by(notebook: "life", identifier: mark["hash"])
+    if e = Entry.find_by(notebook: "work", identifier: mark["hash"])
       e.update(mark_attr(mark))
     else
       Entry.create(mark_attr(mark))
