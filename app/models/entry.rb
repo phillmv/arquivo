@@ -3,7 +3,7 @@ class Entry < ApplicationRecord
 
   scope :visible, -> { where(hide: false) }
   scope :for_notebook, -> (notebook) { where(notebook: notebook.name) }
-  scope :hitherto, -> { where("occurred_at <= ? ", Time.now) }
+  scope :hitherto, -> { where("occurred_at <= ? ", Time.now.end_of_day) }
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
 
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
