@@ -1,3 +1,7 @@
+notebook = "work"
+bookmarks = JSON.load(File.read("pinboard.json"))
+# TODO: do i shove tags in the metadata field or into the body field?
+
 def skip?(mark)
   mark["description"] == "Twitter"
 end
@@ -10,9 +14,9 @@ def mark_body(mark)
   [mark["tags"].split(" ").map { |s| "##{s}" }.join(" "), mark["extended"]].select(&:present?).join("\n\n")
 end
 
-def mark_attr(mark)
+def mark_attr(notebook, mark)
   {
-    notebook: "work",
+    notebook: notebook,
     identifier: mark["hash"],
     url: mark["href"],
     subject: mark["description"],
@@ -24,15 +28,14 @@ def mark_attr(mark)
   }
 end
 
-# TODO: do i shove tags in the metadata field or into the body field?
 
 bookmarks.each do |mark|
   Entry.transaction do
     next if skip?(mark)
-    if e = Entry.find_by(notebook: "work", identifier: mark["hash"])
-      e.update(mark_attr(mark))
+    if e = Entry.find_by(notebook: notebook, identifier: mark["hash"])
+      e.update(mark_attr(notebook, mark))
     else
-      Entry.create(mark_attr(mark))
+      Entry.create(mark_attr(notebook, mark))
     end
   end
 end
