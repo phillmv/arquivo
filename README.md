@@ -21,3 +21,9 @@ rails s
 ```
 
 visit http://localhost:3000/work/timeline
+
+## Backup
+
+```
+rails runner 'Exporter.new("/your/path/here").export!'
+```
