@@ -58,4 +58,19 @@ class Entry < ApplicationRecord
   def to_param
     identifier
   end
+
+  def to_yaml
+    attributes.except("id").to_yaml
+  end
+
+  def to_folder_path(dirname)
+    File.join(dirname,
+              notebook,
+              occurred_at.strftime("%Y/%m/%d"),
+              identifier)
+  end
+
+  def to_filename
+    "#{identifier}.yaml"
+  end
 end

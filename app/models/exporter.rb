@@ -7,51 +7,54 @@ class Exporter
   def export!
     FileUtils.mkdir_p(export_path)
 
-    Entry.find_each do |entry|
+    Entry.with_attached_files.find_each do |entry|
       puts "handling #{entry.identifier}"
-      entry_folder_path = build_entry_folder_path(export_path, entry)
 
+      entry_folder_path = entry.to_folder_path(export_path)
       FileUtils.mkdir_p(entry_folder_path)
-      entry_filename = "#{entry.identifier}.yaml"
 
-      File.write(File.join(entry_folder_path, entry_filename), entry.to_yaml)
+      File.write(File.join(entry_folder_path, entry.to_filename), entry.to_yaml)
 
-      entry.files.find_each do |attachment|
-        entry_files_folder = File.join(entry_folder_path,
-                                       "files")
-        FileUtils.mkdir_p(entry_files_folder)
+      if entry.files.any?
+        entry_files_path = File.join(entry_folder_path,
+                                     "files")
 
-        # attachments have blobs. gotta save both
-        entry_attachment_filename = "attachment-#{attachment.id}.yaml"
+        FileUtils.mkdir_p(entry_files_path)
 
-        entry_attachment_path = File.join(entry_files_folder,
-                                          entry_attachment_filename)
-        File.write(entry_attachment_path, attachment.to_yaml)
+        entry.files.each do |file|
+          blob = file.blob
 
-        entry_blob = attachment.blob
-        entry_blob_filename = "blob-#{attachment.id}-#{entry_blob.id}.yaml"
+          # attachments have blobs. gotta save both
+          entry_file_filename = "file-#{"%03d" % file.id}.yaml"
 
-        entry_blob_path = File.join(entry_files_folder,
-                                    entry_blob_filename)
-        File.write(entry_blob_path, entry_blob.to_yaml)
+          entry_file_path = File.join(entry_files_path,
+                                      entry_file_filename)
+          File.write(entry_file_path, blob_attributes(entry, blob))
 
-        # don't forget the actual file
 
-        puts "entry blob #{entry_blob.id}"
-        actual_file_path = File.join(entry_files_folder,
-                                     entry_blob.filename.to_s)
+          puts "entry blob #{blob.id}"
+          actual_file_path = File.join(entry_files_path,
+                                       blob.filename.to_s)
 
-        File.open(actual_file_path, "wb") do |io|
-          io.puts entry_blob.download
+          File.open(actual_file_path, "wb") do |io|
+            io.puts blob.download
+          end
         end
       end
     end
   end
 
-  def build_entry_folder_path(path, entry)
-    year_month = entry.occurred_at.strftime("%Y/%m/%d")
-    id = entry.identifier
-
-    File.join(path, entry.notebook, year_month, id)
+  def blob_attributes(entry, blob)
+    {
+      "notebook" => entry.notebook,
+      "entry_identifier" => entry.identifier,
+      "key" => blob.key,
+      "filename" => blob.filename.to_s,
+      "content_type" => blob.content_type,
+      "metadata" => blob.metadata,
+      "byte_size" => blob.byte_size,
+      "checksum" => blob.checksum,
+      "created_at" => blob.created_at
+    }.to_yaml
   end
 end
