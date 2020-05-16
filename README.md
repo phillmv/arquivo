@@ -1,24 +1,29 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## Installation
 
-Things you may want to cover:
+```bash
+bundle
 
-* Ruby version
+yarn install
 
-* System dependencies
+rails db:setup
 
-* Configuration
+rails c
+```
+```ruby
+Notebook.create(name: "work")
+CalendarHandler.new("work", "http://example.com/path-to.ics"); ch.process!
+exit
+```
+```bash
+rails s
+```
 
-* Database creation
+visit http://localhost:3000/work/timeline
 
-* Database initialization
+## Backup
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+```
+rails runner 'Exporter.new("/your/path/here").export!'
+```
