@@ -8,39 +8,49 @@ class Exporter
     FileUtils.mkdir_p(export_path)
 
     Entry.with_attached_files.find_each do |entry|
-      puts "handling #{entry.identifier}"
+      puts "handling #{entry.notebook}/#{entry.identifier}"
 
+      # set up folders
       entry_folder_path = entry.to_folder_path(export_path)
       FileUtils.mkdir_p(entry_folder_path)
 
-      File.write(File.join(entry_folder_path, entry.to_filename), entry.to_yaml)
 
-      if entry.files.any?
-        entry_files_path = File.join(entry_folder_path,
-                                     "files")
+      entry_files_path = File.join(entry_folder_path,
+                                   "files")
 
-        FileUtils.mkdir_p(entry_files_path)
+      export_entry!(entry, entry_folder_path)
+    end
+  end
 
-        entry.files.each do |file|
-          blob = file.blob
+  def export_entry!(entry, entry_folder_path)
+    File.write(File.join(entry_folder_path, entry.to_filename), entry.to_yaml)
 
-          # attachments have blobs. gotta save both
-          entry_file_filename = "file-#{"%03d" % file.id}.yaml"
+    if entry.files.any?
+      entry_files_path = File.join(entry_folder_path,
+                                   "files")
 
-          entry_file_path = File.join(entry_files_path,
-                                      entry_file_filename)
-          File.write(entry_file_path, blob_attributes(entry, blob))
+      FileUtils.mkdir_p(entry_files_path)
 
-
-          puts "entry blob #{blob.id}"
-          actual_file_path = File.join(entry_files_path,
-                                       blob.filename.to_s)
-
-          File.open(actual_file_path, "wb") do |io|
-            io.puts blob.download
-          end
-        end
+      entry.files.each_with_index do |file, i|
+        export_blob!(entry, file.blob, entry_files_path)
       end
+    end
+  end
+
+  def export_blob!(entry, blob, entry_files_path)
+    entry_file_filename = "file-#{"%03d" % blob.id}.yaml"
+
+    entry_file_path = File.join(entry_files_path,
+                                entry_file_filename)
+    File.write(entry_file_path, blob_attributes(entry, blob))
+
+
+    puts "entry blob #{blob.id}"
+    actual_file_path = File.join(entry_files_path,
+                                 blob.filename.to_s)
+
+    File.open(actual_file_path, "wb") do |io|
+      io.puts blob.download
     end
   end
 
