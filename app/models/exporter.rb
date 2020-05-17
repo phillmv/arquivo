@@ -32,13 +32,13 @@ class Exporter
       FileUtils.mkdir_p(entry_files_path)
 
       entry.files.each_with_index do |file, i|
-        export_blob!(entry, file.blob, entry_files_path)
+        export_blob!(entry, file.blob, entry_files_path, i)
       end
     end
   end
 
-  def export_blob!(entry, blob, entry_files_path)
-    entry_file_filename = "file-#{"%03d" % blob.id}.yaml"
+  def export_blob!(entry, blob, entry_files_path, count)
+    entry_file_filename = "file-#{count}.yaml"
 
     entry_file_path = File.join(entry_files_path,
                                 entry_file_filename)
