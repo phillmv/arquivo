@@ -45,3 +45,9 @@ you can use the provided `nix-shell` configuration.
 * install the nix package manager https://nixos.org/download.html - if you are on MacOS Catalina see https://gist.github.com/ghedamat/25c671a02923dbac6c140afe54276f9e
 * type `nix-shell` in the root of this project
 * you are now in a `bash` shell that has all the required dependencies, type `bundle` and you'll be good to go
+
+## Customizing the hostname
+
+```
+echo "HOSTNAME=yourlocalhostname" >> .env.development
+```
