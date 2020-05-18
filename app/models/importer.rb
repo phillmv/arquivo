@@ -19,7 +19,13 @@ class Importer
       entry_yaml_path = File.join(path, entry_yaml)
 
       # load in the attr
+      begin
       entry_attributes = YAML.load(File.read(entry_yaml_path))
+      rescue Exception => e
+        puts e
+        binding.pry
+        next
+      end
 
       Entry.transaction do
         entry = upsert_entry!(entry_attributes)
