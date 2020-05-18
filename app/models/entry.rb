@@ -59,8 +59,12 @@ class Entry < ApplicationRecord
     identifier
   end
 
+  def export_attributes
+    attributes.except("id")
+  end
+
   def to_yaml
-    attributes.except("id").to_yaml
+    export_attributes.to_yaml
   end
 
   def to_folder_path(dirname)

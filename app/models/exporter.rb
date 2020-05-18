@@ -4,6 +4,7 @@ class Exporter
     @export_path = export_path
   end
 
+  # TODO: don't overwrite if existing is newer
   def export!
     FileUtils.mkdir_p(export_path)
 

@@ -4,7 +4,6 @@ class Importer
     @import_path = import_path
   end
 
-  # TODO: reprocess tags
   def import!
     raise "Path bad" unless File.exist?(import_path)
 
