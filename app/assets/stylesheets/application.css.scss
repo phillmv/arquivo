@@ -13,6 +13,7 @@
 
 .content-container {
   @extend .col-8, .float-left;
+  @extend .mb-4;
 }
 
 // used for rendering entry bodies
@@ -58,7 +59,19 @@ summary::-webkit-details-marker {
 .truncate {
   overflow: hidden;
   position: relative;
-  height: 500px;
+  max-height: 500px;
+
+  .show-on-fold {
+    display: initial;
+  }
+
+  .hide-on-fold {
+    display: none;
+  }
+}
+
+.show-on-fold {
+  display: none;
 }
 
 .truncate:after{

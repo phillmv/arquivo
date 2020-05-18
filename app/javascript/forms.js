@@ -28,6 +28,14 @@ document.addEventListener("turbolinks:load", function(){
     })
   }
 
+  // add event listener for handling fold & unfold links:
+  document.querySelectorAll('.trigger-fold').forEach(function(elem) { 
+    elem.addEventListener("click", function(e) {
+      e.preventDefault();
+      this.closest(".Box-body").classList.toggle("truncate")
+    })
+  });
+
 });
 
 document.addEventListener("DOMContentLoaded", function(){
