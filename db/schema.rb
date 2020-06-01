@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_141954) do
+ActiveRecord::Schema.define(version: 2020_05_24_203153) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -87,6 +87,21 @@ ActiveRecord::Schema.define(version: 2020_05_08_141954) do
     t.index ["notebook"], name: "index_entries_notebook"
   end
 
+  create_table "i_calendar_entries", force: :cascade do |t|
+    t.integer "calendar_import_id", null: false
+    t.string "name"
+    t.string "uid"
+    t.datetime "recurrence_id"
+    t.string "sequence"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.boolean "recurs"
+    t.text "body"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["calendar_import_id"], name: "index_i_calendar_entries_on_calendar_import_id"
+  end
+
   create_table "notebooks", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -115,4 +130,5 @@ ActiveRecord::Schema.define(version: 2020_05_08_141954) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "contact_email_addresses", "contacts"
+  add_foreign_key "i_calendar_entries", "calendar_imports"
 end

@@ -39,6 +39,7 @@ gem 'deckar01-task_list'
 gem "will_paginate"
 
 gem 'icalendar'
+gem 'icalendar-recurrence'
 
 gem 'dotenv-rails'
 
