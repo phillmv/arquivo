@@ -12,4 +12,8 @@ class ICalendarEntry < ApplicationRecord
   def occurrences_between(startt, endt)
     event.occurrences_between(startt, endt)
   end
+
+  def all_day?
+    event.dtstart.value.is_a?(Date)
+  end
 end

@@ -6,6 +6,8 @@ class CreateICalendarEntries < ActiveRecord::Migration[6.0]
       t.string :uid
       t.datetime :recurrence_id
       t.string :sequence
+      t.date :start_date
+      t.date :end_date
       t.datetime :start_time
       t.datetime :end_time
       t.boolean :recurs

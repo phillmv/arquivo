@@ -40,23 +40,46 @@ class Schedule
   end
 
   def events_for(startt, endt)
-    normal_entries = ICalendarEntry.where(calendar_import: @calendar).where("start_time >= ? and end_time <= ?", startt, endt)
+    entries_for_this_calendar = ICalendarEntry.where(calendar_import: @calendar)
+    normal_entries = entries_for_this_calendar.
+      where(recurs: false).
+      where("start_time >= ? and end_time <= ?", startt, endt)
 
-    normal_entries = normal_entries.where(recurs: false)
+    # all day entries have dates, not datetimes.
+    # we eliminate recurring events because we have to calculate recurrences regardless
+    all_day_normal_entries = entries_for_this_calendar.
+      where(start_time: nil, recurs: false).
+      where("start_date >= ? and end_date <= ?", startt, endt)
 
-    recurring =  ICalendarEntry.where(calendar_import: @calendar).where(recurs: true)
+    normal_entries = normal_entries.or(all_day_normal_entries)
 
     all_events = normal_entries.map do |cal_entry|
       event_attributes(cal_entry)
     end
 
+
     # OH i have to go over EVERY RECURRING not just the ones in this
     # time span
 
+    recurring = entries_for_this_calendar.where(recurs: true)
+
     recurring.each do |cal_entry|
+      # occurrences between is creating instances in the current timezone
+      # the icalendarentry recurrence_id is being serialized as a UTC datetime
+      # while the inst.start_time is in <current timezone>. 
       cal_entry.occurrences_between(startt, endt).each do |inst|
+        # this fails in the case of all day events. inst.start_time will be
+        # beginning_of_day in current tz; recurrence_id will be beginning_of_day in utc
+      
+        if cal_entry.all_day?
+          # converts to beginning of day in utc, as opposed to system time jfc
+          query_recurrence_id = inst.start_time.to_date.to_datetime
+        else
+          query_recurrence_id = inst.start_time
+        end
+
         edited_recurrences = normal_entries.where(uid: cal_entry.uid,
-                                                  recurrence_id: inst.start_time)
+                                                  recurrence_id: query_recurrence_id)
 
         # if there's a cal_entry with the same uid and recurrence_id,
         # time to skip!
@@ -77,14 +100,22 @@ class Schedule
   # need to hash uid, recurrence_id, sequence
   # icalendarentry should probably have notebook eh? why not
   # # need to add all day to handle tz properly / implement all_day?
+  # specifically what's going on is that if an event is all day
+  # it is stored as a Date, not a DateTime, but that gets converted
+  # into "start of day in UTC" which is why it's showing up at 8pm
+  # EST, which is not what i want.
+  # i suspect this might mess up boundaries? like,
+  # give me all the events between this date and that date.
+  # TODO: if an event is not recurring but also all day
+  # TODO: all day events have to be converted to EST on insertion
   def event_attributes(event, start_time = nil, end_time = nil)
     {
       identifier: event.uid.to_s,
       subject: event.summary.to_s.presence,
       from: event.organizer&.to&.presence,
       to: event.attendee.map(&:to).join(", "),
-      occurred_at: start_time || event.start_time,
-      ended_at: end_time || event.end_time,
+      occurred_at: start_time || event.start_time || event.start_date,
+      ended_at: end_time || event.end_time || event.end_date,
       state: event.status.to_s,
       body: body(event),
       kind: "calendar",

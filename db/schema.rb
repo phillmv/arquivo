@@ -93,6 +93,8 @@ ActiveRecord::Schema.define(version: 2020_05_24_203153) do
     t.string "uid"
     t.datetime "recurrence_id"
     t.string "sequence"
+    t.date "start_date"
+    t.date "end_date"
     t.datetime "start_time"
     t.datetime "end_time"
     t.boolean "recurs"
