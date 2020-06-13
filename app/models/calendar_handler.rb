@@ -25,6 +25,7 @@ class CalendarHandler
       body: event.to_ical
     }
 
+    # if the start time is a date, we treat it differently
     if event.dtstart.value.is_a?(Date)
       attributes = attributes.merge(start_date: event.dtstart.to_s,
                                     end_date: event.dtend.to_s,
