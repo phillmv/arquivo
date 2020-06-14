@@ -12,8 +12,15 @@
 
 
 .content-container {
-  @extend .col-8, .float-left;
-  @extend .mb-4;
+  @extend .float-left;
+  @extend .col-11, .col-md-8;
+  @extend .mb-4, .ml-4;
+}
+
+.main-sidebar {
+  @extend .float-left;
+  @extend .col-3, .hide-sm, .hide-md;
+  @extend .pl-4;
 }
 
 // used for rendering entry bodies
