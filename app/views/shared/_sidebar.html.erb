@@ -29,10 +29,8 @@
   <h4>Recent Entries</h4>
   <ul class="list-style-none">
     <% Entry.hitherto.where(notebook: @current_notebook.name).order(occurred_at: :desc).limit(10).each do |entry| %>
-      <li><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= time_ago_in_words(entry.occurred_at, include_seconds: true) %> ago</a></li>
+      <li class="pb-2"><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= entry.truncated_description.truncate(30) %><br>
+          <span class="muted-link"><%= time_ago_in_words(entry.occurred_at, include_seconds: true) %> ago</span></a></li>
     <% end %>
   </ul>
-
-
-
 </div>

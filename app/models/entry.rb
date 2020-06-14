@@ -84,4 +84,8 @@ class Entry < ApplicationRecord
   def to_filename
     "#{identifier}.yaml"
   end
+
+  def truncated_description
+    (subject || body).truncate(30)
+  end
 end
