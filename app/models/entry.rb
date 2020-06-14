@@ -1,9 +1,16 @@
+# The values of an Entry are as follows:
+# - "dumb" (as in simple) but sturdy
+# - an Entry should denote something that has *happened*, i.e.  if the
+#   occurred_at date is in the future, then maybe you want a diff object?
+# - entries can be edited by the user, but if inserted by a robot should be
+#   treated as immutable, or as close as it is sensible.
 class Entry < ApplicationRecord
   has_many_attached :files
 
   scope :visible, -> { where(hide: false) }
-  scope :for_notebook, -> (notebook) { where(notebook: notebook.name) }
+  scope :for_notebook, -> (notebook) { where(notebook: notebook.to_s) }
   scope :hitherto, -> { where("occurred_at <= ? ", Time.now.end_of_day) }
+  # probably ought to add a calendar entry type of object
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
 
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier

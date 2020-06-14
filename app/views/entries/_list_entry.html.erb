@@ -8,8 +8,12 @@
       <div>
         <h3><a href="<%= entry_path(entry, notebook: entry.notebook) %>" class="text-gray-dark"><%= entry.subject %></a></h2>
         <span><%= octicon("watch") %> <%= entry.occurred_at.strftime("%H:%M") %></span>&nbsp;&nbsp;
-        <span><%= octicon("mail-read") %> <%= entry.from %></span>&nbsp;&nbsp;
-        <span><%= octicon("person") %> <%= entry.to.split(", ").count %> attendees</span>&nbsp;&nbsp;
+        <% if entry.from.present? %>
+          <span><%= octicon("mail-read") %> <%= entry.from.truncate(42) %></span>&nbsp;&nbsp;
+        <% end %>
+        <% if entry.to.present? %>
+          <span><%= octicon("person") %> <%= entry.to&.split(", ")&.count %> attendees</span>&nbsp;&nbsp;
+        <% end %>
         <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="btn btn-sm"><%= octicon("reply") %> Add note</a>
       </div>
     </div>
