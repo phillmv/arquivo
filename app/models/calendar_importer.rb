@@ -1,5 +1,5 @@
 require 'open-uri'
-class CalendarHandler
+class CalendarImporter
   attr_accessor :calendars, :calendar_import
 
   def initialize(calendar_import)
@@ -69,50 +69,6 @@ class CalendarHandler
           end
         end
       end
-
-      # Entry.transaction do
-      #   e = Entry.find_by(notebook: notebook, identifier: event.uid.to_s)
-      #   if e
-      #     e.update_attributes(map_attributes(event))
-      #   else
-      #     Entry.create(map_attributes(event))
-      #   end
-      # end
     end
   end
-
-  def old_map_attributes(event)
-    {
-      notebook: notebook,
-      identifier: event.uid.to_s,
-      subject: event.summary.to_s.presence,
-      from: event.organizer&.to&.presence,
-      to: event.attendee.map(&:to).join(", "),
-      occurred_at: event.dtstart.to_s,
-      ended_at: event.dtend.to_s,
-      state: event.status.to_s,
-      body: body(event),
-      kind: "calendar",
-      source: cal_name(event)
-    }
-  end
-
-  # let's do something dumb and easy first.
-  # def body(event)
-  #   [location(event),
-  #    event.description].select(&:present?).join("\n\n")
-  # end
-  #
-  # def location(event)
-  #   if event.location.present?
-  #     "Location: #{event.location}"
-  #   else
-  #     nil
-  #   end
-  # end
-  #
-  # # change later
-  # def cal_name(event)
-  #   event.parent.custom_properties["x_wr_calname"]
-  # end
 end
