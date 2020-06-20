@@ -12,25 +12,32 @@
     </details>
   </div>
 
-  <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4>
-  <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
-  <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> Calendar</a></h4>
-  <h4 class="mb-3"><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
+  <div class="mb-3">
+    <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4>
+    <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
+    <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> Calendar</a></h4>
+    <h4><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
 
-  <h4>Recent Tags</h4>
-  <ul class="list-style-none">
-    <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(8).each do |topic| %>
-      <li><a href="<%= search_path(query: topic, notebook: @current_notebook)%>"><%=topic%></a></li>
-    <% end %>
-  </ul>
+  </div>
 
-  <hr class="col-10">
+  <div class="mb-3">
+    <h4>Recent Entries</h4>
+    <ul class="list-style-none">
+      <% @recent_entries.each do |entry| %>
+        <li class="pb-2"><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= entry.truncated_description.truncate(30) %><br>
+            <span class="muted-link"><%= time_ago_in_words(entry.occurred_at, include_seconds: true) %> ago</span></a></li>
+      <% end %>
+    </ul>
+  </div>
 
-  <h4>Recent Entries</h4>
-  <ul class="list-style-none">
-    <% Entry.hitherto.where(notebook: @current_notebook.name).order(occurred_at: :desc).limit(10).each do |entry| %>
-      <li class="pb-2"><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= entry.truncated_description.truncate(30) %><br>
-          <span class="muted-link"><%= time_ago_in_words(entry.occurred_at, include_seconds: true) %> ago</span></a></li>
-    <% end %>
-  </ul>
+  <div class="mb-3">
+    <h4>Recent Tags</h4>
+    <ul class="list-style-none">
+      <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(8).each do |topic| %>
+        <li><a href="<%= search_path(query: topic, notebook: @current_notebook)%>"><%=topic%></a></li>
+      <% end %>
+    </ul>
+  </div>
+
+
 </div>

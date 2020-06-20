@@ -13,6 +13,8 @@ class Entry < ApplicationRecord
   # probably ought to add a calendar entry type of object
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
 
+  scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }
+
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
