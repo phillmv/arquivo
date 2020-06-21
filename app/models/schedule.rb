@@ -126,7 +126,7 @@ class Schedule
   #
   def event_attributes(event, start_time = nil, end_time = nil)
     {
-      identifier: event.uid.to_s,
+      uid: event.uid.to_s,
       subject: event.summary.to_s.presence,
       from: event.organizer&.to&.presence,
       to: event.attendee.map(&:to).join(", "),
@@ -134,7 +134,6 @@ class Schedule
       ended_at: end_time || event.end_time || event.end_date,
       state: event.status.to_s,
       body: body(event),
-      kind: "calendar",
     }
   end
 

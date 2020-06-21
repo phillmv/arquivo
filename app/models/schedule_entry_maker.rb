@@ -46,6 +46,10 @@ class ScheduleEntryMaker
     end
   end
 
+  def in_our_timezone(&block)
+    Time.use_zone(User.tz, &block)
+  end
+
   def populate(notebook, events)
     events.each do |event|
       entry_attributes = event_to_entry(event)
@@ -64,6 +68,14 @@ class ScheduleEntryMaker
 
   def event_to_entry(event)
     attributes = event.except(:uid, :recurrence_id, :sequence)
+
+    # convert all day events to the current timezone
+    if attributes[:occurred_at].is_a?(Date)
+      in_our_timezone do
+        attributes[:occurred_at] = attributes[:occurred_at].beginning_of_day
+      end
+    end
+
     attributes.merge(kind: "calendar", identifier: event_to_identifier(event))
   end
 
@@ -84,15 +96,6 @@ class ScheduleEntryMaker
     # if an event is edited it'll generate a recurrence_id or a sequence
     # if it's a recurring event it won't have that distinction: gotta
     # re-generate the list and diff it. fuck it let's go by occurred_at
-    str = [event[:uid], event[:occurred_at]&.to_i].compact.join("-")
-    # do I want to use sha256? vaguely concerned about collisions
-    # but i feel like i should largely be safe? what about sha1?
-    # it's technically unsafe for cryptographic use but 256 is SO LONG
-    # gotta look up a url safe b64
-    #
-    # something to investigate: what if we used the occurred_at timestamp
-    # PLUS some hexdigest bits? in the meantime let's just go ahead
-    # with the hex digest
-    Digest::SHA1.hexdigest(str)
+    Entry.generate_identifier(event[:occurred_at], event[:uid])
   end
 end

@@ -21,13 +21,34 @@ class Entry < ApplicationRecord
   before_create :set_identifier
   after_save :process_tags
 
-  # TODO: issue here is i want a uniq id that
-  # while not impervious is pretty resistant
-  # to random collisions. but at time of writing
-  # using occurred_at won't always have sub second
-  # resolution, making this not work super well
   def set_identifier
-    self.identifier ||= occurred_at.strftime("%Y-%m-%d-%H%M%S%L")
+    self.identifier ||= Entry.generate_identifier(occurred_at)
+  end
+
+  # We use the OLC alphabet to minimize chances of spelling dumb words
+  # https://github.com/google/open-location-code/blob/master/docs/olc_definition.adoc#open-location-code
+  B20_ALPHABET = "0123456789abcdefghij"
+  OLC_ALPHABET = "23456789cfghjmpqrvwx"
+
+  # TODO: retry in case of collisions?
+  # Rare for this use case, but… ya never know!
+
+  def self.generate_identifier(datetime, hash_to_be = nil)
+    str = datetime.strftime("%Y%m%d%H%M%S")
+
+    suffix = nil
+    if hash_to_be
+      # we pick 8 base(16) chars so we can be sure to fill out
+      # the 7 base(20) chars it'll be converted to
+      suffix = Digest::SHA256.hexdigest(hash_to_be).first(8).to_i(16).to_s(20)
+    else
+      suffix = SecureRandom.random_number(4 ** 20).to_s(20)
+    end
+
+    # convert to OLC alphabet
+    suffix = suffix.tr(B20_ALPHABET, OLC_ALPHABET).first(7)
+
+    str + "-" + suffix
   end
 
   def process_tags
