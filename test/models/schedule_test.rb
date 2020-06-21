@@ -60,4 +60,39 @@ class ScheduleTest < ActiveSupport::TestCase
 
     assert_equal DateTime.parse("#{thursday} 16:00 Eastern Daylight Time"), thurs_wind_down[:occurred_at]
   end
+
+  test "does the right thing when the calendar is updated" do
+    sched = Schedule.new(@ci)
+
+    friday_events = sched.events_for("2020-06-19", "2020-06-19 23:59:59")
+
+    # we originally had two team events planned
+    team_events = friday_events.select { |e| e[:subject] =~ /Team/ }
+    other_events = friday_events.reject { |e| e[:subject] =~ /Team/ }
+
+    assert_equal 2, team_events.size
+
+    # now we simulate that the calendar has been updated, by changing the ci url
+    @ci.url = @cal_url2
+    @ci.save
+
+    importer = CalendarImporter.new(@ci)
+    importer.process!
+
+    new_friday_events = sched.events_for("2020-06-19", "2020-06-19 23:59:59")
+
+    # now we can verify that the team events have been canceled, i.e. are now gone
+    team_events.each do |team_event|
+      assert new_friday_events.all? { |e| e[:uid] != team_event[:uid] }
+    end
+
+    # but the other events are still present
+    other_events.each do |other_event|
+      assert new_friday_events.any? { |e| e[:uid] == other_event[:uid] }
+    end
+
+    # finally, a new Juneteenth event was scheduled
+
+    assert new_friday_events.find { |e| e[:subject] =~ /Juneteenth/ }
+  end
 end
