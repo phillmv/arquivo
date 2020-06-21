@@ -2,7 +2,7 @@ require 'test_helper'
 
 class CalendarImporterTest < ActiveSupport::TestCase
   setup do
-    @cal_url = File.join(Rails.root, "test", "fixtures", "cal-t1.ics")
+    @cal_url = File.join(Rails.root, "test", "fixtures", "sample_cal_20200530.ics")
   end
 
   test "basic smoke test" do

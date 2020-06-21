@@ -2,12 +2,12 @@ require 'test_helper'
 
 class ScheduleTest < ActiveSupport::TestCase
   setup do
-    @cal_url = File.join(Rails.root, "test", "fixtures", "cal-t1.ics")
+    @cal_url = File.join(Rails.root, "test", "fixtures", "sample_cal_20200530.ics")
     @ci = CalendarImport.create(notebook: "test", title: "example cal", url: @cal_url )
     importer = CalendarImporter.new(@ci)
     importer.process!
 
-    @cal_url2 = File.join(Rails.root, "test", "fixtures", "cal-t2.ics")
+    @cal_url2 = File.join(Rails.root, "test", "fixtures", "sample_cal_20200620.ics")
   end
 
   # this test exercises a single work-week, during which we examine
