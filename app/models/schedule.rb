@@ -125,6 +125,8 @@ class Schedule
       ended_at: end_time || event.end_time || event.end_date,
       state: event.status.to_s,
       body: body(event),
+      sequence: event.sequence.to_s,
+      recurrence_id: event.recurrence_id
     }
   end
 

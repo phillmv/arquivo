@@ -40,6 +40,7 @@ class ScheduleEntryMaker
 
   def event_to_entry(event)
     attributes = event.except(:uid, :recurrence_id, :sequence)
+    attributes[:metadata] = event.slice(:uid, :recurrence_id, :sequence).to_yaml
 
     # convert all day events to the current timezone
     # arguably, this calc could be happening at the Schedule level
