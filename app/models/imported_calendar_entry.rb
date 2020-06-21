@@ -1,4 +1,5 @@
-class ICalendarEntry < ApplicationRecord
+class ImportedCalendarEntry < ApplicationRecord
+  self.table_name = "i_calendar_entries"
   belongs_to :calendar_import
 
   delegate :summary, :organizer, :attendee, :status, :location, :description, to: :event

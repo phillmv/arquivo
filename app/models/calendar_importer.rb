@@ -49,7 +49,7 @@ class CalendarImporter
     calendars.each do |cal|
       name = cal.custom_properties["x_wr_calname"]&.first || "noname"
       cal.events.each do |event|
-        ICalendarEntry.transaction do
+        ImportedCalendarEntry.transaction do
           recurrence_id = event.recurrence_id
 
           # nil.to_s => ""
@@ -60,7 +60,7 @@ class CalendarImporter
             recurrence_id = recurrence_id.to_s
           end
 
-          entry = ICalendarEntry.find_by(calendar_import_id: calendar_import.id,
+          entry = ImportedCalendarEntry.find_by(calendar_import_id: calendar_import.id,
                                          uid: event.uid.to_s,
                                          recurrence_id: recurrence_id,
                                          sequence: event.sequence.to_s)
@@ -70,7 +70,7 @@ class CalendarImporter
           if entry
             entry.update(entry_attributes)
           else
-            ICalendarEntry.create(entry_attributes)
+            ImportedCalendarEntry.create(entry_attributes)
           end
         end
       end
@@ -78,7 +78,7 @@ class CalendarImporter
 
     # TODO: make this all more atomic
     calendar_import.update(last_imported_at: last_imported_at)
-    ICalendarEntry.where(calendar_import_id: calendar_import.id).
+    ImportedCalendarEntry.where(calendar_import_id: calendar_import.id).
       where("last_imported_at != ?", last_imported_at).delete_all
   end
 end
