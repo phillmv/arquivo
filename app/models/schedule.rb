@@ -1,7 +1,6 @@
 class Schedule
   attr_reader :calendar
 
-  # maybe we should work over all of a User's calendars eh
   def initialize(calendar)
     @calendar = calendar
   end
@@ -51,15 +50,14 @@ class Schedule
 
   def events_for(startt, endt)
     entries_for_this_calendar = ICalendarEntry.where(calendar_import: @calendar)
-
-    non_recurring_entries = entries_for_this_calendar.where(recurs: false)
-    normal_entries = non_recurring_entries.
+    normal_entries = entries_for_this_calendar.
+      where(recurs: false).
       where("start_time >= ? and end_time <= ?", startt, endt)
 
     # all day entries have dates, not datetimes.
-    # TODO: what if the end date is nil?
-    all_day_normal_entries = non_recurring_entries.
-      where(start_time: nil).
+    # we eliminate recurring events because we have to calculate recurrences regardless
+    all_day_normal_entries = entries_for_this_calendar.
+      where(start_time: nil, recurs: false).
       where("start_date >= ? and end_date <= ?", startt, endt)
 
     normal_entries = normal_entries.or(all_day_normal_entries)
@@ -69,45 +67,32 @@ class Schedule
     end
 
 
-    # recurring events don't have finitely defined start and end
-    # times, so we have to iterate over all of them regardless
+    # OH i have to go over EVERY RECURRING not just the ones in this
+    # time span
+
     recurring = entries_for_this_calendar.where(recurs: true)
 
     recurring.each do |cal_entry|
-
-      # occurrences_between outputs occurrence instances,
-      # defined in the current *system* tz;
-      #
-      # normally, when doing datetime-aware comparisons, this is OK
-      # but there's a TODO here for untangling what this would mean if we ever
-      # support non-system time tz (i.e. all day events)
-
+      # occurrences between is creating instances in the current timezone
+      # the icalendarentry recurrence_id is being serialized as a UTC datetime
+      # while the inst.start_time is in <current timezone>. 
       cal_entry.occurrences_between(startt, endt).each do |inst|
-
-        # all_day? events issue Date objects, not datetimes
-        # so when this recurrence_id is saved to the database,
-        # it is converted into UTC cos the column is a datetime
-        #
-        # since occurrences_between will coerce the Date into *system* tz,
-        # the comparison for all_day? events will fail since midnight UTC and
-        # midnight in <tz> are not the same *moment* in time.
-        #
-        # in order to make startt match up w/the recurrence_id, let's coerce
-        # the recurrence_id to "midnight in UTC", by converting it back into
-        # a date
-
+        # this fails in the case of all day events. inst.start_time will be
+        # beginning_of_day in current tz; recurrence_id will be beginning_of_day in utc
+      
         if cal_entry.all_day?
+          # converts to beginning of day in utc, as opposed to system time jfc
           query_recurrence_id = inst.start_time.to_date.to_datetime
         else
           query_recurrence_id = inst.start_time
         end
 
-        recurrence_exceptions = normal_entries.where(uid: cal_entry.uid,
-                                                     recurrence_id: query_recurrence_id)
+        edited_recurrences = normal_entries.where(uid: cal_entry.uid,
+                                                  recurrence_id: query_recurrence_id)
 
-        # if there's a normal cal_entry with the same uid and recurrence_id,
+        # if there's a cal_entry with the same uid and recurrence_id,
         # time to skip!
-        if recurrence_exceptions.any?
+        if edited_recurrences.any?
           next
         else
           all_events << event_attributes(cal_entry, inst.start_time, inst.end_time)
@@ -118,49 +103,42 @@ class Schedule
     all_events.sort_by { |h| h[:occurred_at] }
   end
 
-  # TODO: move these fields into the cal entry?
-  # add generation id timestamp for tracking deletions in CalEntry
+  # todo: move these fields into the cal entry
+  # make the var names more coherent
+  # add generation id timestamp for tracking deletions
   # need to hash uid, recurrence_id, sequence
   # icalendarentry should probably have notebook eh? why not
-
-  # TODO: if an event is not recurring but also all day?
-
-  # assumes we're getting an ICalendarEntry
+  # # need to add all day to handle tz properly / implement all_day?
+  # specifically what's going on is that if an event is all day
+  # it is stored as a Date, not a DateTime, but that gets converted
+  # into "start of day in UTC" which is why it's showing up at 8pm
+  # EST, which is not what i want.
+  # i suspect this might mess up boundaries? like,
+  # give me all the events between this date and that date.
+  # TODO: if an event is not recurring but also all day
+  # TODO: all day events have to be converted to EST on insertion
+  #
+  #
+  # SEVERAL ISSUES HERE,
+  # 1. recurrence_id is sometimes a Date, which will get stored as a DateTime in UTC
+  # 2. occurrences_between will generate datetimes in _system_ time, irrespective
+  # of Time.zone (which is a rails thing)
+  #
   def event_attributes(event, start_time = nil, end_time = nil)
-    occurred_at =  start_time || event.start_time || event.start_date
-    ended_at = end_time || event.end_time || event.end_date
-
-    # if it's a date, we want to coerce it to a date time using the current
-    # timezone, which beginning_of_day should be respecting
-    if occurred_at.is_a?(Date)
-      occurred_at = occurred_at.beginning_of_day
-    end
-
-    # if it's a date, we want to coerce it to a date time using the current
-    # timezone, at a moment time in time that corresponds to the intent,
-    # i.e. if an event ends on Jan 1, for our purposes, didn't it actually end
-    # on Dec 31, 23:59:59? Days aren't always (24*60*60) seconds long, so here
-    # we subtract one day then ask for the end_of_day.
-    if ended_at.is_a?(Date)
-      ended_at = (ended_at - 1.day).end_of_day
-    end
-
     {
-      uid: event.uid,
+      identifier: event.uid.to_s,
       subject: event.summary.to_s.presence,
       from: event.organizer&.to&.presence,
-      to: event.attendee.map(&:to).join(", ").presence,
-      occurred_at: occurred_at,
-      ended_at: ended_at,
-      state: event.status.to_s.presence,
+      to: event.attendee.map(&:to).join(", "),
+      occurred_at: start_time || event.start_time || event.start_date,
+      ended_at: end_time || event.end_time || event.end_date,
+      state: event.status.to_s,
       body: body(event),
-      recurrence_id: event.recurrence_id,
-      sequence: event.sequence,
+      kind: "calendar",
     }
   end
 
   # let's do something dumb and easy first.
-  # might want to split this up in the future.
   def body(event)
     [location(event),
      event.description].select(&:present?).join("\n\n")
