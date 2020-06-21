@@ -49,13 +49,14 @@ class Schedule
   end
 
   def events_for(startt, endt)
-    entries_for_this_calendar = ICalendarEntry.where(calendar_import: @calendar)
+    # first, we fetch all the "normal", non recurring events
+    entries_for_this_calendar = @calendar.imported_calendar_entries
     normal_entries = entries_for_this_calendar.
       where(recurs: false).
       where("start_time >= ? and end_time <= ?", startt, endt)
 
-    # all day entries have dates, not datetimes.
-    # we eliminate recurring events because we have to calculate recurrences regardless
+    # due to how we serialize dates, the query for all day events is different
+    # all day entries have dates, not datetimes, so the _time cols should be nil
     all_day_normal_entries = entries_for_this_calendar.
       where(start_time: nil, recurs: false).
       where("start_date >= ? and end_date <= ?", startt, endt)
@@ -67,31 +68,38 @@ class Schedule
     end
 
 
-    # OH i have to go over EVERY RECURRING not just the ones in this
-    # time span
-
+    # recurring events have recurring rulesets, as opposed to fixed start and
+    # end times that we can query.
+    #
+    # therefore, we have to iterate over EVERY SINGLE RECURRING event entry
     recurring = entries_for_this_calendar.where(recurs: true)
 
     recurring.each do |cal_entry|
-      # occurrences between is creating instances in the current timezone
-      # the icalendarentry recurrence_id is being serialized as a UTC datetime
-      # while the inst.start_time is in <current timezone>. 
+      # occurrences_between generates instances w/datetimes
+      # set in the system timezone
+      #
+      # meanwhile, the icalendarentry recurrence_id is serialized
+      # as a UTC datetime
       cal_entry.occurrences_between(startt, endt).each do |inst|
-        # this fails in the case of all day events. inst.start_time will be
-        # beginning_of_day in current tz; recurrence_id will be beginning_of_day in utc
-      
+        # this trips us up in the case of all day events:
+        #
+        # inst.start_time will be beginning_of_day in system tz, while
+        #   recurrence_id will be beginning_of_day in utc
+
+        # for this reason, if dealing with a date object,
+        # we convert it to beginning of day in utc
         if cal_entry.all_day?
-          # converts to beginning of day in utc, as opposed to system time jfc
           query_recurrence_id = inst.start_time.to_date.to_datetime
         else
           query_recurrence_id = inst.start_time
         end
 
+        # with all of the above in mind, we use the recurrence_id to find out
+        # whether there are any overlapping, edited, recurring events
         edited_recurrences = normal_entries.where(uid: cal_entry.uid,
                                                   recurrence_id: query_recurrence_id)
 
-        # if there's a cal_entry with the same uid and recurrence_id,
-        # time to skip!
+        # and if so, move on:
         if edited_recurrences.any?
           next
         else
@@ -103,27 +111,10 @@ class Schedule
     all_events.sort_by { |h| h[:occurred_at] }
   end
 
-  # todo: move these fields into the cal entry
-  # make the var names more coherent
-  # add generation id timestamp for tracking deletions
-  # need to hash uid, recurrence_id, sequence
-  # icalendarentry should probably have notebook eh? why not
-  # # need to add all day to handle tz properly / implement all_day?
-  # specifically what's going on is that if an event is all day
-  # it is stored as a Date, not a DateTime, but that gets converted
-  # into "start of day in UTC" which is why it's showing up at 8pm
-  # EST, which is not what i want.
-  # i suspect this might mess up boundaries? like,
-  # give me all the events between this date and that date.
-  # TODO: if an event is not recurring but also all day
-  # TODO: all day events have to be converted to EST on insertion
+  # keep in mind that occurred_at and ended_at will have to be converted
+  # into the User timezone in the event they are dates.
   #
-  #
-  # SEVERAL ISSUES HERE,
-  # 1. recurrence_id is sometimes a Date, which will get stored as a DateTime in UTC
-  # 2. occurrences_between will generate datetimes in _system_ time, irrespective
-  # of Time.zone (which is a rails thing)
-  #
+  # also, that we could be passing along the recurrence_id & sequence
   def event_attributes(event, start_time = nil, end_time = nil)
     {
       uid: event.uid.to_s,
