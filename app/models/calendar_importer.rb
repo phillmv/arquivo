@@ -14,7 +14,7 @@ class CalendarImporter
     @events ||= @calendars.map(&:events).flatten
   end
 
-  def map_attributes(ci, name, event)
+  def map_attributes(ci, name, event, last_ran_at)
     attributes = {
       calendar_import_id: ci.id,
       name: name,
@@ -22,7 +22,8 @@ class CalendarImporter
       recurrence_id: event.recurrence_id.to_s,
       sequence: event.sequence.to_s,
       recurs: event.rrule.any?,
-      body: event.to_ical
+      body: event.to_ical,
+      imported_at: last_ran_at
     }
 
     # if the start time is a date, we treat it differently
@@ -42,10 +43,12 @@ class CalendarImporter
   end
 
   def process!
+    # used as an identifier to weed out since-deleted entries
+    last_ran_at = Time.current
+
     calendars.each do |cal|
       name = cal.custom_properties["x_wr_calname"]&.first || "noname"
       cal.events.each do |event|
-        # TODO: delete ones that no longer exist
         ICalendarEntry.transaction do
           recurrence_id = event.recurrence_id
 
@@ -62,13 +65,20 @@ class CalendarImporter
                                          recurrence_id: recurrence_id,
                                          sequence: event.sequence.to_s)
 
+          entry_attributes = map_attributes(calendar_import, name, event, last_ran_at)
+
           if entry
-            entry.update(map_attributes(calendar_import, name, event))
+            entry.update(entry_attributes)
           else
-            ICalendarEntry.create(map_attributes(calendar_import, name, event))
+            ICalendarEntry.create(entry_attributes)
           end
         end
       end
     end
+
+    # TODO: make this all more atomic
+    calendar_import.update(last_ran_at: last_ran_at)
+    ICalendarEntry.where(calendar_import_id: calendar_import.id).
+      where("imported_at != ?", last_ran_at).delete_all
   end
 end
