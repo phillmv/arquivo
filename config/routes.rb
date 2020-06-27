@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
 
     post "/", to: "entries#create", as: :create_entry
+    get "/", to: redirect("/%{notebook}/timeline")
     get '/entries', to: "entries#index"
     resources :entries, path: "/" do
       member do
