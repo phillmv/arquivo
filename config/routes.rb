@@ -8,7 +8,13 @@ Rails.application.routes.draw do
     get '/calendar/:date', to: "calendar#daily", as: :calendar_daily
 
 
-    resources :entries, path: "/"
+    post "/", to: "entries#create", as: :create_entry
+    get '/entries', to: "entries#index"
+    resources :entries, path: "/" do
+      member do
+        get "files/:filename", to: "entries#files", as: :file_path
+      end
+    end
 
     get "/settings", to: "settings#index", as: :settings
     post "/settings/add_calendar", to: "settings#add_calendar", as: :add_calendar

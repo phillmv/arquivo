@@ -22,7 +22,7 @@
           <td class="body"><%= entry.body[0..140] %></td>
           <td class="occurred"><%= entry.occurred_at %></td>
           <td><%= link_to 'Show', entry %></td>
-          <td><%= link_to 'Edit', edit_entry_path(entry) %></td>
+          <td><%= link_to 'Edit', edit_entry_path(entry, notebook: entry.notebook) %></td>
           <td><%= link_to 'Destroy', entry, method: :delete, data: { confirm: 'Are you sure?' } %></td>
         </tr>
       <% end %>

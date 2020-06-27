@@ -9,12 +9,17 @@
         <h3><a href="<%= entry_path(entry, notebook: entry.notebook) %>" class="text-gray-dark"><%= entry.subject %></a></h2>
         <span><%= octicon("watch") %> <%= entry.occurred_at.strftime("%H:%M") %></span>&nbsp;&nbsp;
         <% if entry.from.present? %>
-          <span><%= octicon("mail-read") %> <%= entry.from.truncate(42) %></span>&nbsp;&nbsp;
+          <span class="css-truncate css-truncate-target" style="max-width: 180px" title="<%= entry.from %>"><%= octicon("mail-read") %> <%= entry.from %></span>&nbsp;&nbsp;
         <% end %>
         <% if entry.to.present? %>
           <span><%= octicon("person") %> <%= entry.to&.split(", ")&.count %> attendees</span>&nbsp;&nbsp;
         <% end %>
         <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="btn btn-sm"><%= octicon("reply") %> Add note</a>
+        <%= form_with(model: entry, url:  entry_path(entry, notebook: entry.notebook), local: true, class: "d-inline") do |form| %>
+          <%= form.hidden_field :hide, value: true %>
+          <%= hidden_field_tag :redirect_to_timeline, true %>
+          <%= form.submit "Hide", class: "btn btn-sm" %>
+        <% end %>
       </div>
     </div>
   </div>

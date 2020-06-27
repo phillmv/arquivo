@@ -1,5 +1,5 @@
 <% if entry.new_record? %>
-  <% url = entries_path(notebook: @current_notebook) %>
+  <% url = create_entry_path(notebook: @current_notebook) %>
 <% else %>
   <% url = entry_path(entry, notebook: @current_notebook) %>
 <% end %>

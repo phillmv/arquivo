@@ -4,7 +4,7 @@ class EntriesController < ApplicationController
   # GET /entries
   # GET /entries.json
   def index
-    @entries = Entry.all.paginate(params[:page])
+    @entries = Entry.all.paginate(page: params[:page])
   end
 
   # GET /entries/1
@@ -50,8 +50,12 @@ class EntriesController < ApplicationController
   def update
     respond_to do |format|
       if @entry.update(entry_params)
-        format.html { redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully updated.' }
-        format.json { render :show, status: :ok, location: @entry }
+        if params["redirect_to_timeline"]
+          format.html { redirect_to timeline_path(notebook: current_notebook) }
+        else
+          format.html { redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully updated.' }
+          format.json { render :show, status: :ok, location: @entry }
+        end
       else
         format.html { render :edit }
         format.json { render json: @entry.errors, status: :unprocessable_entity }
@@ -70,6 +74,7 @@ class EntriesController < ApplicationController
   end
 
   private
+  # TODO: We can delete this now, right?
     def set_entry
       # quick terrible hack for routing ical uuids
       # that are email addresses
@@ -91,6 +96,6 @@ class EntriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
-      params.require(:entry).permit(:body, :occurred_at, :in_reply_to, files: [])
+      params.require(:entry).permit(:body, :occurred_at, :in_reply_to, :hide, files: [])
     end
 end
