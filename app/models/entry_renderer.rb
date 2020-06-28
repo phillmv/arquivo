@@ -30,6 +30,16 @@ class EntryRenderer
 
   end
 
+  class MyMentionFilter < HTML::Pipeline::MentionFilter
+    def link_to_mentioned_user(login)
+      result[:mentioned_usernames] |= [login]
+
+      "<a href='#{Rails.application.routes.url_helpers.search_path(notebook: context[:entry].notebook, query: "@#{login}")}' class='user-mention'>" \
+        "@#{login}" \
+        '</a>'
+    end
+  end
+
   # nota bene:
   # must use MarkdownFilter with unsafe
   # which means must use SanitizationFilter
@@ -40,6 +50,7 @@ class EntryRenderer
     HTML::Pipeline::SanitizationFilter,
     TaskList::Filter,
     HashtagFilter,
+    MyMentionFilter,
     HTML::Pipeline::TableOfContentsFilter,
     HTML::Pipeline::ImageMaxWidthFilter,
   ], { unsafe: true }
