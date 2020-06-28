@@ -23,7 +23,6 @@ class CalendarController < ApplicationController
     start_date = query_date.beginning_of_week
     end_date = query_date.end_of_week
 
-    @entries = Entry.where(notebook: @current_notebook.name).order(occurred_at: :desc).where("occurred_at >= ? and occurred_at <= ?", start_date, end_date)
-
+    @entries = Entry.where(notebook: @current_notebook.name).visible.order(occurred_at: :desc).where("occurred_at >= ? and occurred_at <= ?", start_date, end_date)
   end
 end

@@ -8,10 +8,14 @@
     <% if entries.any? %>
       <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block">
         <%= date.day %>
-        <div class="pt-2">
-          <%= entries.count %> entries
-        </div>
       </a>
+      <hr>
+      <div class="pt-2">
+        <% entries.each do |entry| %>
+          <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="f6"  style="width: 100%; display: block"><%= entry.truncated_description.truncate(24) %>
+          <hr>
+        <% end %>
+      </div>
     <% else %>
       <%= date.day %>
     <% end %>
