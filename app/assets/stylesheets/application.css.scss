@@ -111,3 +111,14 @@ summary::-webkit-details-marker {
   opacity: 1.0;
   display: inline;
 }
+
+// override dark grey in calendar view
+table.weekly {
+  .next-month, .prev-month {
+    &.today {
+      background-color: #FFFFC0
+    }
+    background-color: inherit;
+  }
+}
+

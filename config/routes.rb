@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     get '/timeline', to: "timeline#index", as: :timeline
     get '/timeline/search', to: "timeline#search", as: :search
     get '/calendar', to: "calendar#monthly", as: :calendar
+    get '/calendar/weekly', to: "calendar#weekly", as: :calendar_weekly
     get '/calendar/:date', to: "calendar#daily", as: :calendar_daily
 
 

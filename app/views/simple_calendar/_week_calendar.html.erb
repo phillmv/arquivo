@@ -1,15 +1,15 @@
 <div class="simple-calendar">
-  <div class="calendar-heading">
-    <%= link_to t('simple_calendar.previous', default: 'Previous'), calendar.url_for_previous_view %>
+  <div class="calendar-heading mb-4 mt-4">
+    <%= link_to t('simple_calendar.previous', default: 'Previous'), calendar.url_for_previous_view, class: "btn btn-sm" %>
     <% if calendar.number_of_weeks == 1 %>
-      <span class="calendar-title">Week <%= calendar.week_number %></span>
+      <span class="calendar-title ml-2 mr-2"><strong><%= [date_range[0], date_range[-1]].map { |d| d.strftime("%b %d, %Y") }.join(" - ") %></strong></span>
     <%else%>
-        <span class="calendar-title">Week <%= calendar.week_number %> - <%= calendar.end_week %></span>
+        <span class="calendar-title ml-2 mr-2">Week <%= calendar.week_number %> - <%= calendar.end_week %></span>
     <%end%>
-        <%= link_to t('simple_calendar.next', default: 'Next'), calendar.url_for_next_view %>
+        <%= link_to t('simple_calendar.next', default: 'Next'), calendar.url_for_next_view, class: "btn btn-sm" %>
   </div>
 
-  <table class="table table-striped">
+  <table class="table table-striped weekly">
     <thead>
       <tr>
         <% date_range.slice(0, 7).each do |day| %>

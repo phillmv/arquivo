@@ -15,7 +15,8 @@
   <div class="mb-3">
     <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4>
     <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
-    <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> Calendar</a></h4>
+    <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> This Month</a></h4>
+    <h4><a href="<%= calendar_weekly_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> This Week</a></h4>
     <h4><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
 
   </div>
