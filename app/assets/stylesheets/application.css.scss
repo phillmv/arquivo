@@ -63,6 +63,7 @@ summary::-webkit-details-marker {
 }
 
 // https://stackoverflow.com/a/17030071
+// TODO: find a better name, css-truncate is used in primer
 .truncate {
   overflow: hidden;
   position: relative;
@@ -91,4 +92,22 @@ summary::-webkit-details-marker {
   // background-color:white;
   // opacity: 0.8;
   bottom: -0.3em
+}
+
+// for displaying the hide button only on hover
+.hide-calendar {
+  display: inline;
+  visibility: hidden;
+  opacity: 0.0;
+  -webkit-transition: all 200ms ease-in-out;
+  -moz-transition: all 200ms ease-in-out;
+  -ms-transition: all 200ms ease-in-out;
+  -o-transition: all 200ms ease-in-out;
+  transition: all 200ms ease-in-out;
+}
+
+.calendar-entry:hover .hide-calendar {
+  visibility: visible;
+  opacity: 1.0;
+  display: inline;
 }
