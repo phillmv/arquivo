@@ -21,6 +21,9 @@ class EntriesController < ApplicationController
     end
 
     @entry = Entry.new(occurred_at: Time.now)
+    if @parent_entry
+      @entry.copy_parent(@parent_entry)
+    end
   end
 
   # GET /entries/1/edit

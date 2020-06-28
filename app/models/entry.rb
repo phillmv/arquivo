@@ -15,6 +15,8 @@ class Entry < ApplicationRecord
 
   scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }
 
+  scope :calendars, -> { where(kind: "calendar") }
+
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
@@ -69,6 +71,16 @@ class Entry < ApplicationRecord
 
   def reply?
     in_reply_to.presence
+  end
+
+  def copy_parent(entry)
+    if entry.calendar?
+      self.body = entry.calendar_body_headline
+    end
+  end
+
+  def calendar_body_headline
+    "#meeting #{to.present? && to&.split(", ").map { |s| "@#{s.split("@").first}" }.join(" ")}"
   end
 
   # this is actually pretty complicated to do properly?
