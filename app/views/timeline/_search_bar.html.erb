@@ -2,7 +2,7 @@
   <%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform" } do |form| %>
     <div class="form-actions">
       <div class="col-10 float-left pr-3">
-        <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "query" %>
+        <%= form.text_field :search_query, class: "form-control input-block", value: @search_query, name: "query", placeholder: "Type and hit enter to search. Ctrl+L to focus." %>
       </div>
 
       <div class="col-2 float-left">
