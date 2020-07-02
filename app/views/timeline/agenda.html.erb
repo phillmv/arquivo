@@ -1,0 +1,50 @@
+<%= render partial: "shared/sidebar" %>
+
+<div class="content-container">
+  <%= render partial: "timeline/search_bar" %>
+
+  <div class="pt-4">
+    <h1>Today's Agenda</h1>
+    <div class="TimelineItem-start"></div>
+
+    <div class="TimelineItem">
+      <div class="TimelineItem-badge bg-blue text-white">
+        <%= octicon("list-unordered") %>
+      </div>
+      <h3>#winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
+    </div>
+  </div>
+
+    <%= render partial: "entries/list_entry", locals: { entry: @reminder_entry } %>
+
+
+    <div>
+      <div class="TimelineItem">
+        <div class="TimelineItem-badge bg-blue text-white">
+          <%= octicon("calendar") %>
+        </div>
+        <h3><a href="<%= calendar_daily_path(@todays_date, notebook: @current_notebook)%>"><%= @todays_date %></a></h3>
+      </div>
+      <% if @entries.empty? %>
+        <div class="TimelineItem">
+          <div class="TimelineItem-badge">
+            <%= octicon("comment") %>
+          </div>
+
+          <div class="TimelineItem-body">
+            <div>
+              <h4>Nothin' yet!</h4>
+            </div>
+          </div>
+        </div>
+        <div class="TimelineItem-break ml-0"></div>
+      <% else %>
+        <% @entries.each do |entry| %>
+          <%= render partial: "entries/list_entry", locals: { entry: entry } %>
+        <% end %>
+      <% end %>
+    </div>
+
+  </div>
+</div>
+

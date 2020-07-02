@@ -8,6 +8,14 @@ class TimelineController < ApplicationController
     end
   end
 
+  def agenda
+    @entries = current_notebook.entries.today.visible.order(occurred_at: :asc)
+    @todays_date = Time.current.strftime("%Y-%m-%d")
+
+    @reminder_entry = Search.find(notebook: @current_notebook, query: "#winddown").first
+    @reminder_entry_date = @reminder_entry.occurred_at.strftime("%Y-%m-%d")
+  end
+
   def search
     @search_query = params[:query]
 

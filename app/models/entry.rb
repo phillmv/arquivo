@@ -9,9 +9,9 @@ class Entry < ApplicationRecord
 
   scope :visible, -> { where(hide: false) }
   scope :for_notebook, -> (notebook) { where(notebook: notebook.to_s) }
-  scope :hitherto, -> { where("occurred_at <= ? ", Time.now.end_of_day) }
-  # probably ought to add a calendar entry type of object
+  scope :hitherto, -> { where("occurred_at <= ? ", Time.current.end_of_day) }
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
+  scope :today, -> { where("occurred_at >= ? and occurred_at <= ?", Time.current.beginning_of_day, Time.current.end_of_day) }
 
   scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }
 

@@ -3,6 +3,7 @@ Rails.application.routes.draw do
 
   scope ':notebook', defaults: { notebook: "journal" } do
     get '/timeline', to: "timeline#index", as: :timeline
+    get '/agenda', to: "timeline#agenda", as: :agenda
     get '/timeline/search', to: "timeline#search", as: :search
     get '/calendar', to: "calendar#monthly", as: :calendar
     get '/calendar/weekly', to: "calendar#weekly", as: :calendar_weekly
