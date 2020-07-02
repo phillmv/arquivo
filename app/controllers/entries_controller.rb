@@ -39,7 +39,13 @@ class EntriesController < ApplicationController
 
     respond_to do |format|
       if @entry.save
-        format.html { redirect_to timeline_path(notebook: current_notebook), notice: 'Entry was successfully created.' }
+        format.html do
+          if request.referer =~ /agenda/
+            redirect_back(fallback_location: timeline_path(notebook: current_notebook))
+          else
+            redirect_to timeline_path(notebook: current_notebook), notice: 'Entry was successfully created.'
+          end
+        end
         format.json { render :show, status: :created, location: @entry }
       else
         format.html { render :new }

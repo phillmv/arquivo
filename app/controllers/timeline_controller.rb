@@ -14,6 +14,8 @@ class TimelineController < ApplicationController
 
     @reminder_entry = Search.find(notebook: @current_notebook, query: "#winddown").first
     @reminder_entry_date = @reminder_entry.occurred_at.strftime("%Y-%m-%d")
+
+    @entry = Entry.new(occurred_at: Time.now)
   end
 
   def search

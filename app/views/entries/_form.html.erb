@@ -3,6 +3,8 @@
 <% else %>
   <% url = entry_path(entry, notebook: @current_notebook) %>
 <% end %>
+
+<% skip_cancel = defined?(skip_cancel) ? skip_cancel : false %>
 <%= form_with(model: entry, url: url, local: true) do |form| %>
   <% if @parent_entry %>
     <%= form.hidden_field :in_reply_to,  value: @parent_entry.identifier %>
@@ -57,6 +59,8 @@
 
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>
-    <%= link_to 'Cancel', timeline_path(@current_notebook), class: "btn btn-danger float-left" %>
+    <% unless skip_cancel %>
+      <%= link_to 'Cancel', timeline_path(@current_notebook), class: "btn btn-danger float-left" %>
+    <% end %>
   </div>
 <% end %>

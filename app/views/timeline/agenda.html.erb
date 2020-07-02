@@ -4,14 +4,18 @@
   <%= render partial: "timeline/search_bar" %>
 
   <div class="pt-4">
-    <h1>Today's Agenda</h1>
+    <div class="pagehead">
+      <h1>Today</h1>
+    </div>
+
+    <%= render 'entries/form', entry: @entry, skip_cancel: true %>
     <div class="TimelineItem-start"></div>
 
     <div class="TimelineItem">
       <div class="TimelineItem-badge bg-blue text-white">
         <%= octicon("list-unordered") %>
       </div>
-      <h3>#winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
+      <h3>Recent #winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
     </div>
   </div>
 
