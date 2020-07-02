@@ -9,11 +9,15 @@ document.onkeyup = function(e) {
   }
 }
 
+// durr do i need both turbolinks:load and DOMContentLoad?
 document.addEventListener("turbolinks:load", function(){
-  var existing_textareas, file_input;
+  var existing_textarea, file_input;
 
-  if(existing_textareas = document.querySelector("textarea")) {
-    autosize(existing_textareas);
+  if(existing_textarea = document.querySelector("textarea")) {
+    autosize(existing_textarea);
+    var len = existing_textarea.value.length;
+    existing_textarea.setSelectionRange(len, len);
+    existing_textarea.scrollTop = existing_textarea.scrollHeight;
   }
 
   file_input = document.querySelector('input[type=file]');
@@ -39,10 +43,13 @@ document.addEventListener("turbolinks:load", function(){
 });
 
 document.addEventListener("DOMContentLoaded", function(){
-  var existing_textareas, new_entry_input;
+  var existing_textarea, new_entry_input;
 
-  if(existing_textareas = document.querySelector("textarea")) {
-    autosize(existing_textareas);
+  if(existing_textarea = document.querySelector("textarea")) {
+    autosize(existing_textarea);
+    var len = existing_textarea.value.length;
+    existing_textarea.setSelectionRange(len, len);
+    existing_textarea.scrollTop = existing_textarea.scrollHeight;
   }
 
   if (document.searchform) {

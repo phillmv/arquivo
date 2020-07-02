@@ -32,7 +32,7 @@
 
   <div class="form-group">
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
-    <%= form.text_area :body, class: "form-control input-block" %>
+    <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
     <%= form.file_field :files, multiple: true, direct_upload: true %>
 
     <% if @entry.files.attached? %>
