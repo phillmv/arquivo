@@ -24,15 +24,12 @@
 }
 
 // used for rendering entry bodies
-.Box-body p:last-of-type {
-  margin-bottom: 0px;
+.entry-box {
+  @extend .Box;
 }
 
-.entry-box {
-  @extend .Box, .mb-2;
-  &:last-of-type {
-    margin-bottom: 0px !important;
-  }
+.entry-box + .entry-box {
+  @extend .mt-2;
 }
 
 .TimelineItem-start {
@@ -52,6 +49,7 @@ summary::-webkit-details-marker {
   @extend .text-small;
   @extend .mb-3;
 
+  // prevent controls (edit, fold, etc) from appearing when selecting text
   .unselectable {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
