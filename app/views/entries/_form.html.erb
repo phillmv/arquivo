@@ -5,20 +5,24 @@
 <% end %>
 
 <% skip_cancel = defined?(skip_cancel) ? skip_cancel : false %>
+<% skip_metadata = defined?(skip_metadata) ? skip_metadata : false %>
+
 <%= form_with(model: entry, url: url, local: true) do |form| %>
   <% if @parent_entry %>
     <%= form.hidden_field :in_reply_to,  value: @parent_entry.identifier %>
   <% end %>
-  <div class="pb-5">
-    <details class="details-reset float-left">
-      <summary class="btn mr-2">Metadata</summary>
-      <dl class="form-group">
-        <dt><%= form.label :occurred_at %></dt>
-        <dd><%= form.text_field :occurred_at, class: "form-control input-sm" %></dd>
-      </dl>
-    </details>
 
-  </div>
+  <% unless skip_metadata %>
+    <div class="pb-5">
+      <details class="details-reset float-left">
+        <summary class="btn mr-2">Metadata</summary>
+        <dl class="form-group">
+          <dt><%= form.label :occurred_at %></dt>
+          <dd><%= form.text_field :occurred_at, class: "form-control input-sm" %></dd>
+        </dl>
+      </details>
+    </div>
+  <% end %>
 
   <% if entry.errors.any? %>
     <div id="error_explanation">

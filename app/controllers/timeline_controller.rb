@@ -4,13 +4,13 @@ class TimelineController < ApplicationController
       order(occurred_at: :desc).paginate(page: params[:page])
 
     @entries = @all_entries.group_by do |e|
-      e.occurred_at.strftime("%Y-%m-%d")
+      e.occurred_at_date
     end
   end
 
   def agenda
-    @entries = current_notebook.entries.today.visible.order(occurred_at: :asc)
     @todays_date = Time.current.strftime("%Y-%m-%d")
+    @entries = current_notebook.entries.today.visible.order(occurred_at: :asc)
 
     @reminder_entry = Search.find(notebook: @current_notebook, query: "#winddown").first
     @reminder_entry_date = @reminder_entry.occurred_at.strftime("%Y-%m-%d")
@@ -26,7 +26,7 @@ class TimelineController < ApplicationController
                             query: @search_query).paginate(page: params[:page])
 
       @entries = @all_entries.group_by do |e|
-        e.occurred_at.strftime("%Y-%m-%d")
+        e.occurred_at_date
       end
 
       render :search

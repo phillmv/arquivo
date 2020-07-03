@@ -1,54 +1,53 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
-  <%= render partial: "timeline/search_bar" %>
+  <%# <%= render partial: "timeline/search_bar" %>
 
-  <div class="pt-4">
-    <div class="pagehead">
-      <h1>Today</h1>
+  <div class="pagehead">
+    <h1>Today, <%= @todays_date %></h1>
+  </div>
+
+  <%= render 'entries/form', entry: @entry, skip_cancel: true, skip_metadata: true %>
+
+  <div class="TimelineItem-start"></div>
+
+  <div class="TimelineItem">
+    <div class="TimelineItem-badge bg-blue text-white">
+      <%= octicon("list-unordered") %>
     </div>
+    <h3>Recent #winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
+  </div>
 
-    <%= render 'entries/form', entry: @entry, skip_cancel: true %>
-    <div class="TimelineItem-start"></div>
+  <%= render partial: "entries/list_entry", locals: { entry: @reminder_entry } %>
 
+
+  <div>
     <div class="TimelineItem">
       <div class="TimelineItem-badge bg-blue text-white">
-        <%= octicon("list-unordered") %>
+        <%= octicon("calendar") %>
       </div>
-      <h3>Recent #winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
+      <h3><a href="<%= calendar_daily_path(@todays_date, notebook: @current_notebook)%>"><%= @todays_date %></a></h3>
     </div>
-  </div>
-
-    <%= render partial: "entries/list_entry", locals: { entry: @reminder_entry } %>
-
-
-    <div>
+    <% if @entries.empty? %>
       <div class="TimelineItem">
-        <div class="TimelineItem-badge bg-blue text-white">
-          <%= octicon("calendar") %>
+        <div class="TimelineItem-badge">
+          <%= octicon("comment") %>
         </div>
-        <h3><a href="<%= calendar_daily_path(@todays_date, notebook: @current_notebook)%>"><%= @todays_date %></a></h3>
+
+        <div class="TimelineItem-body">
+          <div>
+            <h4>Nothin' yet!</h4>
+          </div>
+        </div>
       </div>
-      <% if @entries.empty? %>
-        <div class="TimelineItem">
-          <div class="TimelineItem-badge">
-            <%= octicon("comment") %>
-          </div>
-
-          <div class="TimelineItem-body">
-            <div>
-              <h4>Nothin' yet!</h4>
-            </div>
-          </div>
-        </div>
-        <div class="TimelineItem-break ml-0"></div>
-      <% else %>
-        <% @entries.each do |entry| %>
-          <%= render partial: "entries/list_entry", locals: { entry: entry } %>
-        <% end %>
+      <div class="TimelineItem-break ml-0"></div>
+    <% else %>
+      <% @entries.each do |entry| %>
+        <%= render partial: "entries/list_entry", locals: { entry: entry } %>
       <% end %>
-    </div>
-
+    <% end %>
   </div>
+
+</div>
 </div>
 

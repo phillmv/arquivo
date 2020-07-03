@@ -75,12 +75,16 @@ class Entry < ApplicationRecord
 
   def copy_parent(entry)
     if entry.calendar?
-      self.body = entry.calendar_body_headline
+      self.body = entry.from_calendar_to_body_headline
     end
   end
 
-  def calendar_body_headline
+  def from_calendar_to_body_headline
     "#meeting #{to.present? && to&.split(", ").map { |s| "@#{s.split("@").first}" }.join(" ")}"
+  end
+
+  def occurred_at_date
+    occurred_at.strftime("%Y-%m-%d")
   end
 
   # this is actually pretty complicated to do properly?
