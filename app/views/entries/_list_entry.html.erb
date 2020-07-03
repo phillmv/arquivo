@@ -1,69 +1,7 @@
 <% if entry.calendar? %>
-  <div class="TimelineItem">
-    <div class="TimelineItem-badge">
-      <%= octicon("organization") %>
-    </div>
-
-    <div class="TimelineItem-body mt-0 calendar-entry">
-      <div>
-        <h3><a href="<%= entry_path(entry, notebook: entry.notebook) %>" class="text-gray-dark"><%= entry.subject %></a></h2>
-        <span><%= octicon("watch") %> <%= entry.occurred_at.strftime("%H:%M") %></span>&nbsp;&nbsp;
-        <% if entry.from.present? %>
-          <span class="css-truncate css-truncate-target" style="max-width: 180px" title="<%= entry.from %>"><%= octicon("mail-read") %> <%= entry.from %></span>&nbsp;&nbsp;
-        <% end %>
-        <% if entry.to.present? %>
-          <span><%= octicon("person") %> <%= entry.to&.split(", ")&.count %> attendees</span>&nbsp;&nbsp;
-        <% end %>
-        <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="btn btn-sm"><%= octicon("reply") %> Add note</a>
-        <%= form_with(model: entry, url:  entry_path(entry, notebook: entry.notebook), local: true, class: "hide-calendar") do |form| %>
-          <%= form.hidden_field :hide, value: true %>
-          <%= hidden_field_tag :redirect_to_timeline, true %>
-          <%= form.submit "Hide", class: "btn btn-sm btn-danger", data: { confirm: "Are you sure?" } %>
-        <% end %>
-      </div>
-    </div>
-  </div>
-
+  <%= render "entries/kinds/calendar", entry: entry %>
 <% elsif entry.bookmark? %>
-    <div class="TimelineItem">
-    <div class="TimelineItem-badge">
-      <%= octicon("bookmark") %>
-    </div>
-
-    <div class="TimelineItem-body mt-0">
-      <div>
-        <h4><a href="<%= entry.url %>" target="_blank" class="text-gray-dark"><%= entry.subject%></a></h2>
-        <div class="mt-2"><%= EntryRenderer.new(entry).to_html %></div>
-      </div>
-    </div>
-  </div>
-
+  <%= render "entries/kinds/pinboard", entry: entry %>
 <% else %>
-  <div class="entry-box">
-    <!-- <div class="Box&#45;header"> -->
-      <!-- <a href="<%= edit_entry_path(entry, notebook: @current_notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon float&#45;right"> -->
-      <!--   <%= octicon("pencil") %>&#38;nbsp; -->
-      <!-- </a> -->
-    <!--  -->
-      <!-- <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon"> -->
-    <!--     <%= octicon "link" %> -->
-    <!--     <%= entry.occurred_at %> -->
-    <!--   </a> -->
-    <!-- </div> -->
-    <div class="Box-body markdown-body <%= truncate_class(entry)%>">
-      <div class="entry-list-header">
-        <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
-          <%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %>
-        </a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
-          <%= octicon("pencil") %> edit
-        </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-1 hide-on-fold trigger-fold">
-          <%= octicon("fold") %> fold
-        </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-1 show-on-fold trigger-fold" ><%= octicon("unfold") %> unfold
-        </a><% if entry.reply? %><a href="<%= entry_path(entry.in_reply_to, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable">
-          <%= octicon("telescope") %> parent</a><%end%>
-      </div>
-
-      <%= EntryRenderer.new(entry).to_html %>
-    </div>
-  </div>
+  <%= render "entries/kinds/default", entry: entry %>
 <% end %>
