@@ -4,23 +4,33 @@ class ScheduleEntryMaker
     @notebook = notebook
   end
 
-  # TODO:
-  # - figure out how to backfill
-  # - refactor?
-  # - test this class, i.e. the tz shift
+  def perform
+    populate(notebook, generate_events)
+  end
 
-  # a good enough window
-  def past_seven_days!
-    notebook.calendar_imports.each do |calendar|
-      events = Schedule.new(calendar).past_seven_days
+  def generate_events
+    notebook.calendar_imports.flat_map do |calendar|
+      schedule = Schedule.new(calendar)
 
-      populate(notebook, events)
+      # is there any reason NOT to always do past seven days?
+      # like, i don't want events to get updated necc
+      # but they won't get deleted.
+      #
+      # i feel like i should be running this only for like, today's events but
+      # that seems like a micro-optimization. ideally we would backfill since
+      # the last time the import was run OR just the past 7 days if a new calendar.
+      schedule.past_seven_days(User.tz)
     end
   end
 
   def in_our_timezone(&block)
     Time.use_zone(User.tz, &block)
   end
+
+  # TODO:
+  # - figure out how to backfill
+  # - refactor?
+  # - test this class, i.e. the tz shift
 
   def populate(notebook, events)
     events.each do |event|

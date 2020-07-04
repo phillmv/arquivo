@@ -5,7 +5,7 @@ class ScheduleTest < ActiveSupport::TestCase
     @cal_url = File.join(Rails.root, "test", "fixtures", "sample_cal_20200530.ics")
     @ci = CalendarImport.create(notebook: "test", title: "example cal", url: @cal_url )
     importer = CalendarImporter.new(@ci)
-    importer.process!
+    importer.perform!
 
     @cal_url2 = File.join(Rails.root, "test", "fixtures", "sample_cal_20200620.ics")
   end
@@ -77,7 +77,7 @@ class ScheduleTest < ActiveSupport::TestCase
     @ci.save
 
     importer = CalendarImporter.new(@ci)
-    importer.process!
+    importer.perform!
 
     new_friday_events = sched.events_for("2020-06-19", "2020-06-19 23:59:59")
 

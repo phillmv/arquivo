@@ -42,7 +42,7 @@ class CalendarImporter
     attributes
   end
 
-  def process!
+  def perform!
     # used as an identifier to weed out since-deleted entries
     last_imported_at = Time.current
 
@@ -78,6 +78,7 @@ class CalendarImporter
 
     # TODO: make this all more atomic
     calendar_import.update(last_imported_at: last_imported_at)
+    # TODO: maybe ignore old entries as opposed to delete?
     ImportedCalendarEntry.where(calendar_import_id: calendar_import.id).
       where("last_imported_at != ?", last_imported_at).delete_all
   end

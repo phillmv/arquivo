@@ -13,7 +13,7 @@ class CalendarImporterTest < ActiveSupport::TestCase
 
     assert_equal 0, ImportedCalendarEntry.count
     importer = CalendarImporter.new(@ci)
-    importer.process!
+    importer.perform!
 
     assert_equal 34, ImportedCalendarEntry.where(calendar_import: @ci).count
     assert_equal 13, ImportedCalendarEntry.where(calendar_import: @ci, recurs: true).count
@@ -32,7 +32,7 @@ class CalendarImporterTest < ActiveSupport::TestCase
 
     @ci.update(url: @cal_url2)
     importer = CalendarImporter.new(@ci)
-    importer.process!
+    importer.perform!
 
     t2_import = @ci.reload.last_imported_at
     assert t2_import

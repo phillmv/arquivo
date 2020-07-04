@@ -1,3 +1,5 @@
+# this class takes a calendar import, looks up its imported entries, and
+# then "interprets" them to output event objects.
 class Schedule
   attr_reader :calendar
 
@@ -5,28 +7,24 @@ class Schedule
     @calendar = calendar
   end
 
-  def in_our_timezone(&block)
-    Time.use_zone(User.tz, &block)
-  end
-
-  def today
-    in_our_timezone do
+  def today(tz = "UTC")
+    Time.use_zone(tz) do
       startt = Date.today.beginning_of_day
       endt = startt.end_of_day
       events_for(startt, endt)
     end
   end
 
-  def tomorrow
-    in_our_timezone do
+  def tomorrow(tz = "UTC")
+    Time.use_zone(tz) do
       startt = Date.tomorrow.beginning_of_day
       endt = startt.end_of_day
       events_for(startt, endt)
     end
   end
 
-  def this_week
-    in_our_timezone do
+  def this_week(tz = "UTC")
+    Time.use_zone(tz) do
       if Date.current.sunday?
         monday = Date.tomorrow.beginning_of_day
       else
@@ -39,8 +37,8 @@ class Schedule
     end
   end
 
-  def past_seven_days
-    in_our_timezone do
+  def past_seven_days(tz = "UTC")
+    Time.use_zone(tz) do
       startt = 7.days.ago.beginning_of_day
       endt = Date.today.end_of_day
 
