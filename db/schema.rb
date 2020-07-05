@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_21_164918) do
+ActiveRecord::Schema.define(version: 2020_07_05_132536) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -85,6 +85,14 @@ ActiveRecord::Schema.define(version: 2020_06_21_164918) do
     t.boolean "hide", default: false, null: false
     t.index ["notebook", "identifier"], name: "index_entries_on_notebook_and_identifier", unique: true
     t.index ["notebook"], name: "index_entries_notebook"
+  end
+
+  create_table "feature_flags", force: :cascade do |t|
+    t.string "name"
+    t.boolean "active", default: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["name"], name: "index_feature_flags_on_name"
   end
 
   create_table "i_calendar_entries", force: :cascade do |t|
