@@ -1,10 +1,16 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
+  <%= render partial: "shared/tabnav" %>
   <%= render partial: "timeline/search_bar" %>
 
-  <div class="pt-4">
-    <h1>Search</h1>
+  <% unless FeatureFlag[:redesign] %>
+    <div class="pt-4">
+      <h1>Search</h1>
+  <% else %>
+    <hr class="mb-0">
+    <div>
+  <% end %>
     <div class="TimelineItem-start"></div>
     <% @entries&.each do |day, entries| %>
       <div>

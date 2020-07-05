@@ -12,17 +12,27 @@
     </details>
   </div>
 
-  <div class="mb-3">
-    <% unless FeatureFlag[:redesign] %>
+  <% unless FeatureFlag[:redesign] %>
+    <div class="mb-3">
       <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4>
       <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
       <h4><a href="<%= agenda_path(notebook: @current_notebook) %>"><%= octicon "watch" %> This Day</a></h4>
       <h4><a href="<%= calendar_weekly_path(notebook: @current_notebook) %>"><%= octicon "list-unordered" %> This Week</a></h4>
       <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> This Month</a></h4>
       <h4><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
-    <% end %>
 
+    </div>
+  <% else %>
+  <% end %>
+
+  <div class="mb-3">
+    <h4>Saved Searches</h4>
+    <h4><a href="<%= search_path(notebook: @current_notebook, query: '"- [ ]"')%>">TODO tasks</a></h4>
+    <h4><a href="<%= search_path(notebook: @current_notebook, query: '#meeting')%>">#meeting</a></h4>
+    <h4><a href="<%= search_path(notebook: @current_notebook, query: '#daily')%>">#daily</a></h4>
+    <h4><a href="<%= search_path(notebook: @current_notebook, query: '#winddown')%>">#winddown</a></h4>
   </div>
+
 
   <div class="mb-3">
     <h4>Recent Entries</h4>

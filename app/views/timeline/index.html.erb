@@ -1,15 +1,19 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
+  <%= render partial: "shared/tabnav" %>
   <%= render partial: "timeline/search_bar" %>
 
-  <div class="pt-4">
-    <% unless FeatureFlag[:redesign] %>
+  <% unless FeatureFlag[:redesign] %>
+    <div class="pt-4">
       <div>
         <h1 class="d-inline">Timeline</h1>
         <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
       </div>
-    <% end %>
+    <% else %>
+      <hr class="mb-0">
+      <div>
+      <% end %>
 
     <div class="TimelineItem-start"></div>
 

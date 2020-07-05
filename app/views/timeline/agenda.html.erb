@@ -2,6 +2,7 @@
 
 <div class="content-container">
   <% if FeatureFlag[:redesign] %>
+    <%= render partial: "shared/tabnav" %>
     <%= render partial: "timeline/search_bar" %>
   <% else %>
     <div class="pt-2 pagehead">

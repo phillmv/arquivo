@@ -3,8 +3,7 @@
 <div class="content-container">
 
   <% if FeatureFlag[:redesign] %>
-    <%= render partial: "timeline/search_bar" %>
-    <hr>
+    <%= render partial: "shared/tabnav" %>
   <% else %>
     <div class="pagehead">
       <h1>Calendar</h1>
