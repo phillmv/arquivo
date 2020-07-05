@@ -11,14 +11,16 @@
 
   <div class="TimelineItem-start"></div>
 
-  <div class="TimelineItem">
-    <div class="TimelineItem-badge bg-blue text-white">
-      <%= octicon("list-unordered") %>
+  <% if @reminder_entry %>
+    <div class="TimelineItem">
+      <div class="TimelineItem-badge bg-blue text-white">
+        <%= octicon("list-unordered") %>
+      </div>
+      <h3>Recent #winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
     </div>
-    <h3>Recent #winddown (<a href="<%= calendar_daily_path(@reminder_entry_date, notebook: @current_notebook)%>"><%= @reminder_entry_date %></a>)</h3>
-  </div>
 
-  <%= render partial: "entries/list_entry", locals: { entry: @reminder_entry } %>
+    <%= render partial: "entries/list_entry", locals: { entry: @reminder_entry } %>
+  <% end %>
 
 
   <div>
