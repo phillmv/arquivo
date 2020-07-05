@@ -1,12 +1,17 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
-  <%# <%= render partial: "timeline/search_bar" %>
+  <% if FeatureFlag[:redesign] %>
+    <%= render partial: "timeline/search_bar" %>
+  <% else %>
+    <div class="pt-2 pagehead">
+      <h1>Today, <%= @todays_date %></h1>
+    </div>
+  <% end %>
 
-  <div class="pagehead">
-    <h1>Today, <%= @todays_date %></h1>
-  </div>
-
+  <% if FeatureFlag[:redesign] %>
+    <hr>
+  <% end %>
   <%= render 'entries/form', entry: @entry, skip_cancel: true, skip_metadata: true %>
 
   <div class="TimelineItem-start"></div>

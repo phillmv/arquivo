@@ -1,9 +1,15 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
-  <div class="pagehead">
-    <h1>Calendar</h1>
-  </div>
+
+  <% if FeatureFlag[:redesign] %>
+    <%= render partial: "timeline/search_bar" %>
+    <hr>
+  <% else %>
+    <div class="pagehead">
+      <h1>Calendar</h1>
+    </div>
+  <% end %>
   <%= week_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
       <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block">

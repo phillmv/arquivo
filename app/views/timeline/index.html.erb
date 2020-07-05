@@ -4,7 +4,13 @@
   <%= render partial: "timeline/search_bar" %>
 
   <div class="pt-4">
-    <h1>Timeline</h1>
+    <% unless FeatureFlag[:redesign] %>
+      <div>
+        <h1 class="d-inline">Timeline</h1>
+        <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
+      </div>
+    <% end %>
+
     <div class="TimelineItem-start"></div>
 
     <% @entries&.each do |day, entries| %>
