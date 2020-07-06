@@ -3,16 +3,13 @@
 <div class="content-container">
   <% if FeatureFlag[:redesign] %>
     <%= render partial: "shared/tabnav" %>
-    <%= render partial: "timeline/search_bar" %>
+    <%# <%= render partial: "timeline/search_bar" %>
   <% else %>
     <div class="pt-2 pagehead">
       <h1>Today, <%= @todays_date %></h1>
     </div>
   <% end %>
 
-  <% if FeatureFlag[:redesign] %>
-    <hr>
-  <% end %>
   <%= render 'entries/form', entry: @entry, skip_cancel: true, skip_metadata: true %>
 
   <div class="TimelineItem-start"></div>
