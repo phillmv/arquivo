@@ -1,6 +1,7 @@
 module ApplicationHelper
   TABNAV_OPTS = {
     "timeline/index" => :timeline,
+    "timeline/search" => :timeline,
     "timeline/agenda" => :this_day,
     "calendar/weekly" => :this_week,
     "calendar/monthly" => :this_month,
