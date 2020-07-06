@@ -32,7 +32,7 @@ gem "commonmarker"
 gem "octicons"
 gem "octicons_helper"
 gem "html-pipeline"
-gem "sanitize", '~> 4.6'
+gem "sanitize", '~> 5.2'
 gem "escape_utils", '~> 1.0'
 gem 'deckar01-task_list'
 
