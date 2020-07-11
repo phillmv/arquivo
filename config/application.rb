@@ -20,6 +20,7 @@ module Arquivo
     if hostname = ENV.fetch("HOSTNAME", nil)
       config.hosts << hostname
     end
+    config.hosts << "arquivo.localhost"
 
     # simple_calendar config
     config.beginning_of_week = :sunday
