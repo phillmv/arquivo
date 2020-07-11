@@ -9,18 +9,20 @@ Rails.application.routes.draw do
     get '/calendar/weekly', to: "calendar#weekly", as: :calendar_weekly
     get '/calendar/:date', to: "calendar#daily", as: :calendar_daily
 
+    get "/settings", to: "settings#index", as: :settings
+    post "/settings/add_calendar", to: "settings#add_calendar", as: :add_calendar
 
     post "/", to: "entries#create", as: :create_entry
     get "/", to: redirect("/%{notebook}/timeline")
     get '/entries', to: "entries#index"
+    get '/save', to: "entries#save_bookmark"
+    post "/create_or_update", to: "entries#create_or_update", as: :create_or_update_entry
+    patch "/create_or_update", to: "entries#create_or_update"
     resources :entries, path: "/" do
       member do
         get "files/:filename", to: "entries#files", as: :file_path
       end
     end
-
-    get "/settings", to: "settings#index", as: :settings
-    post "/settings/add_calendar", to: "settings#add_calendar", as: :add_calendar
   end
 
   root to: "timeline#index"

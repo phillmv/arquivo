@@ -1,11 +1,14 @@
-<% if entry.new_record? %>
+<% skip_cancel = defined?(skip_cancel) ? skip_cancel : false %>
+<% skip_metadata = defined?(skip_metadata) ? skip_metadata : false %>
+<% bookmark = defined?(bookmark) ? bookmark : false %>
+
+<% if bookmark %>
+  <% url = create_or_update_entry_path(notebook: @current_notebook) %>
+<% elsif entry.new_record? %>
   <% url = create_entry_path(notebook: @current_notebook) %>
 <% else %>
   <% url = entry_path(entry, notebook: @current_notebook) %>
 <% end %>
-
-<% skip_cancel = defined?(skip_cancel) ? skip_cancel : false %>
-<% skip_metadata = defined?(skip_metadata) ? skip_metadata : false %>
 
 <%= form_with(model: entry, url: url, local: true) do |form| %>
   <% if @parent_entry %>
@@ -36,28 +39,41 @@
     </div>
   <% end %>
 
+  <% if bookmark %>
+    <div class="form-group">
+      <%= form.label :url %>
+      <%= form.text_field :url, class: "form-control input-block" %>
+    </div>
+    <div class="form-group">
+      <%= form.label :subject %>
+      <%= form.text_field :subject, class: "form-control input-block" %>
+    </div>
+  <% end %>
+
   <div class="form-group">
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
     <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
-    <%= form.file_field :files, multiple: true, direct_upload: true %>
+    <% unless bookmark %>
+      <%= form.file_field :files, multiple: true, direct_upload: true %>
 
-    <% if @entry.files.attached? %>
-      <div class="pt-2">
-        <h4>Attached files:</h4>
-        <table class="col-12">
-          <% @entry.files.each do |file| %>
-            <tr>
-              <td class="col-10">
-                <%= form.hidden_field :files, multiple: true, value: file.signed_id %>
-              <a href="<%= url_for(file)%>"><%= file.filename %></a></td>
-              <td>
-                <a href="">delete</a>
-              </td>
+      <% if @entry.files.attached? %>
+        <div class="pt-2">
+          <h4>Attached files:</h4>
+          <table class="col-12">
+            <% @entry.files.each do |file| %>
+              <tr>
+                <td class="col-10">
+                  <%= form.hidden_field :files, multiple: true, value: file.signed_id %>
+                  <a href="<%= url_for(file)%>"><%= file.filename %></a></td>
+                <td>
+                  <a href="">delete</a>
+                </td>
 
-            </tr>
-          <% end %>
-        </table>
-      </div>
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
     <% end %>
   </div>
 

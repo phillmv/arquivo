@@ -4,6 +4,13 @@
     <h1>Settings for <%= octicon "book", height: 32 %> <%= @current_notebook %></h1>
   </div>
 
+  <h3>Bookmarklet</h3>
+  <div>
+    <p>
+    Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.localhost/<%= @current_notebook %>/save?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));">Save(<%= @current_notebook %>)</a>
+    </p>
+  </div>
+
   <h2>Calendars</h2>
   <hr>
   <div class="simple-calendar">
@@ -26,6 +33,7 @@
     </table>
   </div>
 
+  <% if false %>
   <br>
   <div class="d-table table-fixed width-full">
   <div class="d-table-cell border">
@@ -63,7 +71,7 @@
   </div>
 </div>
 
-
+<% end %>
 
 
   <div>

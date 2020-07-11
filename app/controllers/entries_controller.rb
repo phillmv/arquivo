@@ -26,6 +26,38 @@ class EntriesController < ApplicationController
     end
   end
 
+  def save_bookmark
+    entry_attributes = bookmark_params.slice(:url, :subject)
+    entry_attributes[:occurred_at] = Time.now
+
+    @entry = Entry.for_notebook(current_notebook).find_by_url(entry_attributes[:url])
+    @entry ||= Entry.new(entry_attributes)
+  end
+
+  # create for bookmarks has to work differently.
+  def create_or_update
+    if @entry = Entry.for_notebook(current_notebook).find_by_url(entry_params[:url])
+    else
+      @entry = Entry.new(entry_params)
+      @entry.kind = "pinboard"
+      @entry.notebook = current_notebook
+      @entry.occurred_at ||= Time.now
+    end
+
+    respond_to do |format|
+      if (@entry.new_record? && @entry.save) || @entry.update(entry_params)
+        format.html do
+          render "entries/success_close_window"
+          # redirect_to timeline_path(notebook: current_notebook), notice: 'Entry was successfully created.'
+        end
+        format.json { render :show, status: :created, location: @entry }
+      else
+        format.html { render :new }
+        format.json { render json: @entry.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   # GET /entries/1/edit
   def edit
   end
@@ -105,6 +137,10 @@ class EntriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
-      params.require(:entry).permit(:body, :occurred_at, :in_reply_to, :hide, files: [])
+      params.require(:entry).permit(:body, :url, :subject, :occurred_at, :in_reply_to, :hide, files: [])
+    end
+
+    def bookmark_params
+      params.permit(:body, :url, :subject)
     end
 end

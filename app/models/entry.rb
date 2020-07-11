@@ -20,11 +20,17 @@ class Entry < ApplicationRecord
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
+  validates :identifier, uniqueness: true
   before_create :set_identifier
   after_save :process_tags
 
   def set_identifier
-    self.identifier ||= Entry.generate_identifier(occurred_at)
+    if self.bookmark?
+      # TODO: pinboard uses MD5, do I have to use MD5??
+      self.identifier = Digest::MD5.hexdigest(self.url)
+    else
+      self.identifier ||= Entry.generate_identifier(occurred_at)
+    end
   end
 
   # We use the OLC alphabet to minimize chances of spelling dumb words
@@ -51,6 +57,12 @@ class Entry < ApplicationRecord
     suffix = suffix.tr(B20_ALPHABET, OLC_ALPHABET).first(7)
 
     str + "-" + suffix
+  end
+
+  # TODO: what do i gain over just search url column?
+  # will i never index the url field?
+  def self.find_by_url(url)
+    find_by(identifier: Digest::MD5.hexdigest(url))
   end
 
   def process_tags

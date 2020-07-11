@@ -1,0 +1,9 @@
+<%= render partial: "shared/sidebar" %>
+
+<div class="content-container">
+  <div class="pagehead">
+    <h1>New Bookmark</h1>
+  </div>
+
+  <%= render 'form', entry: @entry, skip_metadata: true, skip_cancel: true, bookmark: true %>
+</div>
