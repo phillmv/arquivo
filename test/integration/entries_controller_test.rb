@@ -6,7 +6,7 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "save a bookmark" do
-    get "/#{@current_notebook}/save", params: { url: "http://example.com", subject: "foo" }
+    get save_bookmark_path(notebook: @current_notebook), params: { url: "http://example.com", subject: "foo" }
     assert_response :success
 
     assert_select('input[value="http://example.com"]')
@@ -38,7 +38,7 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
     assert_equal "#with #tags #now lol", bookmark.body
 
     # hitting /save on an existing bookmark brings up its deets
-    get "/#{@current_notebook}/save", params: { url: "http://example.com", subject: "foo" }
+    get save_bookmark_path(notebook: @current_notebook), params: { url: "http://example.com", subject: "foo" }
 
     assert_select('input[value="a different subject"]')
     # where did the \n come from in the textarea?, strip for now

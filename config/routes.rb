@@ -15,7 +15,7 @@ Rails.application.routes.draw do
     post "/", to: "entries#create", as: :create_entry
     get "/", to: redirect("/%{notebook}/timeline")
     get '/entries', to: "entries#index"
-    get '/save', to: "entries#save_bookmark"
+    get '/save_bookmark', to: "entries#save_bookmark", as: :save_bookmark
     post "/create_or_update", to: "entries#create_or_update", as: :create_or_update_entry
     patch "/create_or_update", to: "entries#create_or_update"
     resources :entries, path: "/" do
