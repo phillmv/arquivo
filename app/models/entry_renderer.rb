@@ -72,6 +72,6 @@ class EntryRenderer
 
   # TODO: fold this into the HashtagFilter, maybe?
   def extract_tags
-    entry.body.scan(HASHTAG_REGEX).flatten
+    entry.body&.scan(HASHTAG_REGEX)&.flatten || []
   end
 end
