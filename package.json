@@ -4,7 +4,7 @@
   "dependencies": {
     "@github/file-attachment-element": "^1.0.2",
     "@github/textarea-autosize": "^0.2.0",
-    "@primer/css": "primer/css",
+    "@primer/css": "14.4.0",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",

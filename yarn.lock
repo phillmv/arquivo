@@ -702,9 +702,10 @@
   resolved "https://registry.yarnpkg.com/@github/textarea-autosize/-/textarea-autosize-0.2.0.tgz#5d1bccf3513cc64e48a427d9f6c29a7ce06a3f06"
   integrity sha512-ff7eDuJHYL/hwhf8flUhajQVuZIvEyDjfbHuqIBhLJhic5RfYrpYgjjaQc6+2Hjf6w0cUj/JnSmtpGt3ILN9cA==
 
-"@primer/css@primer/css":
-  version "14.2.0"
-  resolved "https://codeload.github.com/primer/css/tar.gz/17dabe3d0aadebce21d9c7c694a939ddced9244a"
+"@primer/css@14.4.0":
+  version "14.4.0"
+  resolved "https://registry.yarnpkg.com/@primer/css/-/css-14.4.0.tgz#7a131411dd38890e9019f804a3cd0663b17575fc"
+  integrity sha512-o9DwcAH43jZNDC/rPLjsYTU/I1LsHIgIQlSO3X8vZV2u65LmWeA5jHI2cSadZYN3N0Gm0Soh0zVYuhh7kMskXA==
   dependencies:
     "@primer/octicons" "^9.1.1"
 
