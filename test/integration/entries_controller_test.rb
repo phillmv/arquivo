@@ -20,6 +20,8 @@ class EntriesControllerTest < ActionDispatch::IntegrationTest
     assert 1, Entry.count
     bookmark = Entry.last
 
+    assert bookmark.bookmark?
+
     assert_equal Digest::MD5.hexdigest("http://example.com"), bookmark.identifier
     assert_equal "foo", bookmark.subject
     assert_equal "lol", bookmark.body
