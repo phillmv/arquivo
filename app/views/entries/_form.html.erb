@@ -1,6 +1,12 @@
 <% skip_cancel = defined?(skip_cancel) ? skip_cancel : false %>
 <% skip_metadata = defined?(skip_metadata) ? skip_metadata : false %>
 <% bookmark = defined?(bookmark) ? bookmark : false %>
+<%# when we hit create_or_update from outside the bookmarklet, we will want to
+  redirect back to the timeline or per normal, as opposed to trying to window.close.
+  now the third time i have to special case this form, this is a strong smell
+  that i should just have a bookmark form separate from normal entry form
+%>
+<% outside_of_bookmarklet = defined?(outside_of_bookmarklet) ? outside_of_bookmarklet : false %>
 
 <% if bookmark %>
   <% url = create_or_update_entry_path(notebook: @current_notebook) %>
@@ -10,21 +16,10 @@
   <% url = entry_path(entry, notebook: @current_notebook) %>
 <% end %>
 
+
 <%= form_with(model: entry, url: url, local: true) do |form| %>
   <% if @parent_entry %>
     <%= form.hidden_field :in_reply_to,  value: @parent_entry.identifier %>
-  <% end %>
-
-  <% unless skip_metadata %>
-    <div class="pb-5">
-      <details class="details-reset float-left">
-        <summary class="btn mr-2">Metadata</summary>
-        <dl class="form-group">
-          <dt><%= form.label :occurred_at %></dt>
-          <dd><%= form.text_field :occurred_at, class: "form-control input-sm" %></dd>
-        </dl>
-      </details>
-    </div>
   <% end %>
 
   <% if entry.errors.any? %>
@@ -42,8 +37,24 @@
   <% if bookmark %>
     <%= form.text_field :url, class: "form-control input-block" %>
     <br/>
-      <%= form.text_field :subject, class: "form-control input-block" %>
+    <%= form.text_field :subject, class: "form-control input-block" %>
+    <% if outside_of_bookmarklet %>
+      <%= hidden_field_tag :outside_of_bookmarklet, true %>
+    <% end %>
   <% end %>
+
+    <% unless skip_metadata %>
+      <div class="pb-5">
+        <details class="details-reset float-left">
+          <summary class="btn mr-2">Metadata</summary>
+          <dl class="form-group">
+            <dt><%= form.label :occurred_at %></dt>
+            <dd><%= form.text_field :occurred_at, class: "form-control input-sm" %></dd>
+          </dl>
+        </details>
+      </div>
+    <% end %>
+
 
   <div class="form-group">
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>

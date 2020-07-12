@@ -8,5 +8,10 @@ FactoryBot.define do
     trait :calendar do
       kind { "calendar" }
     end
+
+    trait :bookmark do
+      url { Faker::Internet.url(host: "example.com") }
+      kind { "pinboard" }
+    end
   end
 end

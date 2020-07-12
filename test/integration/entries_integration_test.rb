@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class EntriesControllerTest < ActionDispatch::IntegrationTest
+class EntriesIntegrationTest < ActionDispatch::IntegrationTest
   setup do
     @current_notebook = Notebook.create(name: "test")
   end

@@ -8,5 +8,13 @@
       <h4><a href="<%= entry.url %>" target="_blank" class="text-gray-dark"><%= entry.subject%></a></h2>
       <div class="mt-2"><%= EntryRenderer.new(entry).to_html %></div>
     </div>
+
+    <div class="entry-list-header">
+        <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
+          <%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %>
+        </a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
+          <%= octicon("pencil") %> edit
+        </a>
+      </div>
   </div>
 </div>

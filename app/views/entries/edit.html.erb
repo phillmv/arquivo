@@ -5,6 +5,6 @@
     <h1>Editing Entry</h1>
   </div>
 
-  <%= render 'form', entry: @entry %>
+  <%= render 'form', entry: @entry, bookmark: @entry.bookmark?, skip_metadata: @entry.bookmark?, outside_of_bookmarklet: true %>
 
 </div>

@@ -36,6 +36,10 @@ class EntriesController < ApplicationController
 
   # create for bookmarks has to work differently.
   def create_or_update
+    if entry_params[:url].nil?
+      raise ActionController::RoutingError.new('Not Found')
+    end
+
     if @entry = Entry.for_notebook(current_notebook).find_by_url(entry_params[:url])
     else
       @entry = Entry.new(entry_params)
@@ -47,8 +51,13 @@ class EntriesController < ApplicationController
     respond_to do |format|
       if (@entry.new_record? && @entry.save) || @entry.update(entry_params)
         format.html do
-          render "entries/success_close_window"
-          # redirect_to timeline_path(notebook: current_notebook), notice: 'Entry was successfully created.'
+          # TODO: test/refactor this dumb behaviour
+          if params[:outside_of_bookmarklet]
+            # redirect_to timeline_path(notebook: current_notebook)
+            redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully updated.'
+          else
+            render "entries/success_close_window"
+          end
         end
         format.json { render :show, status: :created, location: @entry }
       else
