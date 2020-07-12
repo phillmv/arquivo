@@ -12,7 +12,7 @@ class TimelineController < ApplicationController
     @todays_date = Time.current.strftime("%Y-%m-%d")
     @entries = current_notebook.entries.today.visible.order(occurred_at: :asc)
 
-    @reminder_entry = Search.find(notebook: @current_notebook, query: "#winddown").first
+    @reminder_entry = Search.find(notebook: @current_notebook, query: "#winddown").where("occurred_at < ?", Time.current.beginning_of_day).first
     @reminder_entry_date = @reminder_entry&.occurred_at&.strftime("%Y-%m-%d")
 
     @entry = Entry.new(occurred_at: Time.now)
