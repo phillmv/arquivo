@@ -1,6 +1,6 @@
 class CalendarController < ApplicationController
   def monthly
-    query_date = params[:start_date]&.to_date || Time.zone.now
+    query_date = params[:start_date]&.to_datetime || Time.current
 
     start_date = query_date.beginning_of_month
     end_date = query_date.end_of_month
