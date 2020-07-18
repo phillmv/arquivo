@@ -14,8 +14,9 @@ class Entry < ApplicationRecord
   scope :today, -> { where("occurred_at >= ? and occurred_at <= ?", Time.current.beginning_of_day, Time.current.end_of_day) }
 
   scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }
-
   scope :calendars, -> { where(kind: "calendar") }
+  scope :bookmarks, -> { where(kind: "pinboard") }
+  scope :not_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
 
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
