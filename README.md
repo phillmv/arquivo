@@ -11,13 +11,29 @@ rails db:setup
 
 rails c
 ```
+
+App assumes there's a Notebook called "journal", and you will want to create a few more at your leisure.
+
 ```ruby
 Notebook.create(name: "journal") # default notebook
 
 Notebook.create(name: "work")
-CalendarHandler.new("work", "http://example.com/path-to.ics"); ch.process!
-exit
 ```
+
+A notebook gets more useful once you add a calendar import:
+
+```ruby
+CalendarImport.create(notebook: "your-notebook-here",
+                      title: "name-of-calendar",
+                      url: "http://example.com/path-to.ics");
+
+# to manually process it:
+UpdateCalendarsJob.perform_now!
+
+```
+
+Then just start the server:
+
 ```bash
 rails s
 
@@ -28,10 +44,13 @@ forego start
 
 visit http://localhost:3000/work/timeline
 
-## Backup
+## Import / Export
 
-```
+Meant to sync notebooks between machines. This works quite well with Dropbox.
+
+```bash
 rails runner 'Exporter.new("/your/path/here").export!'
+rails runner 'Importer.new("/your/path/here").import!'
 ```
 
 # Developing
@@ -49,5 +68,5 @@ you can use the provided `nix-shell` configuration.
 ## Customizing the hostname
 
 ```
-echo "HOSTNAME=yourlocalhostname" >> .env.development
+echo "HOSTNAME=arquivo.localhost" >> .env.development
 ```
