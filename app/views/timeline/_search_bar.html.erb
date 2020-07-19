@@ -7,22 +7,23 @@
         <%= octicon "search", class: "subnav-search-icon", style: "z-index: 3" %>
       </div>
 
-      <!-- <span class="input&#45;group&#45;button"> -->
-      <!--  -->
-      <!--   <details class="dropdown details&#45;reset details&#45;overlay "> -->
-      <!--     <summary class="btn" aria&#45;haspopup="true" style="margin&#45;left: &#45;2px"> -->
-      <!--       Filter -->
-      <!--       <div class="dropdown&#45;caret"></div> -->
-      <!--     </summary> -->
-      <!--  -->
-      <!--     <ul class="dropdown&#45;menu dropdown&#45;menu&#45;sw" style="top: 34px"> -->
-      <!--       <li><a class="dropdown&#45;item" href="#url">Bookmarks</a></li> -->
-      <!--       <li><a class="dropdown&#45;item" href="#url">Calendar</a></li> -->
-      <!--       <li class="dropdown&#45;divider" role="separator"></li> -->
-      <!--       <li><a class="dropdown&#45;item" href="#url">Only Bookmarks</a></li> -->
-      <!--     </ul> -->
-      <!--   </details> -->
-      <!-- </span> -->
+      <span class="input-group-button">
+
+        <details class="dropdown details-reset details-overlay ">
+          <summary class="btn" aria-haspopup="true" style="margin-left: -2px">
+            Add Filter
+            <div class="dropdown-caret"></div>
+          </summary>
+
+          <ul class="dropdown-menu dropdown-menu-sw search-filter" style="top: 34px">
+            <li><a class="dropdown-item" href="" data-filter="is:bookmark">Only Bookmarks</a></li>
+            <li><a class="dropdown-item" href="" data-filter="is:calendar">Only Calendar</a></li>
+            <li class="dropdown-divider" role="separator"></li>
+            <li><a class="dropdown-item" href="" data-filter="not:bookmarks">No Bookmarks</a></li>
+            <li><a class="dropdown-item" href="" data-filter="not:calendar">No Calendar</a></li>
+          </ul>
+        </details>
+      </span>
 
       <!-- <div class="col&#45;2 float&#45;left"> -->
       <%# <%= form.submit "Search", class: "btn btn-sm" %>

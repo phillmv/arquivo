@@ -14,12 +14,14 @@ document.addEventListener("turbolinks:load", function(){
   setTextAreaHandler();
   setFileUploadHandler();
   setEntryFoldToggleHandler();
+  setFilterHandler();
 });
 
 document.addEventListener("DOMContentLoaded", function(){
   setTextAreaHandler();
   setFileUploadHandler();
   setEntryFoldToggleHandler();
+  setFilterHandler();
 
   /* TODO: deprecated, used to work, left here for reference only, for now
   var new_entry_input;
@@ -53,6 +55,24 @@ document.addEventListener("DOMContentLoaded", function(){
   }*/
 });
 
+
+function setFilterHandler() {
+  var filter_dropdown_links, link, selected_filter;
+
+  filter_dropdown_links = document.querySelectorAll("ul.search-filter a")
+  for (let dropdown_link of filter_dropdown_links) {
+    dropdown_link.addEventListener("click", (e) => {
+      e.preventDefault();
+      link = e.currentTarget;
+
+      selected_filter = link.dataset.filter;
+      if (document.searchform.search_query.value.indexOf(selected_filter) == -1) {
+        document.searchform.search_query.value =  `${document.searchform.search_query.value} ${selected_filter}`
+      }
+      link.closest("form").submit();
+    });
+  }
+}
 // 1. always autosize textareas,
 // 2. always scroll to the bottom of the input
 function setTextAreaHandler() {
