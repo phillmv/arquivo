@@ -79,6 +79,7 @@ class ExportImportTest < ActiveSupport::TestCase
         assert_equal e.export_attributes, entry.export_attributes
 
         # TODO: also do something with attachments
+        # TODO: handle two entries with the same identifier but different notebooks
       end
     end
   end
