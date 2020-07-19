@@ -3,54 +3,26 @@ import autosize from '@github/textarea-autosize';
 import { DirectUpload} from "@rails/activestorage";
 
 // press control L to get to the search field
-document.onkeyup = function(e) { 
-  if(e.ctrlKey && e.which == 76) { 
+document.onkeyup = function(e) {
+  if(e.ctrlKey && e.which == 76) {
     document.searchform.query.focus()
   }
 }
 
-// durr do i need both turbolinks:load and DOMContentLoad?
+// durr do i need both turbolinks:load *and* DOMContentLoad?
 document.addEventListener("turbolinks:load", function(){
-  var existing_textarea, file_input;
-
-  if(existing_textarea = document.querySelector("textarea")) {
-    autosize(existing_textarea);
-    var len = existing_textarea.value.length;
-    existing_textarea.setSelectionRange(len, len);
-    existing_textarea.scrollTop = existing_textarea.scrollHeight;
-  }
-
-  file_input = document.querySelector('input[type=file]');
-
-  // handling uploads
-  // Bind to normal file selection
-  if(file_input) {
-    file_input.addEventListener('change', (event) => {
-      Array.from(file_input.files).forEach(file => uploadFile(file, file_input))
-      // you might clear the selected files from the input
-      file_input.value = null
-    })
-  }
-
-  // add event listener for handling fold & unfold links:
-  document.querySelectorAll('.trigger-fold').forEach(function(elem) { 
-    elem.addEventListener("click", function(e) {
-      e.preventDefault();
-      this.closest(".Box-body").classList.toggle("truncate")
-    })
-  });
-
+  setTextAreaHandler();
+  setFileUploadHandler();
+  setEntryFoldToggleHandler();
 });
 
 document.addEventListener("DOMContentLoaded", function(){
-  var existing_textarea, new_entry_input;
+  setTextAreaHandler();
+  setFileUploadHandler();
+  setEntryFoldToggleHandler();
 
-  if(existing_textarea = document.querySelector("textarea")) {
-    autosize(existing_textarea);
-    var len = existing_textarea.value.length;
-    existing_textarea.setSelectionRange(len, len);
-    existing_textarea.scrollTop = existing_textarea.scrollHeight;
-  }
+  /* TODO: deprecated, used to work, left here for reference only, for now
+  var new_entry_input;
 
   if (document.searchform) {
     // pressing tab from the search form should move to the new entry form
@@ -77,10 +49,50 @@ document.addEventListener("DOMContentLoaded", function(){
           e.preventDefault();
         }
       });
-    }
-  }
+    } 
+  }*/
 });
 
+// 1. always autosize textareas,
+// 2. always scroll to the bottom of the input
+function setTextAreaHandler() {
+  var existing_textarea;
+  if(existing_textarea = document.querySelector("textarea")) {
+    autosize(existing_textarea);
+
+    var len = existing_textarea.value.length;
+    existing_textarea.setSelectionRange(len, len);
+    existing_textarea.scrollTop = existing_textarea.scrollHeight;
+  }
+}
+
+function setFileUploadHandler() {
+  var file_input;
+
+  file_input = document.querySelector('input[type=file]');
+
+  // handling uploads
+  // Bind to normal file selection
+  if(file_input) {
+    file_input.addEventListener('change', (event) => {
+      Array.from(file_input.files).forEach(file => uploadFile(file, file_input))
+      // you might clear the selected files from the input
+      file_input.value = null
+    })
+  }
+}
+
+function setEntryFoldToggleHandler() {
+  // add event listener for handling fold & unfold links:
+  document.querySelectorAll('.trigger-fold').forEach(function(elem) {
+    elem.addEventListener("click", function(e) {
+      e.preventDefault();
+      this.closest(".Box-body").classList.toggle("truncate")
+    })
+  });
+}
+
+// handles directupload to form, injecting url back into textarea
 const uploadFile = (file, file_input) => {
   // your form needs the file_field direct_upload: true, which
   //  provides data-direct-upload-url
@@ -109,6 +121,8 @@ const uploadFile = (file, file_input) => {
     }
   })
 }
+
+
 
 
 // import Turbolinks from 'turbolinks';
