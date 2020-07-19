@@ -16,12 +16,12 @@ class Entry < ApplicationRecord
   scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }
   scope :calendars, -> { where(kind: "calendar") }
   scope :bookmarks, -> { where(kind: "pinboard") }
-  scope :not_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
+  scope :except_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
 
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
-  validates :identifier, uniqueness: true
+  validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   after_save :process_tags
 
