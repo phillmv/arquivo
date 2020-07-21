@@ -13,8 +13,18 @@
 
 .content-container {
   @extend .float-left;
-  @extend .col-lg-6, .col-sm-10, .offset-sm-1;
-  @extend .mb-lg-4, .ml-lg-4;
+  @extend .col-10, .offset-1;
+  // .ml-lg cancels .offset-1
+  @extend .col-lg-6, .ml-lg-4;
+  @extend .mb-lg-4;
+}
+
+.calendar-container {
+  @extend .float-left;
+  @extend .col-10, .offset-1;
+  // .ml-lg-0 cancels the offset
+  @extend .ml-lg-0, .pl-lg-4;
+  @extend .mb-lg-4;
 }
 
 .main-sidebar {
