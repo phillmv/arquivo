@@ -137,7 +137,7 @@ class Entry < ApplicationRecord
     "#{identifier}.yaml"
   end
 
-  def truncated_description
-    (subject || body).truncate(30)
+  def truncated_description(n = 30)
+    (subject || body).truncate(n)
   end
 end

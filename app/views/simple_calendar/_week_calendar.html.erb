@@ -13,7 +13,12 @@
     <thead>
       <tr>
         <% date_range.slice(0, 7).each do |day| %>
-          <th><%= t('date.abbr_day_names')[day.wday] %></th>
+          <th>
+
+      <a href="<%= calendar_daily_path(day, notebook: @current_notebook) %>" style="width: 100%; display: block" class="link-gray-dark text-underline">
+        <h4><%= t('date.abbr_day_names')[day.wday] %> <%= day.day %></h4>
+      </a>
+          </th>
         <% end %>
       </tr>
     </thead>
