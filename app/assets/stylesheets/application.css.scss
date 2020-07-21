@@ -13,13 +13,13 @@
 
 .content-container {
   @extend .float-left;
-  @extend .col-11, .col-md-8;
-  @extend .mb-4, .ml-4;
+  @extend .col-lg-6, .col-sm-10, .offset-sm-1;
+  @extend .mb-lg-4, .ml-lg-4;
 }
 
 .main-sidebar {
   @extend .float-left;
-  @extend .col-3, .hide-sm, .hide-md;
+  @extend .col-2, .hide-sm, .hide-md;
   @extend .pl-4;
 }
 
