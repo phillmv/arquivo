@@ -104,10 +104,17 @@ function setFileUploadHandler() {
 
 function setEntryFoldToggleHandler() {
   // add event listener for handling fold & unfold links:
-  document.querySelectorAll('.trigger-fold').forEach(function(elem) {
+  document.querySelectorAll('.show-on-fold').forEach(function(elem) {
     elem.addEventListener("click", function(e) {
       e.preventDefault();
-      this.closest(".Box-body").classList.toggle("truncate")
+      this.closest(".Box-body").classList.remove("truncate");
+    })
+  });
+
+  document.querySelectorAll('.hide-on-fold').forEach(function(elem) {
+    elem.addEventListener("click", function(e) {
+      e.preventDefault();
+      this.closest(".Box-body").classList.add("truncate");
     })
   });
 }
