@@ -15,8 +15,8 @@
 
   <div class="">
 
-  <% if @entry.parent %>
-    <%= render partial: "entries/list_entry", locals: { entry: @entry.parent } %>
+    <% if @entry.parent %>
+    <%= render partial: "entries/thread_list_entry", locals: { entry: @entry.parent } %>
   <% end %>
 
 
@@ -58,7 +58,7 @@
   </div>
 
   <div class="form-actions mt-2 pt-3 border-top">
-    <a href="<%= new_entry_path(@entry, notebook: @entry.notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Add note</a>
+    <a href="<%= new_entry_path(notebook: @entry.notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Add note</a>
     <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(notebook: @current_notebook), class: "btn float-left" %>
   </div>
 </div>

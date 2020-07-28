@@ -1,0 +1,4 @@
+<% if entry.parent %>
+  <%= render partial: "entries/thread_list_entry", locals: { entry: entry.parent } %>
+<% end %>
+<%= render partial: "entries/list_entry", locals: { entry: entry } %>
