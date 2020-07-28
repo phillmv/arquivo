@@ -20,7 +20,8 @@ Rails.application.routes.draw do
     patch "/create_or_update", to: "entries#create_or_update"
     resources :entries, path: "/" do
       member do
-        get "files/:filename", to: "entries#files", as: :file_path
+        get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
+        post "direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload
       end
     end
   end

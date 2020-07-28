@@ -26,6 +26,7 @@ class Entry < ApplicationRecord
   after_save :process_tags
 
   def set_identifier
+    self.occurred_at ||= Time.current
     if self.bookmark?
       # TODO: pinboard uses MD5, do I have to use MD5??
       self.identifier = Digest::MD5.hexdigest(self.url)
@@ -138,6 +139,6 @@ class Entry < ApplicationRecord
   end
 
   def truncated_description(n = 30)
-    (subject || body).truncate(n)
+    (subject || body || "").truncate(n)
   end
 end

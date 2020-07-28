@@ -1,5 +1,5 @@
 class EntriesController < ApplicationController
-  before_action :set_entry, only: [:show, :edit, :update, :destroy]
+  before_action :set_entry, only: [:show, :edit, :update, :destroy, :files]
 
   # GET /entries
   # GET /entries.json
@@ -74,12 +74,11 @@ class EntriesController < ApplicationController
   # POST /entries
   # POST /entries.json
   def create
-    @entry = Entry.new(entry_params)
-    @entry.notebook = current_notebook
-    @entry.occurred_at ||= Time.now
+    @entry = @current_notebook.entries.find_by(identifier: create_entry_params[:identifier])
+    @entry ||= @current_notebook.entries.new(create_entry_params)
 
     respond_to do |format|
-      if @entry.save
+      if (@entry.new_record? && @entry.save) || @entry.update(entry_params)
         format.html do
           if request.referer =~ /agenda/
             redirect_back(fallback_location: timeline_path(notebook: current_notebook))
@@ -123,6 +122,12 @@ class EntriesController < ApplicationController
     end
   end
 
+  def files
+    blob = @entry.files.blobs.find_by!(filename: params[:filename])
+    expires_in ActiveStorage.service_urls_expire_in
+    redirect_to rails_blob_url(blob, disposition: params[:disposition])
+  end
+
   private
   # TODO: We can delete this now, right?
     def set_entry
@@ -147,6 +152,10 @@ class EntriesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
       params.require(:entry).permit(:body, :url, :subject, :occurred_at, :in_reply_to, :hide, files: [])
+    end
+
+    def create_entry_params
+      params.require(:entry).permit(:identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, files: [])
     end
 
     def bookmark_params

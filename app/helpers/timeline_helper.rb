@@ -1,6 +1,6 @@
 module TimelineHelper
   def truncate_class(entry)
-    if entry.body.size > 1024
+    if (entry.body&.size || 0) > 1024
       " truncate"
     else
       ""

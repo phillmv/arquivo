@@ -89,6 +89,7 @@ function setTextAreaHandler() {
 function setFileUploadHandler() {
   var file_input;
 
+  // TODO: surely a SelectorAll and a for loop better eh?
   file_input = document.querySelector('input[type=file]');
 
   // handling uploads
@@ -129,13 +130,14 @@ const uploadFile = (file, file_input) => {
   upload.create((error, blob) => {
     if (error) {
       alert(error);
+
     } else {
 
       var form = file_input.closest("form");
       var textarea = form.querySelector("textarea");
       // TODO: get this to distinguish between
       // images and non-images.
-      textarea.setRangeText(`\n![${blob.filename}](${blob.blob_path})`);
+      textarea.setRangeText(`\n![${blob.filename}](${blob.file_path})`);
 
       // Add an appropriately-named hidden input to the form with a
       //  value of blob.signed_id so that the blob ids will be
