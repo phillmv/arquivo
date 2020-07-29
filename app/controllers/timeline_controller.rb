@@ -34,4 +34,14 @@ class TimelineController < ApplicationController
       redirect_to timeline_path(notebook: current_notebook)
     end
   end
+
+  def todo
+    @search_query = '"- [ ]"'
+    @all_entries = Search.find(notebook: current_notebook,
+                               query: @search_query).paginate(page: params[:page])
+
+    @entries = @all_entries.group_by do |e|
+      e.occurred_at_date
+    end
+  end
 end

@@ -1,0 +1,32 @@
+<%= render partial: "shared/sidebar" %>
+
+<div class="content-container">
+  <%= render partial: "shared/tabnav" %>
+  <%= render partial: "timeline/search_bar" %>
+
+  <% unless FeatureFlag[:redesign] %>
+    <div class="pt-4">
+      <h1>Todo</h1>
+  <% else %>
+    <hr class="mb-0">
+    <div>
+  <% end %>
+    <div class="TimelineItem-start"></div>
+    <% @entries&.each do |day, entries| %>
+      <div>
+        <div class="TimelineItem">
+          <div class="TimelineItem-badge bg-blue text-white">
+            <%= octicon("calendar") %>
+          </div>
+          <h3><a href="<%= calendar_daily_path(day, notebook: @current_notebook)%>"><%= day %></a></h3>
+        </div>
+        <% entries.each do |entry| %>
+          <%= render partial: "entries/kinds/todo", locals: { entry: entry } %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= will_paginate @all_entries, class: "pagination mt-4 mb-4"%>
+</div>
+

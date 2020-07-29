@@ -1,5 +1,5 @@
 <div class="entry-box">
-  <div class="Box-body markdown-body <%= truncate_class(entry)%>">
+  <div class="Box-body markdown-body <%#= truncate_class(entry)%>">
     <div class="entry-list-header">
       <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
         <%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %>
@@ -12,6 +12,6 @@
           <%= octicon("telescope") %> parent</a><%end%>
   </div>
 
-    <%= EntryRenderer.new(entry).to_html %>
+  <%= EntryRenderer.new(entry).to_html("todo_body") %>
   </div>
 </div>

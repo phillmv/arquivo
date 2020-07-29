@@ -115,6 +115,10 @@ class Entry < ApplicationRecord
                           "updated_at")
   end
 
+  def todo_body
+    @todo_body ||= [body.lines.first, body.lines.select { |s| s.index("- [ ]") } ].join
+  end
+
   def to_param
     identifier
   end

@@ -63,6 +63,7 @@ class EntryRenderer
 
   def to_html(attribute_name = "body")
     attribute = entry.attributes[attribute_name]
+    attribute ||= entry.send(attribute_name) if attribute_name == "todo_body"
     if !attribute
       ""
     else
