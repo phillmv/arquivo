@@ -27,7 +27,7 @@
 
   <div class="mb-3">
     <h4>Saved Searches</h4>
-    <h4><a href="<%= search_path(notebook: @current_notebook, query: '"- [ ]"')%>">TODO tasks</a></h4>
+    <h4><a href="<%= todo_path(notebook: @current_notebook)%>">TODO tasks</a></h4>
     <h4><a href="<%= search_path(notebook: @current_notebook, query: '#meeting')%>">#meeting</a></h4>
     <h4><a href="<%= search_path(notebook: @current_notebook, query: '#daily')%>">#daily</a></h4>
     <h4><a href="<%= search_path(notebook: @current_notebook, query: '#winddown')%>">#winddown</a></h4>

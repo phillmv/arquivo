@@ -11,6 +11,32 @@ document.onkeyup = function(e) {
   }
 }
 
+// this fn submits the tasklist form to update the entry
+// its out here cos its adding an event on document
+// TODO: move this inside the fn below
+document.addEventListener("tasklist:changed", (e) => {
+  var list_elem = e.currentTarget.activeElement.parentElement
+  list_elem.classList.add("animate-flicker")
+  var form = e.target.closest("form")
+
+  fetch(form.action, {
+    method: form.method,
+    body: new FormData(form),
+    headers: {
+      "Accept": "application/json"
+    }
+  }).then((response) => {
+    if(response.status == 200) {
+      list_elem.classList.remove("animate-flicker")
+    }
+    else {
+      alert("yo, this checkbox failed to update, might want to refresh the page")
+    }
+  });
+
+});
+
+
 // durr do i need both turbolinks:load *and* DOMContentLoad?
 document.addEventListener("turbolinks:load", function(){
   setTextAreaHandler();
@@ -66,28 +92,6 @@ function setTaskListHandler() {
   for (let mdiv of markdown_divs) {
     new TaskList(mdiv);
   }
-
-  document.addEventListener("tasklist:changed", (e) => {
-    var list_elem = e.currentTarget.activeElement.parentElement
-    list_elem.classList.add("animate-flicker")
-    var form = e.target.closest("form")
-
-    fetch(form.action, {
-      method: form.method,
-      body: new FormData(form),
-      headers: {
-        "Accept": "application/json"
-      }
-    }).then((response) => {
-      if(response.status == 200) {
-        list_elem.classList.remove("animate-flicker")
-      }
-      else {
-        alert("yo, this checkbox failed to update, might want to refresh the page")
-      }
-    });
-
-  });
 }
 
 
