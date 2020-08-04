@@ -103,7 +103,7 @@ class EntriesController < ApplicationController
           format.html { redirect_to timeline_path(notebook: current_notebook) }
         else
           format.html { redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully updated.' }
-          format.json { render :show, status: :ok, location: @entry }
+          format.json { render json: @entry.export_attributes, status: :ok, location: @entry }
         end
       else
         format.html { render :edit }

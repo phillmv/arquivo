@@ -2,6 +2,8 @@ import autosize from '@github/textarea-autosize';
 // import '@github/file-attachment-element';
 import { DirectUpload} from "@rails/activestorage";
 
+import TaskList from "deckar01-task_list";
+
 // press control L to get to the search field
 document.onkeyup = function(e) {
   if(e.ctrlKey && e.which == 76) {
@@ -15,6 +17,7 @@ document.addEventListener("turbolinks:load", function(){
   setFileUploadHandler();
   setEntryFoldToggleHandler();
   setFilterHandler();
+  setTaskListHandler()
 });
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -22,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function(){
   setFileUploadHandler();
   setEntryFoldToggleHandler();
   setFilterHandler();
+   // setTaskListHandler()
 
   /* TODO: deprecated, used to work, left here for reference only, for now
   var new_entry_input;
@@ -54,6 +58,37 @@ document.addEventListener("DOMContentLoaded", function(){
     } 
   }*/
 });
+
+
+function setTaskListHandler() {
+  var markdown_divs;
+  markdown_divs = document.querySelectorAll(".js-task-list-container");
+  for (let mdiv of markdown_divs) {
+    new TaskList(mdiv);
+  }
+
+  document.addEventListener("tasklist:changed", (e) => {
+    var list_elem = e.currentTarget.activeElement.parentElement
+    list_elem.classList.add("animate-flicker")
+    var form = e.target.closest("form")
+
+    fetch(form.action, {
+      method: form.method,
+      body: new FormData(form),
+      headers: {
+        "Accept": "application/json"
+      }
+    }).then((response) => {
+      if(response.status == 200) {
+        list_elem.classList.remove("animate-flicker")
+      }
+      else {
+        alert("yo, this checkbox failed to update, might want to refresh the page")
+      }
+    });
+
+  });
+}
 
 
 function setFilterHandler() {

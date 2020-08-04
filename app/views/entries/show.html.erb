@@ -20,7 +20,7 @@
   <% end %>
 
 
-  <div class="markdown-body pr-4">
+  <div class="markdown-body js-task-list-container pr-4">
     <div class="entry-list-header">
       <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
         <%= octicon "link", class: "mr-1" %><%= @entry.occurred_at %>
@@ -29,22 +29,34 @@
         </a>
     </div>
 
+    <div class="entry-body">
     <% if @entry.calendar? %>
-      <%= @renderer.to_html("subject") %>
+      <h3><%= @entry.subject %></h3>
 
       <% if @entry.to.present? %>
-        Attendees: <%= @renderer.to_html("to") %>
+        <h5>Attendees:</h5>
+        <%= @renderer.to_html("to") %>
       <% end %>
 
       <% if @entry.from.present? %>
-        From: <%= @renderer.to_html("from") %>
+        <h5>From:</h5>
+        <%= @renderer.to_html("from") %>
       <% end %>
-
+      <h5>Description:</h5>
       <%= @renderer.to_html %>
 
     <% else %>
       <%= @renderer.to_html %>
     <% end %>
+    </div>
+
+    <%# by definition can't render show w/o an existing entry %>
+    <div class="entry-edit d-none">
+      <%= form_with(model: @entry, url: entry_path(@entry, notebook: @entry.notebook)) do |form| %>
+        <%= form.text_area :body, class: "js-task-list-field" %>
+      <% end %>
+    </div>
+
   </div>
 
   <% if @entry.files.attached? %>
