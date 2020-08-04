@@ -1,27 +1,10 @@
 require 'task_list/filter'
 class EntryRenderer
-  # nota bene:
-  # must use MarkdownFilter with unsafe
-  # which means must use SanitizationFilter
-  # which means must not have CommonMarker insert TaskLists and
-  # instead must have a filter transform AFTER sanitization
-  PIPELINE = HTML::Pipeline.new [
-    PipelineFilter::MarkdownFilter,
-    HTML::Pipeline::SanitizationFilter,
-    PipelineFilter::MyTaskListFilter,
-    PipelineFilter::HashtagFilter,
-    PipelineFilter::MentionFilter,
-    HTML::Pipeline::TableOfContentsFilter,
-    HTML::Pipeline::ImageMaxWidthFilter,
-  ], { unsafe: true,
-       commonmarker_render_options: [:SOURCEPOS],
-       whitelist: PipelineFilter::ENTRY_SANITIZATION_WHITELIST
-  }
+  PIPELINE = PipelineFilter::ENTRY_PIPELINE
 
-  attr_accessor :entry, :notebook
+  attr_accessor :entry
   def initialize(entry)
     @entry = entry
-    @notebook = entry.notebook
   end
 
   # TODO: to_html should accept… a string, maybe?
