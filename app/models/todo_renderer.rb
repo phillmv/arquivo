@@ -9,14 +9,13 @@ class TodoRenderer
     PipelineFilter::MarkdownFilter,
     HTML::Pipeline::SanitizationFilter,
     TaskList::Filter,
-    PipelineFilter::DumbSanitizationFilter,
+    PipelineFilter::OnlyTodoFilter,
     PipelineFilter::HashtagFilter,
     PipelineFilter::MentionFilter,
     HTML::Pipeline::TableOfContentsFilter,
     HTML::Pipeline::ImageMaxWidthFilter,
   ], { unsafe: true,
        whitelist: PipelineFilter::ENTRY_SANITIZATION_WHITELIST,
-       second_whitelist: PipelineFilter::TODO_SANITIZATION_WHITELIST,
        commonmarker_render_options: [:SOURCEPOS]
   }
 
@@ -30,7 +29,7 @@ class TodoRenderer
     if !attribute
       ""
     else
-      PIPELINE.to_html(attribute, entry: entry).html_safe
+      PIPELINE.to_html(attribute, entry: entry, todo_only: true).html_safe
     end
 
   end
