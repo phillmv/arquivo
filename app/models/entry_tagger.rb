@@ -1,13 +1,16 @@
 class EntryTagger
-  attr_reader :entry, :renderer
+  attr_reader :entry
 
   def initialize(entry)
     @entry = entry
-    @renderer = EntryRenderer.new(entry)
+  end
+
+  def extract_tags
+    entry.body&.scan(PipelineFilter::HashtagFilter::HASHTAG_REGEX)&.flatten || []
   end
 
   def process!
-    renderer.extract_tags.each do |name|
+    extract_tags.each do |name|
       Tag.transaction do
         tag = Tag.find_by(notebook: entry.notebook,
                           name: name)

@@ -26,9 +26,4 @@ class EntryRenderer
   def todo_to_html
     @todo_to_html ||= PIPELINE.to_html(entry.body, entry: entry, todo_only: true).html_safe
   end
-
-  # TODO: fold this into the HashtagFilter, maybe?
-  def extract_tags
-    entry.body&.scan(PipelineFilter::HashtagFilter::HASHTAG_REGEX)&.flatten || []
-  end
 end
