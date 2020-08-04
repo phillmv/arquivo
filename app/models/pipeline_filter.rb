@@ -11,40 +11,40 @@ module PipelineFilter
   TSW = TODO_SANITIZATION_WHITELIST
 
   # The Todo render pipeline is the same as the Entry pipeline, but we run
-  # a second sanitization step after the TaskFilter. There is a 2-step trick here:
-  #
-  # 1. Because Commonmarker wraps everything in a <p> tag, by exclusing the p tag
-  # from the allowed elements, we delete virtually all html that is not in a list
-  #
-  # 2. We attach a transformer lambda that checks list tags to see if they have
-  # been given the task list class.
-  TSW[:elements] = TSW[:elements] - %w[p blockquote h1 h2 h3 h4 h5 h6 hr pre]
-  TSW[:remove_contents] = %w[p pre h1 h2 h3 h4 h5 h6]
+  # a second sanitization step after the TaskFilter.
 
-  # this is why we have to run the sanitization filter twice:
-  # the TaskFilter introduces input fields, which would be otherwise removed.
-  # Because we've already sanitized this once, we can be assured this
-  # whitelisted input actually came from the TaskFilter
+  # We attach a transformer lambda that checks wipes out non-list tags, and
+  # checks lists to see if they have been given the task list class
+
+  # We have to run the sanitization filter twice because the TaskFilter introduces
+  # input fields, which would be otherwise removed. We can't 
   TSW[:elements] = TSW[:elements] + %w[input]
   TSW[:attributes] = TSW[:attributes].dup
   TSW[:attributes]['input'] = ['class']
   TSW[:attributes]['ul'] = ['class']
   TSW[:attributes]['ol'] = ['class']
   TSW[:attributes]['li'] = ['class']
+
+  TOP_LEVEL_TAGS = %w[p blockquote h1 h2 h3 h4 h5 h6 hr pre].to_set
+
   TSW[:transformers] = [
+    # this almost certainly can just be replaced with a filter
+    # or by adding it to the task filter?
     lambda do |env|
       name = env[:node_name]
       node = env[:node]
 
       if ["ul","ol"].include?(name)
-        if node.attributes["class"].present? && node.attributes["class"].value == "task-list"
-        else
+        if node.attributes["class"]&.value != "task-list"
           node.remove
         end
+      elsif name == "li"
+        if node.attributes["class"]&.value != "task-list-item"
+          node.remove
+        end
+      elsif TOP_LEVEL_TAGS.include?(name) && node.ancestors.first&.name == "#document-fragment"
+        node.remove
       end
     end
   ].freeze
-
-  # TODO: handle p nested inside a list, handle lis without the task list class. might have to make a lambda for all of this
-
 end
