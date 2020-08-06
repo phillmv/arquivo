@@ -6,7 +6,8 @@
     </div>
     <div class="entry-edit d-none">
       <%= form_with(model: entry, url: entry_path(entry, notebook: entry.notebook)) do |form| %>
-        <%= form.text_area :body, class: "js-task-list-field" %>
+        <%# if this is a text_area, it breaks the autofocus on the entries/form text_area. so it's a text_field! %>
+        <%= form.text_field :body, class: "js-task-list-field" %>
       <% end %>
     </div>
   </div>

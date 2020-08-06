@@ -71,6 +71,10 @@ class Entry < ApplicationRecord
     EntryTagger.new(self).process!
   end
 
+  def default?
+    kind.nil?
+  end
+
   def calendar?
     kind == "calendar"
   end
@@ -90,6 +94,8 @@ class Entry < ApplicationRecord
   def copy_parent(entry)
     if entry.calendar?
       self.body = entry.from_calendar_to_body_headline
+    elsif entry.default?
+      self.body = entry.body&.lines&.first
     end
   end
 
