@@ -8,6 +8,12 @@ class SearchTest < ActiveSupport::TestCase
     @hello_world = @notebook.entries.create(body: "hello world!")
     @goodbye_world = @notebook.entries.create(body: "goodbye cruel world!")
 
+    # --- used for quote test
+    @notebook.entries.create(body: "Sphinx of black quartz, judge my vow")
+    @notebook.entries.create(body: "Sphinx of black opaque quartz, judge my vow")
+    # ---
+
+
     @other_hello_world = @other_notebook.entries.create(body: "hello world!")
 
     @notebook.entries.create(body: "#test #great\nyo yo yo")
@@ -77,14 +83,13 @@ class SearchTest < ActiveSupport::TestCase
     result = Search.new(@notebook).find(query: "world goodbye")
 
     # if search tokens ORed together, i would expect
-    # this to return both hello and goodbye cruel world
+    # this to return both hello *and* goodbye cruel world
     assert_equal 1, result.size
     assert_equal @goodbye_world, result.first
   end
 
   test "handles filters" do
     # --- calendars
-    #
     result = Search.new(@notebook).find(query: "is:calendar")
 
     assert_equal 1, result.size
@@ -94,7 +99,6 @@ class SearchTest < ActiveSupport::TestCase
     refute result.any? { |r| r.calendar? }
 
     # --- bookmarks
-
     result = Search.new(@notebook).find(query: "is:bookmark")
 
     assert_equal 1, result.size
@@ -104,7 +108,6 @@ class SearchTest < ActiveSupport::TestCase
     refute result.any? { |r| r.bookmark? }
 
     # --- notes
-
     result = Search.new(@notebook).find(query: "is:note")
     assert result.all? { |r| r.note? }
 
@@ -144,6 +147,16 @@ class SearchTest < ActiveSupport::TestCase
 
     assert_equal 3, results.size
     assert_equal @after_entries.to_set, results.to_set
+  end
+
+  test "handles quotes" do
+    results = Search.new(@notebook).find(query: "black quartz vow")
+
+    assert_equal 2, results.size
+
+    results = Search.new(@notebook).find(query: '"black quartz" vow')
+
+    assert_equal 1, results.size
   end
 end
 
