@@ -6,8 +6,13 @@
     </div>
     <div class="entry-edit d-none">
       <%= form_with(model: entry, url: entry_path(entry, notebook: entry.notebook)) do |form| %>
-        <%# if this is a text_area, it breaks the autofocus on the entries/form text_area. so it's a text_field! %>
-        <%= form.text_field :body, class: "js-task-list-field" %>
+        <%# if the js-task-list-field ends up as a text_area, on the "in_reply_to"
+          new entry screen it breaks the autofocus on the entries/form text_area.
+          so it's a div! this required patching everything to do a textContent lookup.
+          yes this is extremely hacky, thank you. %>
+        <div class="js-task-list-field"><%= entry.body %></div>
+        <%# what we can't do, commented out as a lesson to the future: %>
+        <%# <%= form.text_area :body, class: "js-task-list-field" %>
       <% end %>
     </div>
   </div>

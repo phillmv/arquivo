@@ -2,7 +2,8 @@ import autosize from '@github/textarea-autosize';
 // import '@github/file-attachment-element';
 import { DirectUpload} from "@rails/activestorage";
 
-import TaskList from "deckar01-task_list";
+// TODO: tbh, convert this to js and remove coffeescript as a dependency ;p
+import TaskList from "task_list";
 
 // press control L to get to the search field
 document.onkeyup = function(e) {
@@ -13,15 +14,27 @@ document.onkeyup = function(e) {
 
 // this fn submits the tasklist form to update the entry
 // its out here cos its adding an event on document
-// TODO: move this inside the fn below
+// TODO: move this inside the fn below? maybe attached to the form
 document.addEventListener("tasklist:changed", (e) => {
   var list_elem = e.currentTarget.activeElement.parentElement
   list_elem.classList.add("animate-flicker")
   var form = e.target.closest("form")
 
+  var task_list_field = form.querySelector(".js-task-list-field")
+  var form_data = new FormData(form)
+  if (!task_list_field.value) {
+    // if the task_list_field has .value, then it's a textarea within
+    // the form, and its contents will have been captured in the FormData
+    //
+    // if the task_list_field does not have a .value, then it's because it's
+    // our hacky div solution, so we need to look up its textContent and
+    // manually insert the field into the form_data.
+    form_data.set("entry[body]", task_list_field.textContent)
+  }
+
   fetch(form.action, {
     method: form.method,
-    body: new FormData(form),
+    body: form_data,
     headers: {
       "Accept": "application/json"
     }

@@ -150,10 +150,26 @@ class TaskList
     @field.dispatchEvent changeEvent
 
     unless changeEvent.defaultPrevented
-      { result, lineNumber, lineSource } =
-        TaskList.updateSource(@field.value, index, item.checked, item)
+      # HACK:
+      # sometimes the field won't be an input, and so
+      # we have to use textContent over value.
+      field_value = undefined
 
-      @field.value = result
+      if @field.value
+        field_value = @field.value
+      else
+        field_value = @field.textContent
+
+      { result, lineNumber, lineSource } =
+        TaskList.updateSource(field_value, index, item.checked, item)
+
+      # HACK:
+      # see above, not always an input, sometimes a div
+      if @field.value
+        @field.value = result
+      else
+        @field.textContent = result
+
       changeEvent = createEvent 'change'
       @field.dispatchEvent changeEvent
       changedEvent = createEvent 'tasklist:changed', {
