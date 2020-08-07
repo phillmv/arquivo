@@ -2,7 +2,11 @@
   <div class="Box-body markdown-body <%= truncate_class(entry)%> js-task-list-container">
     <%= render partial: "entries/action_bar", locals: { entry: entry } %>
     <div class="entry-body">
-      <%= EntryRenderer.new(entry).to_html %>
+      <% if @has_todo %>
+        <%= EntryRenderer.new(entry).todo_to_html %>
+      <% else %>
+        <%= EntryRenderer.new(entry).to_html %>
+      <% end %>
     </div>
     <div class="entry-edit d-none">
       <%= form_with(model: entry, url: entry_path(entry, notebook: entry.notebook)) do |form| %>

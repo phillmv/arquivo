@@ -3,6 +3,9 @@ class Search
     "is:calendar",
     "is:bookmark",
     "is:note",
+    "has:todo",
+    "has:done",
+    "not:todo",
     "not:note",
     "not:calendar",
     "not:bookmark",
@@ -50,6 +53,12 @@ class Search
                     sql_query.bookmarks
                   when "is:note"
                     sql_query.where("kind is null")
+                  when "has:todo"
+                    sql_query.where("body like ?", "%- [ ]%")
+                  when "has:done"
+                    sql_query.where("body like ?", "%- [x]%")
+                  when "not:todo"
+                    sql_query.where("body not like ?", "%- [ ]%")
                   when "not:calendar"
                     sql_query.except_calendars
                   when "not:bookmark"
