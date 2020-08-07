@@ -25,12 +25,11 @@ class TimelineController < ApplicationController
       @all_entries = Search.new(current_notebook).
         find(query: @search_query).paginate(page: params[:page])
 
-      @has_todo = !!@search_query.index("has:todo")
-
       @entries = @all_entries.group_by do |e|
         e.occurred_at_date
       end
 
+      @has_todo = !!@search_query.index("has:todo")
       render :search
     else
       redirect_to timeline_path(notebook: current_notebook)

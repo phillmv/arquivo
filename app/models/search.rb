@@ -9,6 +9,9 @@ class Search
     "not:note",
     "not:calendar",
     "not:bookmark",
+    "sort:asc",
+    "sort:created",
+    "sort:created-asc"
   ])
 
   OPERATORS = [
@@ -65,6 +68,8 @@ class Search
                     sql_query.except_bookmarks
                   when "not:note"
                     sql_query.where("kind is not null")
+                  when "sort:asc"
+                    sql_query.reorder(occurred_at: :asc)
                   end
     end
 
