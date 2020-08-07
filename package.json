@@ -2,17 +2,19 @@
   "name": "archive",
   "private": true,
   "dependencies": {
-    "@github/file-attachment-element": "^1.0.2",
-    "@github/textarea-autosize": "^0.2.0",
-    "@github/text-expander-element": "1.1.1",
     "@github/auto-complete-element": "3.0.2",
+    "@github/file-attachment-element": "^1.0.2",
+    "@github/text-expander-element": "1.1.1",
+    "@github/textarea-autosize": "^0.2.0",
     "@primer/css": "14.4.0",
     "@rails/actioncable": "^6.0.0",
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "4.2.2",
-    "turbolinks": "^5.2.0",
-    "deckar01-task_list": "2.3.1"
+    "coffee-loader": "^1.0.0",
+    "coffeescript": "1.12.7",
+    "deckar01-task_list": "2.3.1",
+    "turbolinks": "^5.2.0"
   },
   "version": "0.1.0",
   "devDependencies": {
