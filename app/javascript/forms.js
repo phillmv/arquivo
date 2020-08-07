@@ -9,6 +9,8 @@ import TaskList from "task_list";
 document.onkeyup = function(e) {
   if(e.ctrlKey && e.which == 76) {
     document.searchform.query.focus()
+    var len = document.searchform.query.value.length;
+    document.searchform.query.setSelectionRange(len, len);
   }
 }
 
