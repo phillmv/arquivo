@@ -12,7 +12,7 @@ class TimelineController < ApplicationController
     @todays_date = Time.current.strftime("%Y-%m-%d")
     @entries = current_notebook.entries.today.visible.order(occurred_at: :asc)
 
-    @reminder_entry = Search.find(notebook: @current_notebook, query: "#winddown").where("occurred_at < ?", Time.current.beginning_of_day).first
+    @reminder_entry = Search.new(current_notebook).find(query: "#winddown").where("occurred_at < ?", Time.current.beginning_of_day).first
     @reminder_entry_date = @reminder_entry&.occurred_at&.strftime("%Y-%m-%d")
 
     @entry = Entry.new(occurred_at: Time.now)
@@ -22,8 +22,8 @@ class TimelineController < ApplicationController
     @search_query = params[:query]
 
     if @search_query.present?
-      @all_entries = Search.find(notebook: current_notebook,
-                            query: @search_query).paginate(page: params[:page])
+      @all_entries = Search.new(current_notebook).
+        find(query: @search_query).paginate(page: params[:page])
 
       @entries = @all_entries.group_by do |e|
         e.occurred_at_date
@@ -37,8 +37,8 @@ class TimelineController < ApplicationController
 
   def todo
     @search_query = '"- [ ]"'
-    @all_entries = Search.find(notebook: current_notebook,
-                               query: @search_query).paginate(page: params[:page])
+    @all_entries = Search.new(current_notebook).
+      find(query: @search_query).paginate(page: params[:page])
 
     @entries = @all_entries.group_by do |e|
       e.occurred_at_date
