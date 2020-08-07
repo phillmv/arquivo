@@ -14,7 +14,7 @@ class SearchTest < ActiveSupport::TestCase
     @notebook.entries.create(body: "#test2 #great\nsecond list")
 
     @calendar_entry = @notebook.entries.calendars.create(subject: "grocery list", body: "#meeting @lisa\nhi hi hi")
-    # TODO: LOL should also search urls, eh?
+    # TODO: LOL should also search the url field, eh?
     @bookmark_entry = @notebook.entries.bookmarks.create(subject: "sample link!", url: "http://example.com/sample", body: "#cool #interesting")
 
     @before_entries = [
