@@ -11,6 +11,10 @@ class Entry < ApplicationRecord
   scope :for_notebook, -> (notebook) { where(notebook: notebook.to_s) }
   scope :hitherto, -> { where("occurred_at <= ? ", Time.current.end_of_day) }
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
+  # used in Search
+  scope :before, -> (date) { where("occurred_at < ?", date) }
+  scope :after, -> (date) { where("occurred_at >= ?", date) }
+  # ---
   scope :today, -> { where("occurred_at >= ? and occurred_at <= ?", Time.current.beginning_of_day, Time.current.end_of_day) }
 
   scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }

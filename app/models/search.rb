@@ -29,19 +29,8 @@ class Search
       tokens << s
     end
 
-    filters = []
-    tokens = tokens.reject { |t| FILTERS.member?(t) && (filters << t) }
-
-    operators = []
-    tokens = tokens.reject do |t|
-      OPERATORS.any? do |op|
-        if (i = t.index(op)) && t[i+op.length + 1] !=~ /\s/
-          operators << [op, t[i+op.length..-1]]
-        else
-          nil
-        end
-      end
-    end
+    filters, tokens = parse_filters(tokens)
+    operators, tokens = parse_operators(tokens)
 
     sql_query = Entry.for_notebook(notebook).order(occurred_at: :desc)
 
@@ -55,33 +44,63 @@ class Search
 
     filters.each do |op|
       sql_query = case op
-      when "is:calendar"
-        sql_query.calendars
-      when "is:bookmark"
-        sql_query.bookmarks
-      when "is:note"
-        sql_query.where("kind is null")
-      when "not:calendar"
-        sql_query.except_calendars
-      when "not:bookmark"
-        sql_query.except_bookmarks
-      when "not:note"
-        sql_query.where("kind is not null")
-      end
+                  when "is:calendar"
+                    sql_query.calendars
+                  when "is:bookmark"
+                    sql_query.bookmarks
+                  when "is:note"
+                    sql_query.where("kind is null")
+                  when "not:calendar"
+                    sql_query.except_calendars
+                  when "not:bookmark"
+                    sql_query.except_bookmarks
+                  when "not:note"
+                    sql_query.where("kind is not null")
+                  end
     end
 
     operators.each do |op, arg|
       sql_query = case op
-        when "before:"
-          date = date_str_to_date(arg)
-          sql_query.where("occurred_at < ?", date)
-        when "after:"
-          date = date_str_to_date(arg)
-          sql_query.where("occurred_at >= ?", date)
-      end
+                  when "before:"
+                    date = date_str_to_date(arg)
+                    sql_query.before(date)
+                  when "after:"
+                    date = date_str_to_date(arg)
+                    sql_query.after(date)
+                  end
     end
 
     sql_query
+  end
+
+  def parse_filters(tokens)
+    filters = []
+    tokens = tokens.reject { |t| FILTERS.member?(t) && (filters << t) }
+
+    [filters, tokens]
+  end
+
+  def parse_operators(tokens)
+    operators = []
+    tokens = tokens.reject do |t|
+      OPERATORS.any? do |op|
+        # token t is a string "foo:bar"
+        # if substring "foo:" exists, and the character following ':'
+        # a) is not nil (i.e. the string continues past the operator)
+        # b) is not whitespace
+        if (i = t.index(op)) && not_nil_nor_whitespace?(t[i+op.length])
+          operators << [op, t[i+op.length..-1]]
+        else
+          nil
+        end
+      end
+    end
+
+    [operators, tokens]
+  end
+
+  def not_nil_nor_whitespace?(char)
+    !char.nil? && !char.match?(/\s/)
   end
 
   def date_str_to_date(str)
