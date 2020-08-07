@@ -13,7 +13,13 @@
 
 .content-container {
   @extend .float-left;
-  @extend .col-10, .offset-1;
+  // this is very hard to reason about and yet every time i touch this
+  // i manage to not document how this works. my basic intuition is as follows:
+  // you define the smallest sets first which are then overrided by… larger
+  // breakpoints?
+  // answer: gotta define the sizes in all the diff breakpoints
+  @extend .col-sm-10, .offset-1;
+  @extend .col-md-8;
   // .ml-lg cancels .offset-1
   @extend .col-lg-6, .ml-lg-4;
   @extend .mb-lg-4;
@@ -21,7 +27,8 @@
 
 .calendar-container {
   @extend .float-left;
-  @extend .col-10, .offset-1;
+  @extend .col-sm-10, .offset-1;
+  @extend .col-md-8;
   // .ml-lg-0 cancels the offset
   @extend .ml-lg-0, .pl-lg-4;
   @extend .mb-lg-4;
