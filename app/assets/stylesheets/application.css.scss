@@ -24,6 +24,16 @@
   @extend .mb-lg-4;
 }
 
+.sidebar-container {
+  @extend .float-left;
+  @extend .col-md-2;
+  @extend .col-lg-2;
+  @extend .hide-sm, .hide-md;
+  @extend .ml-sm-4;
+  @extend .mr-sm-4;
+}
+
+
 .calendar-container {
   @extend .float-left;
   @extend .col-sm-10, .offset-1;
@@ -34,14 +44,6 @@
   @extend .mb-lg-4;
 }
 
-.main-sidebar {
-  @extend .float-left;
-  @extend .col-md-2;
-  @extend .col-lg-2;
-  @extend .hide-sm, .hide-md;
-  @extend .ml-sm-4;
-  @extend .mr-sm-4;
-}
 
 // used for rendering entry bodies
 .entry-box {
