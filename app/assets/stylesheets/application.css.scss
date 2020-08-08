@@ -19,7 +19,7 @@
   // breakpoints?
   // answer: gotta define the sizes in all the diff breakpoints
   @extend .col-sm-11, .mx-sm-4;
-  @extend .col-md-8, .mx-md-6;
+  @extend .col-md-8, .mx-md-4;
   @extend .col-lg-6, .ml-lg-4;
   @extend .mb-lg-4;
 }
@@ -28,6 +28,7 @@
   @extend .float-left;
   @extend .col-sm-10, .offset-1;
   @extend .col-md-8;
+  @extend .col-lg-9;
   // .ml-lg-0 cancels the offset
   @extend .ml-lg-0, .pl-lg-4;
   @extend .mb-lg-4;
@@ -38,7 +39,8 @@
   @extend .col-md-2;
   @extend .col-lg-2;
   @extend .hide-sm, .hide-md;
-  @extend .pr-md-4;
+  @extend .ml-sm-4;
+  @extend .mr-sm-4;
 }
 
 // used for rendering entry bodies
