@@ -59,6 +59,7 @@ document.addEventListener("turbolinks:load", function(){
   setEntryFoldToggleHandler();
   setFilterHandler();
   setTaskListHandler()
+  savedSearch();
 });
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -100,6 +101,13 @@ document.addEventListener("DOMContentLoaded", function(){
   }*/
 });
 
+
+function savedSearch() {
+  var saved_search = document.querySelector("#new_saved_search")
+  saved_search.addEventListener("submit", (e) => {
+    saved_search.saved_search_query.value = document.searchform.query.value
+  });
+}
 
 function setTaskListHandler() {
   var markdown_divs;

@@ -1,0 +1,2 @@
+class SavedSearch < ApplicationRecord
+end

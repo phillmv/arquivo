@@ -26,15 +26,6 @@
   <% end %>
 
   <div class="mb-3">
-    <h4>Saved Searches</h4>
-    <h4><a href="<%= search_path(notebook: @current_notebook, query: "has:todo")%>">TODO tasks</a></h4>
-    <h4><a href="<%= search_path(notebook: @current_notebook, query: '#meeting')%>">#meeting</a></h4>
-    <h4><a href="<%= search_path(notebook: @current_notebook, query: '#daily')%>">#daily</a></h4>
-    <h4><a href="<%= search_path(notebook: @current_notebook, query: '#winddown')%>">#winddown</a></h4>
-  </div>
-
-
-  <div class="mb-3">
     <h4>Recent Entries</h4>
     <ul class="list-style-none">
       <% @recent_entries.each do |entry| %>

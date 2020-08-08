@@ -35,4 +35,21 @@ class TimelineController < ApplicationController
       redirect_to timeline_path(notebook: current_notebook)
     end
   end
+
+  def save_search
+    SavedSearch.transaction do
+      saved_search = current_notebook.saved_searches.find_by(name: saved_search_params[:name])
+      if saved_search
+        saved_search.update(saved_search_params)
+      else
+        current_notebook.saved_searches.create(saved_search_params)
+      end
+    end
+
+    redirect_to search_path(notebook: current_notebook, query: params[:saved_search][:query])
+  end
+
+  def saved_search_params
+    params.require(:saved_search).permit(:name, :query, :octicon)
+  end
 end

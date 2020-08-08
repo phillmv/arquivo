@@ -1,4 +1,71 @@
-<%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform" } do |form| %>
+<div class="tabnav mt-2">
+    <nav class="tabnav-tabs" aria-label="Foo bar">
+        <!-- <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn btn&#45;sm float&#45;right"><%= octicon "pencil" %> New Entry</a> -->
+      
+      <!-- <a class="btn btn&#45;sm float&#45;right" href="#url" role="button">New Entry</a> -->
+
+      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= any_search_tabnav?(@current_notebook.saved_searches, @search_query) %> accesskey="1">
+        <h5><%= octicon "note" %></h5>
+      </a>
+
+      <% @current_notebook.saved_searches.limit(6).each_with_index do |saved_search, i| %>
+        <a class="tabnav-tab" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" <%= search_tabnav(saved_search, @search_query) %> accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a>
+      <% end %>
+    </nav>
+  </div>
+
+
+  <div class="form-actions">
+    <div class="d-inline-flex col-12 pb-1">
+      <%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform", class: "col-12" } do |form| %>
+
+        <div class="position-relative">
+          <%= form.text_field :search_query, class: "form-control pl-5 col-12", value: @search_query, name: "query", placeholder: "Type and hit enter to search. Ctrl+L to focus." %>
+          <%= octicon "search", class: "subnav-search-icon", style: "z-index: 3" %>
+        </div>
+      <% end %>
+      <%= form_for SavedSearch.new, url: save_search_path(notebook: @current_notebook), html: { class: "" }, method: :post do |form| %>
+        <%= form.hidden_field :query %>
+      <span class="input-group-button">
+        <details class="details-reset details-overlay details-overlay-dark" style="margin-left: -2px">
+          <summary class="btn" aria-haspopup="dialog">Save Search</summary>
+          <details-dialog class="Box d-flex flex-column anim-fade-in fast mt-1" style="position: absolute; margin-top: 38px !important; margin-left: -190px; width: 300px; z-index: 100;">
+            <div class="overflow-auto">
+              <div class="Box-body overflow-auto">
+                <dl class="form-group my-0">
+                  <dt>
+                  <%= form.label :octicon %>
+                  </dt>
+                  <dd>
+                  <%= form.text_field :octicon, class: "form-control" %>
+                  </dd>
+
+                  <dt>
+                  <%= form.label :name %>
+                  </dt>
+                  <dd>
+                  <%= form.text_field :name, class: "form-control" %>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+            <div class="Box-footer">
+              <%= form.submit class: "btn btn-block" %>
+              <!-- <button type="button" class="btn btn&#45;block" data&#45;close&#45;dialog>Save</button> -->
+            </div>
+          </details-dialog>
+        </details>
+      </span>
+      <% end %>
+    </div>
+
+
+
+
+    <!-- for reference -->
+    <% if false %>
+      <br><br>
+  <%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform" } do |form| %>
   <div class="form-actions">
     <div class="input-group col-12 float-left">
 
@@ -8,31 +75,69 @@
       </div>
 
       <span class="input-group-button">
-
-        <details class="dropdown details-reset details-overlay ">
-          <summary class="btn" aria-haspopup="true" style="margin-left: -2px">
-            Add Filter
-            <div class="dropdown-caret"></div>
-          </summary>
-
-          <ul class="dropdown-menu dropdown-menu-sw search-filter" style="top: 34px">
-            <li><a class="dropdown-item" href="" data-filter="is:note">Notes</a></li>
-            <li><a class="dropdown-item" href="" data-filter="is:bookmark">Bookmarks</a></li>
-            <li><a class="dropdown-item" href="" data-filter="is:calendar">Calendars</a></li>
-            <li class="dropdown-divider" role="separator"></li>
-            <li><a class="dropdown-item" href="" data-filter="not:note">No Notes</a></li>
-            <li><a class="dropdown-item" href="" data-filter="not:bookmark">No Bookmarks</a></li>
-            <li><a class="dropdown-item" href="" data-filter="not:calendar">No Calendar</a></li>
-          </ul>
+        <details class="details-reset details-overlay details-overlay-dark" style="margin-left: -2px">
+          <summary class="btn" aria-haspopup="dialog">Save Search</summary>
+          <details-dialog class="Box d-flex flex-column anim-fade-in fast mt-1" style="position: absolute; margin-top: 38px !important; margin-left: -190px; width: 300px; z-index: 100;">
+            <div class="overflow-auto">
+              <div class="Box-body overflow-auto">
+                <dl class="form-group my-0">
+                  <dt>
+                  <%= form.label :save_search, "Name" %>
+                  </dt>
+                  <dd>
+                  <%= form.text_field :save_search, class: "form-control" %>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+            <div class="Box-footer">
+              <%= form.submit class: "btn btn-block" %>
+              <!-- <button type="button" class="btn btn&#45;block" data&#45;close&#45;dialog>Save</button> -->
+            </div>
+          </details-dialog>
         </details>
       </span>
+
+    </div>
+  </div>
+<% end %>
+<% end %>
+
+
+
+
+
+
+
+
+  <!--- old -->
+
+      <!-- <span class="input&#45;group&#45;button"> -->
+      <!--  -->
+      <!--   <details class="dropdown details&#45;reset details&#45;overlay "> -->
+      <!--     <summary class="btn" aria&#45;haspopup="true" style="margin&#45;left: &#45;2px"> -->
+      <!--       Add Filter -->
+      <!--       <div class="dropdown&#45;caret"></div> -->
+      <!--     </summary> -->
+      <!--  -->
+      <!--     <ul class="dropdown&#45;menu dropdown&#45;menu&#45;sw search&#45;filter" style="top: 34px"> -->
+      <!--       <li><a class="dropdown&#45;item" href="" data&#45;filter="is:note">Notes</a></li> -->
+      <!--       <li><a class="dropdown&#45;item" href="" data&#45;filter="is:bookmark">Bookmarks</a></li> -->
+      <!--       <li><a class="dropdown&#45;item" href="" data&#45;filter="is:calendar">Calendars</a></li> -->
+      <!--       <li class="dropdown&#45;divider" role="separator"></li> -->
+      <!--       <li><a class="dropdown&#45;item" href="" data&#45;filter="not:note">No Notes</a></li> -->
+      <!--       <li><a class="dropdown&#45;item" href="" data&#45;filter="not:bookmark">No Bookmarks</a></li> -->
+      <!--       <li><a class="dropdown&#45;item" href="" data&#45;filter="not:calendar">No Calendar</a></li> -->
+      <!--     </ul> -->
+      <!--   </details> -->
+      <!-- </span> -->
 
       <!-- <div class="col&#45;2 float&#45;left"> -->
       <%# <%= form.submit "Search", class: "btn btn-sm" %>
       <!-- <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn"><%= octicon "pencil" %> New Entry</a> -->
       <!-- </div> -->
-    </div>
-  </div>
+    <!-- </div> -->
+  <!-- </div> -->
 
   <%# this can work !%>
   <% if false %>
@@ -40,36 +145,44 @@
   <summary class="btn" aria-haspopup="dialog">Save Search</summary>
   <details-dialog class="Box d-flex flex-column anim-fade-in fast mt-1" style="position: absolute; width: 300px; z-index: 100;">
     <div class="Box-header">
-      <button class="Box-btn-octicon btn-octicon float-right" type="button" aria-label="Close dialog" data-close-dialog>
-        <%= octicon "x" %>
-      </button>
-      <h3 class="Box-title">Box title</h3>
+      <!-- <button class="Box&#45;btn&#45;octicon btn&#45;octicon float&#45;right" type="button" aria&#45;label="Close dialog" data&#45;close&#45;dialog> -->
+        <%# <%= octicon "x" %>
+      <!-- </button> -->
+      <h3 class="Box-title">Save Search</h3>
     </div>
     <div class="overflow-auto">
       <div class="Box-body overflow-auto">
-        <p>
-          The quick brown fox jumps over the lazy dog and feels as if he were in the seventh heaven of typography together with Hermann Zapf, the most famous artist of the...
-        </p>
+        <%= form_for(SavedSearch.new, url: "foo") do |form| %>
+          <dl class="form-group my-0">
+            <dt>
+            <%= form.label :name %>
+            </dt>
+            <dd>
+            <%= form.text_field :name, class: "form-control" %>
+            </dd>
+          </dl>
+        <% end %>
+
+      <!--   <p> -->
+      <!--   </p> -->
       </div>
-      <ul>
-        <li class="Box-row">
-          <img class="avatar v-align-middle mr-2" src="https://avatars.githubusercontent.com/broccolini?s=48" alt="broccolini" width="24" height="24">
-          @broccolini
-        </li>
-        <li class="Box-row border-bottom">
-          <img class="avatar v-align-middle mr-2" src="https://avatars.githubusercontent.com/jonrohan?s=48" alt="jonrohan" width="24" height="24">
-          @jonrohan
-        </li>
-        <li class="Box-row border-bottom">
-          <img class="avatar v-align-middle mr-2" src="https://avatars.githubusercontent.com/shawnbot?s=48" alt="shawnbot" width="24" height="24">
-          @shawnbot
-        </li>
-      </ul>
+      <!-- <ul> -->
+        <!-- <li class="Box&#45;row"> -->
+                  <!-- </li> -->
+        <!-- <li class="Box&#45;row border&#45;bottom"> -->
+        <!--   <img class="avatar v&#45;align&#45;middle mr&#45;2" src="https://avatars.githubusercontent.com/jonrohan?s=48" alt="jonrohan" width="24" height="24"> -->
+        <!--   @jonrohan -->
+        <!-- </li> -->
+        <!-- <li class="Box&#45;row border&#45;bottom"> -->
+        <!--   <img class="avatar v&#45;align&#45;middle mr&#45;2" src="https://avatars.githubusercontent.com/shawnbot?s=48" alt="shawnbot" width="24" height="24"> -->
+        <!--   @shawnbot -->
+        <!-- </li> -->
+      <!-- </ul> -->
     </div>
     <div class="Box-footer">
-      <button type="button" class="btn btn-block" data-close-dialog>Okidoki</button>
+      <button type="button" class="btn btn-block" data-close-dialog>Save</button>
     </div>
   </details-dialog>
   </details>
-<% end %>
+<%# <% end %>
 <% end %>

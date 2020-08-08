@@ -14,6 +14,18 @@ module ApplicationHelper
     end
   end
 
+  def any_search_tabnav?(saved_searches, search_query)
+    if saved_searches.none? { |ss| ss.query == search_query }
+      "aria-current='page'"
+    end
+  end
+
+  def search_tabnav(saved_search, search_query)
+    if saved_search&.query == search_query
+      "aria-current='page'"
+    end
+  end
+
   def current_action
     @current_action ||= "#{controller_name}/#{action_name}"
   end
