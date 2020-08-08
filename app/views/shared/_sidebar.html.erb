@@ -1,6 +1,6 @@
 <div class="main-sidebar">
   <div class="mb-3">
-    <h1><u><a href="<%= timeline_path(notebook: @current_notebook) %>">Arquivo</a></u></h1>
+    <h1 class="arquivo"><a href="<%= timeline_path(notebook: @current_notebook) %>">Arquivo</a></u></h1>
     <details>
       <summary><h2 style="display: inline"><%= octicon "book", height: 24 %> <%= @current_notebook.name %> </h2></summary>
       <ul style="list-style: none">

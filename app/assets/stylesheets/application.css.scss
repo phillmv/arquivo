@@ -36,8 +36,9 @@
 
 .main-sidebar {
   @extend .float-left;
-  @extend .col-2, .hide-sm, .hide-md;
-  @extend .pl-4;
+  @extend .col-md-2;
+  @extend .col-lg-2;
+  @extend .hide-sm, .hide-md;
 }
 
 // used for rendering entry bodies
@@ -137,3 +138,14 @@ table.weekly {
   }
 }
 
+
+// brand
+h1.arquivo {
+  font-size: 42px;
+  a {
+    text-decoration: underline black;
+    &:hover {
+      text-decoration: underline $blue-500;
+    }
+  }
+}
