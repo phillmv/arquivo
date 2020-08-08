@@ -30,7 +30,7 @@ class TimelineController < ApplicationController
       end
 
       @has_todo = !!@search_query.index("has:todo")
-      render :search
+      render :index
     else
       redirect_to timeline_path(notebook: current_notebook)
     end

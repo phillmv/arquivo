@@ -6,7 +6,8 @@
     <%# <%= render partial: "timeline/search_bar" %>
   <% else %>
     <div class="pt-2 pagehead">
-      <h1>Today, <%= @todays_date %></h1>
+      <h1 class="d-inline">Today, <%= @todays_date %></h1>
+      <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
     </div>
   <% end %>
 
