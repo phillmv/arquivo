@@ -64,6 +64,7 @@ class PipelineFilter::MyTaskListFilter < TaskList::Filter
             mark_for_deletion = []
             delete_list = true
 
+            # TODO: make recursive????
             list.children.each do |li|
               delete_li = true
 
