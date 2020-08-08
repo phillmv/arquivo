@@ -18,9 +18,8 @@
   // you define the smallest sets first which are then overrided by… larger
   // breakpoints?
   // answer: gotta define the sizes in all the diff breakpoints
-  @extend .col-sm-10, .offset-1;
-  @extend .col-md-8;
-  // .ml-lg cancels .offset-1
+  @extend .col-sm-11, .mx-sm-4;
+  @extend .col-md-8, .mx-md-6;
   @extend .col-lg-6, .ml-lg-4;
   @extend .mb-lg-4;
 }
@@ -39,6 +38,7 @@
   @extend .col-md-2;
   @extend .col-lg-2;
   @extend .hide-sm, .hide-md;
+  @extend .pr-md-4;
 }
 
 // used for rendering entry bodies
