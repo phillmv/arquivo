@@ -87,7 +87,7 @@
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>
     <% unless skip_cancel %>
-      <%= link_to 'Cancel', timeline_path(@current_notebook), class: "btn btn-danger float-left" %>
+      <%= link_to 'Cancel', :back, class: "btn btn-danger float-left" %>
     <% end %>
   </div>
 <% end %>
