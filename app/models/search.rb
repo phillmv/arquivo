@@ -38,7 +38,7 @@ class Search
     filters, tokens = parse_filters(tokens)
     operators, tokens = parse_operators(tokens)
 
-    sql_query = Entry.for_notebook(notebook).order(occurred_at: :desc)
+    sql_query = Entry.for_notebook(notebook).order(occurred_at: :desc).hitherto
 
     sql_where = tokens.map do |s|
       ["body like ? or subject like ?", "%#{s}%", "%#{s}%"]
@@ -122,7 +122,7 @@ class Search
      when "yesterday"
        Time.current.yesterday.end_of_day
      when "lastweek"
-       6.days.ago.end_of_day
+       8.days.ago.end_of_day
      when "lastmonth"
        Time.current.prev_month.end_of_month
      when "lastyear"
