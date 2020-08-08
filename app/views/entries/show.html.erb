@@ -1,16 +1,14 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
-  <div class="border-bottom mb-2">
-    <h4>
+  <div class="pagehead pt-2 mb-2">
     <nav aria-label="Breadcrumb" class="mb-1">
-  <ol>
-    <li class="breadcrumb-item"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></li>
-    <li class="breadcrumb-item"><a href="<%= calendar_daily_path(@current_date, notebook: @entry.notebook) %>"><%= @current_date %></a></li>
-    <li class="breadcrumb-item" aria-current="page"><%= @entry.identifier %></li>
-  </ol>
-    </h4>
-</nav>
+      <ol>
+        <li class="breadcrumb-item"><h1 class="d-inline"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></h1></li>
+        <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= calendar_daily_path(@current_date, notebook: @entry.notebook) %>"><%= @current_date %></a></h3></li>
+        <li class="breadcrumb-item" aria-current="page"><h3 class="d-inline"><%= @entry.identifier %></h3></li>
+      </ol>
+    </nav>
   </div>
 
   <div class="">
