@@ -15,8 +15,8 @@
       <% end %>
       <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="btn btn-sm"><%= octicon("reply") %> Add note</a>
       <%= form_with(model: entry, url:  entry_path(entry, notebook: entry.notebook), local: true, class: "hide-calendar") do |form| %>
-        <%= form.hidden_field :hide, value: true %>
-        <%= hidden_field_tag :redirect_to_timeline, true %>
+        <%= form.hidden_field :hide, value: true, id: "entry_hide##{entry.id}" %>
+        <%= hidden_field_tag :redirect_to_timeline, true, id: "entry_redirect_to_timeline##{entry.id}" %>
         <%= form.submit "Hide", class: "btn btn-sm btn-danger", data: { confirm: "Are you sure?" } %>
       <% end %>
     </div>
