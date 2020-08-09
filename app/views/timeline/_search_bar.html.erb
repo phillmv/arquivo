@@ -1,29 +1,68 @@
 <div class="tabnav mt-2">
+
+        <%= form_for SavedSearch.new, url: save_search_path(notebook: @current_notebook), html: { class: "" }, method: :post do |form| %>
+        <%= form.hidden_field :query %>
+        <details class="details-reset details-overlay details-overlay-dark float-right" style="margin-left: -2px">
+          <summary class="btn btn-sm" aria-haspopup="dialog">Save <span class="dropdown-caret"></span></summary>
+          <details-dialog class="Box d-flex flex-column anim-fade-in fast mt-1" style="position: absolute; margin-top: 38px !important; margin-left: -190px; width: 300px; z-index: 100;">
+            <div class="overflow-auto">
+              <div class="Box-body overflow-auto">
+                <dl class="form-group my-0">
+                  <dt>
+                  <%= form.label :octicon %>
+                  </dt>
+                  <dd>
+                  <%= form.text_field :octicon, class: "form-control" %>
+                  </dd>
+
+                  <dt>
+                  <%= form.label :name %>
+                  </dt>
+                  <dd>
+                  <%= form.text_field :name, class: "form-control" %>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+            <div class="Box-footer">
+              <%= form.submit class: "btn btn-block" %>
+              <!-- <button type="button" class="btn btn&#45;block" data&#45;close&#45;dialog>Save</button> -->
+            </div>
+          </details-dialog>
+        </details>
+    <% end %>
+
+  <!-- <a class="btn btn&#45;sm float&#45;right" href="#url" role="button">Button</a> -->
+  
     <nav class="tabnav-tabs" aria-label="Foo bar">
-        <!-- <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn btn&#45;sm float&#45;right"><%= octicon "pencil" %> New Entry</a> -->
-      
-      <!-- <a class="btn btn&#45;sm float&#45;right" href="#url" role="button">New Entry</a> -->
+      <div class="UnderlineNav-body">
+        <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= any_search_tabnav?(@current_notebook.saved_searches, @search_query) %> accesskey="1">
+          <h5><%= octicon "note" %></h5>
+        </a>
 
-      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= any_search_tabnav?(@current_notebook.saved_searches, @search_query) %> accesskey="1">
-        <h5><%= octicon "note" %></h5>
-      </a>
+        <% @current_notebook.saved_searches.limit(6).each_with_index do |saved_search, i| %>
+          <a class="tabnav-tab" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" <%= search_tabnav(saved_search, @search_query) %> accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a>
+        <% end %>
 
-      <% @current_notebook.saved_searches.limit(6).each_with_index do |saved_search, i| %>
-        <a class="tabnav-tab" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" <%= search_tabnav(saved_search, @search_query) %> accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a>
-      <% end %>
+      </div>
     </nav>
-  </div>
+</div>
 
 
   <div class="form-actions">
     <div class="d-inline-flex col-12 pb-1">
       <%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform", class: "col-12" } do |form| %>
 
-        <div class="position-relative">
+        <div class="position-relative d-inline-flex col-12">
           <%= form.text_field :search_query, class: "form-control pl-5 col-12", value: @search_query, name: "query", placeholder: "Type and hit enter to search. Ctrl+L to focus." %>
           <%= octicon "search", class: "subnav-search-icon", style: "z-index: 3" %>
+          <span class="input-group-button">
+            <%= form.submit "Search", class: "btn" %>
+          </span>
         </div>
+
       <% end %>
+      <% if false %>
       <%= form_for SavedSearch.new, url: save_search_path(notebook: @current_notebook), html: { class: "" }, method: :post do |form| %>
         <%= form.hidden_field :query %>
       <span class="input-group-button">
@@ -56,7 +95,10 @@
           </details-dialog>
         </details>
       </span>
-      <% end %>
+    <% end %>
+  <% end %>
+     <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn ml-2"><%= octicon "pencil" %> New Entry</a>
+
     </div>
 
 
