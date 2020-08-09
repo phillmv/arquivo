@@ -1,26 +1,14 @@
 <%= render partial: "shared/sidebar" %>
 <div class="content-container">
-  <div class="pagehead pt-2">
-    <h1 class="d-inline">Timeline</h1>
-    <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
+  <!-- <div class="pagehead pt&#45;2"> -->
+  <!--   <h1 class="d&#45;inline">Timeline</h1> -->
+  <!-- </div> -->
+  <!--  -->
+  <div style="padding-top: 9px">
+    <%= render partial: "timeline/search_bar" %>
+    </div>
 
-  </div>
-
-  <%# <%= render partial: "shared/tabnav" %>
-  <%= render partial: "timeline/search_bar" %>
-
-  <% if false #unless FeatureFlag[:redesign] %>
-    <div class="pt-4">
-      <div>
-        <h1 class="d-inline">Timeline</h1>
-        <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
-      </div>
-    <% else %>
-      <!-- <hr class="mb&#45;0"> -->
-      <!-- <div> -->
-      <% end %>
-      <div>
-
+  <div>
     <div class="TimelineItem-start"></div>
 
     <% @entries&.each do |day, entries| %>

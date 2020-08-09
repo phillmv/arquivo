@@ -14,7 +14,7 @@
 
   <% unless FeatureFlag[:redesign] %>
     <div class="mb-3">
-      <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "note" %> Timeline</a></h4>
+      <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "zap" %> Timeline</a></h4>
       <h4><a href="<%= agenda_path(notebook: @current_notebook) %>"><%= octicon "watch" %> This Day</a></h4>
       <h4><a href="<%= calendar_weekly_path(notebook: @current_notebook) %>"><%= octicon "list-unordered" %> This Week</a></h4>
       <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> This Month</a></h4>

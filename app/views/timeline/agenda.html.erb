@@ -1,15 +1,9 @@
 <%= render partial: "shared/sidebar" %>
 
 <div class="content-container">
-  <% if FeatureFlag[:redesign] %>
-    <%= render partial: "shared/tabnav" %>
-    <%# <%= render partial: "timeline/search_bar" %>
-  <% else %>
-    <div class="pt-2 pagehead">
-      <h1 class="d-inline">Today, <%= @todays_date %></h1>
-      <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
-    </div>
-  <% end %>
+  <div class="pt-2 pagehead">
+    <h1 class="d-inline">Today, <%= @todays_date %></h1>
+  </div>
 
   <%= render 'entries/form', entry: @entry, skip_cancel: true, skip_metadata: true %>
 
