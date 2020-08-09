@@ -25,6 +25,15 @@
   <% else %>
   <% end %>
 
+   <div class="mb-3">
+    <h4>Recent Tags</h4>
+    <ul class="list-style-none">
+      <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(12).each do |topic| %>
+        <li><a href="<%= search_path(query: topic, notebook: @current_notebook)%>"><%=topic%></a></li>
+      <% end %>
+    </ul>
+  </div>
+
   <div class="mb-3">
     <h4>Recent Entries</h4>
     <ul class="list-style-none">
@@ -34,15 +43,4 @@
       <% end %>
     </ul>
   </div>
-
-  <div class="mb-3">
-    <h4>Recent Tags</h4>
-    <ul class="list-style-none">
-      <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(8).each do |topic| %>
-        <li><a href="<%= search_path(query: topic, notebook: @current_notebook)%>"><%=topic%></a></li>
-      <% end %>
-    </ul>
-  </div>
-
-
 </div>
