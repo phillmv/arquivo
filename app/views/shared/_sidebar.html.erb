@@ -25,7 +25,7 @@
   <% else %>
   <% end %>
 
-   <div class="mb-3">
+   <div class="mb-3 hide-xl">
     <h4>Recent Tags</h4>
     <ul class="list-style-none">
       <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(12).each do |topic| %>

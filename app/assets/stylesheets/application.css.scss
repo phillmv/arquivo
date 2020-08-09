@@ -33,6 +33,13 @@
   @extend .mr-sm-4;
 }
 
+.context-container {
+  @extend .float-left;
+  @extend .col-md-2;
+  @extend .col-lg-2;
+  @extend .hide-sm, .hide-md, .hide-lg;
+}
+
 
 .calendar-container {
   @extend .float-left;
