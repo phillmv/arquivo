@@ -36,7 +36,8 @@
 
 .calendar-container {
   @extend .float-left;
-  @extend .col-sm-10, .offset-1;
+  @extend .col-sm-11, .mx-sm-4;
+  // @extend .col-sm-10, .offset-1;
   @extend .col-md-8;
   @extend .col-lg-9;
   // .ml-lg-0 cancels the offset
