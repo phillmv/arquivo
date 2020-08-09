@@ -104,9 +104,11 @@ document.addEventListener("DOMContentLoaded", function(){
 
 function savedSearch() {
   var saved_search = document.querySelector("#new_saved_search")
-  saved_search.addEventListener("submit", (e) => {
-    saved_search.saved_search_query.value = document.searchform.query.value
-  });
+  if (saved_search) {
+    saved_search.addEventListener("submit", (e) => {
+      saved_search.saved_search_query.value = document.searchform.query.value
+    });
+  }
 }
 
 function setTaskListHandler() {
