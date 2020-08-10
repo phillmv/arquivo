@@ -1,5 +1,5 @@
 <div class="entry-list-header">
-  <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1">
+  <a href="<%= entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon permalink mr-1">
     <%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %>
   </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-1 hide-on-fold trigger-fold">
     <%= octicon("fold") %> fold
@@ -8,7 +8,7 @@
   <% if entry.reply? %><a href="<%= entry_path(entry.in_reply_to, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
       <%= octicon("telescope") %> parent</a><%end%>
 
- <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="Box-btn-octicon btn-octicon unselectable mr-1"><%= octicon("reply") %> Reply</a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable">
+ <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="Box-btn-octicon btn-octicon unselectable mr-1"><%= octicon("reply") %> Reply</a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="edit-permalink Box-btn-octicon btn-octicon unselectable">
     <%= octicon("pencil") %> edit
   </a>
 

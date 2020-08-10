@@ -204,6 +204,14 @@ function setEntryFoldToggleHandler() {
       elem.closest(".Box-body").classList.remove("collapsed");
     }
   });
+
+  document.addEventListener('dblclick', (e) => {
+    var elem = e.target;
+    var entry_box;
+    if (entry_box = elem.closest(".entry-box")) {
+      window.location.href = entry_box.querySelector("a.edit-permalink").href
+    }
+  });
 }
 
 // handles directupload to form, injecting url back into textarea
