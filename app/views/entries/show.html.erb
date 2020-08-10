@@ -11,13 +11,13 @@
     </nav>
   </div>
 
-  <div class="">
 
-    <% if @entry.parent %>
-      <%= render partial: "entries/thread_list_entry", locals: { entry: @entry.parent } %>
-    <% end %>
+  <% if @entry.parent %>
+    <%= render partial: "entries/thread_list_entry", locals: { entry: @entry.parent } %>
+  <% end %>
 
 
+  <div class="entry-show">
   <div class="markdown-body js-task-list-container pr-4">
     <div class="mb-3">
       <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon mr-1 f4">

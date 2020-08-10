@@ -60,6 +60,15 @@ document.addEventListener("turbolinks:load", function(){
   setFilterHandler();
   setTaskListHandler()
   savedSearch();
+
+  var entry;
+  if (entry = document.querySelector('.entry-show')) {
+    entry.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest"
+    });
+  }
 });
 
 document.addEventListener("DOMContentLoaded", function(){
