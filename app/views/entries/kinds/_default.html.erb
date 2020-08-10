@@ -1,5 +1,5 @@
 <div class="entry-box">
-  <div class="Box-body markdown-body <%= truncate_class(entry)%> js-task-list-container">
+  <div class="Box-body markdown-body <%= truncate_class(entry)%> js-task-list-container pb-1 ">
     <%= render partial: "entries/action_bar", locals: { entry: entry } %>
     <div class="entry-body">
       <% if @has_todo %>
