@@ -58,6 +58,16 @@
   @extend .Box;
 }
 
+// unused
+// .entry-edit {
+//   padding-top: 12px;
+//   padding-right: 12px;
+//   padding-bottom: 12px;
+//   padding-left: 16px;
+//   margin-top: -1px;
+//   border-top: 1px solid #e1e4e8;
+// }
+
 .entry-box + .entry-box {
   @extend .mt-2;
 }
@@ -76,7 +86,7 @@ summary::-webkit-details-marker {
 }
 
 .entry-list-header {
-  // @extend .text-small;
+  @extend .text-small;
   @extend .mb-3;
 
   @extend .text-gray-dark;
