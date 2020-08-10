@@ -182,6 +182,19 @@ function setEntryFoldToggleHandler() {
       this.closest(".Box-body").classList.add("truncate");
     })
   });
+
+  // click anywhere in the entry to remove truncate
+  document.addEventListener("click", (e) => {
+    var elem = e.target;
+    var entry_body;
+    if(!elem.matches(".hide-on-fold") && (entry_body = elem.closest(".truncate"))) {
+      entry_body.classList.remove("truncate");
+    }
+
+    if(elem.closest(".collapsed")){
+      elem.closest(".Box-body").classList.remove("collapsed");
+    }
+  });
 }
 
 // handles directupload to form, injecting url back into textarea

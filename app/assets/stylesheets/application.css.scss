@@ -164,3 +164,21 @@ h1.arquivo {
     }
   }
 }
+
+.entry-collapsed {
+  display: none;
+}
+.collapsed {
+  // height: 100px;
+  overflow: hidden;
+  .entry-body {
+    display: none;
+  }
+  .entry-collapsed {
+    display: initial;
+  }
+
+  .trigger-fold {
+    display: none;
+  }
+}

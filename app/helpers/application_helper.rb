@@ -37,4 +37,10 @@ module ApplicationHelper
   def current_action
     @current_action ||= "#{controller_name}/#{action_name}"
   end
+
+  def collapse_entry(collapse = false)
+    if collapse
+      "collapsed"
+    end
+  end
 end
