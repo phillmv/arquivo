@@ -14,7 +14,8 @@
               <%= form.label :octicon %>
               </dt>
               <dd>
-              <%= form.text_field :octicon, class: "form-control" %>
+              <%= form.select :octicon, SavedSearch::OCTICONS, {include_blank: true}, { class: "form-select" } %>
+              <%# <%= form.text_field :octicon, class: "form-control" %>
               </dd>
 
               <dt>
@@ -40,7 +41,14 @@
       </a>
 
       <% @current_notebook.saved_searches.limit(6).each_with_index do |saved_search, i| %>
-        <a class="tabnav-tab" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" <%= search_tabnav(saved_search, @search_query) %> accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a>
+        <span class="tabnav-tab" <%= search_tabnav(saved_search, @search_query) %>>
+          <a class="<%= search_tabnav_colour(saved_search, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a><% if search_tabnav(saved_search, @search_query) %>
+
+        <%= form_for saved_search, url: delete_saved_search_path(notebook: @current_notebook, id: saved_search), html: { class: "d-inline" }, method: :delete do |form| %>
+          <button type="submit" class="btn-link text-gray-dark"><%= octicon("x")%></button>
+        <% end %>
+      <% end %>
+        </span>
       <% end %>
 
     </div>

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     get '/agenda', to: "timeline#agenda", as: :agenda
     get '/timeline/search', to: "timeline#search", as: :search
     post '/timeline/save_search', to: "timeline#save_search", as: :save_search
+    delete '/timeline/save_search/:id', to: "timeline#delete_saved_search", as: :delete_saved_search
     get '/calendar', to: "calendar#monthly", as: :calendar
     get '/calendar/weekly', to: "calendar#weekly", as: :calendar_weekly
     get '/calendar/:date', to: "calendar#daily", as: :calendar_daily

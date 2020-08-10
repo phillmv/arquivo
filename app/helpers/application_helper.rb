@@ -26,6 +26,14 @@ module ApplicationHelper
     end
   end
 
+  def search_tabnav_colour(saved_search, search_query)
+    if search_tabnav(saved_search, search_query)
+      "text-gray-dark"
+    else
+      "text-gray"
+    end
+  end
+
   def current_action
     @current_action ||= "#{controller_name}/#{action_name}"
   end
