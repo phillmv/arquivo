@@ -69,7 +69,17 @@
 // }
 
 .entry-box + .entry-box {
-  @extend .mt-2;
+  margin-top: 0px !important;
+  border-top: 0px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+
+}
+
+.entry-show {
+  border: 1px solid $gray-400 !important;
+  border-top-left-radius: 2px !important;
+  border-top-right-radius: 2px !important;
 }
 
 .TimelineItem-start {
