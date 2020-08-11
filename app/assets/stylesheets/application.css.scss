@@ -118,7 +118,7 @@ summary::-webkit-details-marker {
 .truncate {
   overflow: hidden;
   position: relative;
-  max-height: 500px;
+  max-height: 300px;
 
   .show-on-fold {
     display: initial;
@@ -129,13 +129,19 @@ summary::-webkit-details-marker {
   }
 }
 
+.truncate.truncate-more {
+    max-height: 180px;
+  }
+
+
 .show-on-fold {
   display: none;
 }
 
+
 .truncate:after{
   content:"";
-  height: 200px;
+  height: 75px;
   display: block;
   width: 100%;
   position:absolute;
@@ -182,23 +188,5 @@ h1.arquivo {
     &:hover {
       text-decoration: underline $blue-500;
     }
-  }
-}
-
-.entry-collapsed {
-  display: none;
-}
-.collapsed {
-  // height: 100px;
-  overflow: hidden;
-  .entry-body {
-    display: none;
-  }
-  .entry-collapsed {
-    display: initial;
-  }
-
-  .trigger-fold {
-    display: none;
   }
 }

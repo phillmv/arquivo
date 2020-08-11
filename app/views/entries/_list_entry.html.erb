@@ -1,9 +1,9 @@
-<% collapsed = if defined?(collapsed); collapsed; else false; end %>
+<% threaded = if defined?(threaded); threaded; else false; end %>
 
 <% if entry.calendar? %>
   <%= render "entries/kinds/calendar", entry: entry %>
 <% elsif entry.bookmark? %>
   <%= render "entries/kinds/pinboard", entry: entry %>
 <% else %>
-  <%= render "entries/kinds/default", entry: entry, collapsed: collapsed %>
+  <%= render "entries/kinds/default", entry: entry, threaded: threaded %>
 <% end %>

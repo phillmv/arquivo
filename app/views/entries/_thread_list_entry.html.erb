@@ -1,5 +1,5 @@
-<% collapsed = if defined?(collapsed); collapsed; else false; end %>
+<% threaded = if defined?(threaded); threaded; else false; end %>
 <% if entry.parent %>
-  <%= render partial: "entries/thread_list_entry", locals: { entry: entry.parent, collapsed: true } %>
+  <%= render partial: "entries/thread_list_entry", locals: { entry: entry.parent, threaded: true } %>
 <% end %>
-<%= render partial: "entries/list_entry", locals: { entry: entry, collapsed: collapsed } %>
+<%= render partial: "entries/list_entry", locals: { entry: entry, threaded: true } %>

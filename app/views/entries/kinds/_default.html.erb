@@ -1,15 +1,12 @@
 <div class="entry-box">
-  <div class="Box-body markdown-body <%= truncate_class(entry, collapsed)%> <%= collapse_entry(collapsed) %> js-task-list-container pb-1 ">
-    <%= render partial: "entries/action_bar", locals: { entry: entry } %>
+  <div class="Box-body markdown-body <%= truncate_class(entry, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
+    <%= render partial: "entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
       <% if @has_todo %>
         <%= EntryRenderer.new(entry).todo_to_html %>
       <% else %>
         <%= EntryRenderer.new(entry).to_html %>
       <% end %>
-    </div>
-    <div class="entry-collapsed">
-      <p><%= entry.truncated_description(170) %>
     </div>
     <div class="entry-edit d-none">
       <%= form_with(model: entry, url: entry_path(entry, notebook: entry.notebook)) do |form| %>

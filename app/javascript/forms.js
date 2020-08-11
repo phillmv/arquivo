@@ -196,7 +196,7 @@ function setEntryFoldToggleHandler() {
   document.addEventListener("click", (e) => {
     var elem = e.target;
     var entry_body;
-    if(!elem.matches(".hide-on-fold") && (entry_body = elem.closest(".truncate"))) {
+    if(!elem.matches(".hide-on-fold") && (entry_body = elem.closest(".Box-body"))) {
       entry_body.classList.remove("truncate");
     }
 
@@ -207,11 +207,31 @@ function setEntryFoldToggleHandler() {
 
   document.addEventListener('dblclick', (e) => {
     var elem = e.target;
-    var entry_box;
-    if (entry_box = elem.closest(".entry-box")) {
-      window.location.href = entry_box.querySelector("a.edit-permalink").href
+    var entry_body;
+    if(!elem.matches(".show-on-fold") && (entry_body = elem.closest(".Box-body"))) {
+      entry_body.classList.add("truncate");
+
+      if (!isScrolledIntoView(entry_body)) {
+        entry_body.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest"
+        });
+      }
     }
   });
+}
+
+function isScrolledIntoView(el) {
+    var rect = el.getBoundingClientRect();
+    var elemTop = rect.top;
+    var elemBottom = rect.bottom;
+
+    // Only completely visible elements return true:
+    var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+    // Partially visible elements return true:
+    //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
+    return isVisible;
 }
 
 // handles directupload to form, injecting url back into textarea
