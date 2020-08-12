@@ -18,4 +18,8 @@ class Notebook < ApplicationRecord
   def to_param
     name
   end
+
+  def sync_path
+    "/tmp/arquivo-test"
+  end
 end

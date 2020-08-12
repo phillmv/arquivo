@@ -27,7 +27,7 @@ class Entry < ApplicationRecord
 
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
-  after_save :process_tags
+  after_save :process_tags, :sync_to_git
 
   def set_identifier
     self.occurred_at ||= Time.current
@@ -71,8 +71,13 @@ class Entry < ApplicationRecord
     find_by(identifier: Digest::MD5.hexdigest(url))
   end
 
+  # -- after_save
   def process_tags
     EntryTagger.new(self).process!
+  end
+
+  def sync_to_git
+    EntrySync.new(self).write!
   end
 
   def note?
@@ -144,8 +149,18 @@ class Entry < ApplicationRecord
               identifier)
   end
 
+  def to_relative_filepath
+    File.join(occurred_at.strftime("%Y/%m/%d"),
+              identifier,
+              to_filename)
+  end
+
   def to_filename
     "#{identifier}.yaml"
+  end
+
+  def to_full_filepath(dirname)
+    File.join(to_folder_path(dirname), to_filename)
   end
 
   def truncated_description(n = 30)

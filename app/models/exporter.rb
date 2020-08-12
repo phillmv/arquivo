@@ -1,29 +1,28 @@
 class Exporter
-  attr_accessor :export_path
-  def initialize(export_path)
+  attr_accessor :export_path, :notebook
+  def initialize(export_path, notebook = nil)
     @export_path = export_path
+    @notebook = notebook
   end
 
   # TODO: don't overwrite if existing is newer
   def export!
     FileUtils.mkdir_p(export_path)
 
-    Entry.with_attached_files.find_each do |entry|
+    entries = notebook&.entries || Entry
+    entries.with_attached_files.find_each do |entry|
       puts "handling #{entry.notebook}/#{entry.identifier}"
-
-      # set up folders
-      entry_folder_path = entry.to_folder_path(export_path)
-      FileUtils.mkdir_p(entry_folder_path)
-
-
-      entry_files_path = File.join(entry_folder_path,
-                                   "files")
 
       export_entry!(entry, entry_folder_path)
     end
   end
 
-  def export_entry!(entry, entry_folder_path)
+  def export_entry!(entry, export_path)#entry_folder_path)
+    # set up folders
+    entry_folder_path = entry.to_folder_path(export_path)
+    FileUtils.mkdir_p(entry_folder_path)
+
+    # TODO: replace with to_full_filepath
     File.write(File.join(entry_folder_path, entry.to_filename), entry.to_yaml)
 
     if entry.files.any?
@@ -36,6 +35,8 @@ class Exporter
         export_blob!(entry, file.blob, entry_files_path, i)
       end
     end
+
+    entry_folder_path
   end
 
   def export_blob!(entry, blob, entry_files_path, count)
