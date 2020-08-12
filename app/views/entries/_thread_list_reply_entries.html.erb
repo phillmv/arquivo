@@ -1,0 +1,5 @@
+<% entry.replies.each do |reply| %>
+  <%= render partial: "entries/list_entry", locals: { entry: reply, threaded: true } %>
+  <%= render partial: "entries/thread_list_reply_entries", locals: { entry: reply, threaded: true } %>
+<% end %>
+

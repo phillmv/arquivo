@@ -1,4 +1,3 @@
-<% threaded = if defined?(threaded); threaded; else false; end %>
 <% if entry.parent %>
   <%= render partial: "entries/thread_list_entry", locals: { entry: entry.parent, threaded: true } %>
 <% end %>
