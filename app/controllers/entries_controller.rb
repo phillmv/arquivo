@@ -10,6 +10,7 @@ class EntriesController < ApplicationController
   # GET /entries/1
   # GET /entries/1.json
   def show
+    @show_thread = params[:thread].present?
     @renderer = EntryRenderer.new(@entry)
     @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
   end
@@ -73,6 +74,7 @@ class EntriesController < ApplicationController
 
   # POST /entries
   # POST /entries.json
+  # TODO: why do we support create or update in this method vs the method above?
   def create
     @entry = @current_notebook.entries.find_by(identifier: create_entry_params[:identifier])
     @entry ||= @current_notebook.entries.new(create_entry_params)

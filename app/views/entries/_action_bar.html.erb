@@ -4,8 +4,8 @@
     <%= octicon("fold") %> fold
   </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-0 show-on-fold trigger-fold" ><%= octicon("unfold") %> unfold
   </a><span class="float-right">
-  <% if entry.reply? && !threaded %><a href="<%= entry_path(entry.in_reply_to, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
-      <%= octicon("telescope") %> parent</a><%end%>
+  <% if entry.reply? && !threaded %><a href="<%= entry_path(entry, notebook: entry.notebook, thread: true) %>" class="Box-btn-octicon btn-octicon unselectable mr-1">
+      <%= octicon("comment-discussion") %> thread</a><%end%>
 
  <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="Box-btn-octicon btn-octicon unselectable mr-1"><%= octicon("reply") %> Reply</a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="edit-permalink Box-btn-octicon btn-octicon unselectable">
     <%= octicon("pencil") %> edit

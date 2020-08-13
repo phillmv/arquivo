@@ -11,11 +11,9 @@
     </nav>
   </div>
 
-
-  <% if @entry.parent %>
+  <% if @show_thread && @entry.parent %>
     <%= render partial: "entries/thread_list_entry", locals: { entry: @entry.parent } %>
   <% end %>
-
 
   <div class="entry-box entry-show">
   <div class="Box-body border-0 markdown-body js-task-list-container">
@@ -25,6 +23,10 @@
       <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon f4">
         <%= octicon "link", class: "mr-1 v-visible " %><%= @entry.occurred_at %>
       </a>
+
+      <% if !@show_thread && (@entry.reply? || @entry.replies.any?) %><a href="<%= entry_path(@entry, notebook: @entry.notebook, thread: true) %>" class="Box-btn-octicon btn-octicon unselectable mr-1 float-right">
+          <%= octicon("comment-discussion") %> thread</a><%end%>
+
     </div>
 
     <div class="entry-body">
@@ -73,7 +75,7 @@
     <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(notebook: @current_notebook), class: "btn float-left" %>
   </div>
 
-  <% if @entry.replies.any? %>
+  <% if @show_thread && @entry.replies.any? %>
     <div class="mt-3">
       <%= render partial: "entries/thread_list_reply_entries", locals: { entry: @entry } %>
     </div>
