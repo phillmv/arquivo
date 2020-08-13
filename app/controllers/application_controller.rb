@@ -26,6 +26,10 @@ class ApplicationController < ActionController::Base
 
   # TODO: optimize
   def current_notebook
+    if defined?(@current_notebook)
+      return @current_notebook
+    end
+
     notebook = params[:notebook] || session[:notebook] || Notebook.default
 
     @current_notebook = Notebook.find_by!(name: notebook).tap do
