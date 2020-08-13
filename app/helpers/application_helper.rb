@@ -1,14 +1,19 @@
 module ApplicationHelper
-  TABNAV_OPTS = {
-    "timeline/index" => :timeline,
-    "timeline/search" => :timeline,
-    "timeline/agenda" => :this_day,
-    "calendar/weekly" => :this_week,
+  SIDEBAR_NAV_OPTS = {
+    "timeline/index" =>   :timeline,
+    "timeline/search" =>  :timeline,
+    "calendar/daily" =>   :timeline,
+    "entries/show" =>     :timeline,
+    "entries/new" =>      :timeline,
+    "entries/edit" =>     :timeline,
+    "timeline/agenda" =>  :this_day,
+    "calendar/weekly" =>  :this_week,
     "calendar/monthly" => :this_month,
   }
-  def current_tabnav(opt)
-    if TABNAV_OPTS[current_action] == opt
-      "aria-current='page'"
+
+  def current_sidebar?(type)
+    if SIDEBAR_NAV_OPTS[current_action] == type
+      "black-underline"
     else
       nil
     end
@@ -36,11 +41,5 @@ module ApplicationHelper
 
   def current_action
     @current_action ||= "#{controller_name}/#{action_name}"
-  end
-
-  def collapse_entry(collapse = false)
-    if collapse
-      "collapsed"
-    end
   end
 end

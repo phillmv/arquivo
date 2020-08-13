@@ -12,38 +12,25 @@
     </details>
   </div>
 
-  <% unless FeatureFlag[:newnav] %>
-    <div class="mb-3">
-      <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "zap" %> Timeline</a></h4>
-      <h4><a href="<%= agenda_path(notebook: @current_notebook) %>"><%= octicon "watch" %> This Day</a></h4>
-      <h4><a href="<%= calendar_weekly_path(notebook: @current_notebook) %>"><%= octicon "list-unordered" %> This Week</a></h4>
-      <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> This Month</a></h4>
-      <h4><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
-      <!-- <h4><a href="<%= new_entry_path(notebook: @current_notebook) %>"><%= octicon "pencil" %> New Entry</a></h4> -->
 
+  <div class="Box border-0">
+    <div class="Box-row pl-0">
+      <h4 ><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "zap" %> <span class="<%= current_sidebar?(:timeline) %>">Timeline</span></a></h4>
     </div>
-  <% else %>
+    <div class="Box-row pl-0">
 
-    <div class="Box border-0">
-      <div class="Box-row pl-0">
-        <h4><a href="<%= timeline_path(notebook: @current_notebook) %>"><%= octicon "zap" %> Timeline</a></h4>
-      </div>
-      <div class="Box-row pl-0">
-
-      <h4><a href="<%= agenda_path(notebook: @current_notebook) %>"><%= octicon "watch" %> This Day</a></h4>
-      </div>
-            <div class="Box-row pl-0">
-      <h4><a href="<%= calendar_weekly_path(notebook: @current_notebook) %>"><%= octicon "list-unordered" %> This Week</a></h4>
-      </div>
-      <div class="Box-row pl-0">
-      <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> This Month</a></h4>
-      </div>
-      <div class="Box-row pl-0">
-      <h4><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
-      </div>
-
+      <h4><a href="<%= agenda_path(notebook: @current_notebook) %>"><%= octicon "watch" %> <span class="<%= current_sidebar?(:this_day) %>">This Day</span></a></h4>
     </div>
-  <% end %>
+    <div class="Box-row pl-0">
+      <h4><a href="<%= calendar_weekly_path(notebook: @current_notebook) %>"><%= octicon "list-unordered" %> <span class="<%= current_sidebar?(:this_week) %>">This Week</span></a></h4>
+    </div>
+    <div class="Box-row pl-0">
+      <h4><a href="<%= calendar_path(notebook: @current_notebook) %>"><%= octicon "calendar" %> <span class="<%= current_sidebar?(:this_month) %>">This Month</span></a></h4>
+    </div>
+    <div class="Box-row pl-0">
+      <h4><a href="<%= settings_path(notebook: @current_notebook) %>"><%= octicon "gear" %> Settings</a></h4>
+    </div>
+  </div>
 
    <div class="mb-3 hide-xl">
     <h4>Recent Tags</h4>

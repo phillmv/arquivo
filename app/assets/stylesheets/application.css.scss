@@ -190,3 +190,10 @@ h1.arquivo {
     }
   }
 }
+
+.black-underline {
+  text-decoration: underline black;
+  &:hover {
+    text-decoration: underline $blue-500;
+  }
+}
