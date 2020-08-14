@@ -80,6 +80,12 @@
       <%= render partial: "entries/thread_list_reply_entries", locals: { entry: @entry } %>
     </div>
   <% end %>
+</div>
 
-
+<div class="col-2 float-left mt-8">
+  <h4>Revisions</h4>
+  <%= EntrySync.new(@entry).versions.size %> revisions
+  <% EntrySync.new(@entry).versions.each do |rev, date| %>
+    <a href=""><%= rev %></a> <%= date %>
+  <% end %>
 </div>

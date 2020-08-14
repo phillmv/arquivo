@@ -9,17 +9,21 @@ class EntrySync
   end
 
   def versions
+    if defined?(@versions)
+      return @versions
+    end
+
     repo = init_repo(notebook_folder_path)
     full_filepath = entry.to_full_filepath(dirname)
     if File.exist?(full_filepath)
-      repo.log.path(full_filepath).map { |c| [c.sha, c.date] }
+      @versions = repo.log.path(full_filepath).map { |c| [c.sha, c.date] }
     else
-      []
+      @versions = []
     end
   end
 
   def get_version(sha)
-    repo = init_repo(notebook_folder_path)
+    repo = open_repo(notebook_folder_path)
     full_filepath = entry.to_full_filepath(dirname)
     if File.exist?(full_filepath)
       yaml = repo.object("#{sha}:#{entry.to_relative_filepath}").contents
@@ -30,9 +34,25 @@ class EntrySync
   end
 
   def write!
-    repo = init_repo(notebook_folder_path)
+    repo = open_repo(notebook_folder_path)
     entry_folder_path = write_to_disc(entry, dirname)
     commit_to_repo(repo, entry, entry_folder_path)
+  end
+
+  def open_repo(working_dir)
+    if defined?(@repo)
+      return @repo
+    end
+
+    begin
+      @repo = Git.open(working_dir)
+    rescue ArgumentError => e
+      if e.message == "path does not exist"
+        return @repo = init_repo(working_dir)
+      else
+        raise e
+      end
+    end
   end
 
   def init_repo(working_dir)
@@ -50,6 +70,7 @@ class EntrySync
     repo.commit(entry.identifier)
   end
 
+  # -- unused
   def ready?
     raise "can't see git in PATH" unless do_we_have_git?
     raise "can't write to #{dirname}" unless File.writable?(dirname)
@@ -58,6 +79,4 @@ class EntrySync
   def do_we_have_git?
     %x[which git].present?
   end
-
 end
-
