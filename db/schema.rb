@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_08_150908) do
+ActiveRecord::Schema.define(version: 2020_08_13_152640) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -111,6 +111,15 @@ ActiveRecord::Schema.define(version: 2020_08_08_150908) do
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "last_imported_at"
     t.index ["calendar_import_id"], name: "index_i_calendar_entries_on_calendar_import_id"
+  end
+
+  create_table "key_values", force: :cascade do |t|
+    t.string "namespace"
+    t.string "key"
+    t.string "value"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["namespace", "key"], name: "index_key_values_on_namespace_and_key"
   end
 
   create_table "notebooks", force: :cascade do |t|
