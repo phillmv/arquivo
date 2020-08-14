@@ -52,6 +52,11 @@
   @extend .mb-lg-4;
 }
 
+// settings
+.settings-toc {
+  @extend .h3;
+  padding-left: 1em !important;
+}
 
 // used for rendering entry bodies
 .entry-box {

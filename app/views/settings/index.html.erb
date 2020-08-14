@@ -1,37 +1,102 @@
 <%= render partial: "shared/sidebar" %>
+
 <div class="content-container">
+
   <div class="pagehead">
-    <h1>Settings for <%= octicon "book", height: 32 %> <%= @current_notebook %></h1>
+    <h1>Settings</h1>
   </div>
 
-  <h3>Bookmarklet</h3>
-  <div>
-    <p>
-    Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.localhost/<%= @current_notebook %>/save_bookmark?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));">Save(<%= @current_notebook %>)</a>
-    </p>
+  <div class="markdown-body">
+    <ol class="settings-toc pb-4">
+      <li><a href="#general">Arquivo</a></li>
+      <li><a href="#this-notebook">The <%= octicon "book", height: 20 %> <%= @current_notebook %> Notebook</a></li>
+      <li><a href="#bookmarklet">Bookmarklet for <%= octicon "book", height: 20 %> <%= @current_notebook %> </a></li>
+    </ol>
   </div>
 
-  <h2>Calendars</h2>
-  <hr>
-  <div class="simple-calendar">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>title</th>
-          <th>url</th>
-          <th colspan="3"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @calendar_imports.each do |ci| %>
+  <a name="general"></a>
+  <div class="pb-4">
+    <div class="pagehead">
+      <h2>Arquivo</h2>
+      <p>Settings that apply for the whole app.</p>
+    </div>
+    <h3>Where should we save files?</h3>
+    <p>Arquivo saves all of your entries into a locally stored git repository.</p>
+
+    <%= form_with(model: @path_setting, url: "foo", local: true) do |form| %>
+      <dl class="form-group">
+        <dt><%= form.label :value, "Path to an existing folder" %></dt>
+        <dd>
+        <%# CANNOT be arsed right now to get the file_field to return directories but not every single file within the directly right now %>
+        <%= form.text_field :value, class: "form-control" %>
+        </dd>
+
+        <div class="form-actions pt-2">
+          <%= form.submit "Save", class: "btn btn-primary float-left" %>
+        </div>
+        <!-- <dd><input class="form&#45;control" type="text" value="Example Value" id="example&#45;text" /></dd> -->
+      </dl>
+    <% end %>
+  </div>
+
+  <a name="this-notebook"></a>
+   <div class="pb-4">
+    <div class="pagehead">
+      <h2>The <%= octicon "book", height: 20 %> <%= @current_notebook %> Notebook</h2>
+      <p>Settings for this notebook.</p>
+    </div>
+
+    <h3>Calendars</h3>
+    <p>This is broken! Do not use yet, configure a CalendarImport thru the console.</p>
+    <hr>
+    <div class="simple-calendar">
+      <table class="table">
+        <thead>
           <tr>
-            <td><%= ci.title %></td>
-            <td><span class=""><%= ci.url %></span></td>
+            <th>title</th>
+            <th>url</th>
+            <th colspan="3"></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @calendar_imports.each do |ci| %>
+            <tr>
+              <td><%= ci.title %></td>
+              <td><span class=""><%= ci.url %></span></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <div>
+    <%= form_for(@new_calendar_import, url: add_calendar_path(notebook: @current_notebook)) do |form| %>
+
+      <div class="form-group">
+        <%= form.label :url, "URL" %>
+        <%= form.text_field :url, class: "form-control input-sm" %>
+        <%= form.submit "Create", class: "btn btn-primary" %>
+      </div>
+
+    <% end %>
   </div>
+
+
+   </div>
+
+
+
+   <a name="bookmarklet"></a>
+   <div class="pb-4">
+     <div class="pagehead">
+       <h2>Bookmarklet for <%= octicon "book", height: 20 %> <%= @current_notebook %></h2>
+     </div>
+     <div>
+       <p>
+       Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.localhost/<%= @current_notebook %>/save_bookmark?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));"><kbd>Bookmark in <%= @current_notebook %></kbd></a>
+      </p>
+    </div>
+  </div>
+
 
   <% if false %>
   <br>
@@ -74,15 +139,4 @@
 <% end %>
 
 
-  <div>
-    <%= form_for(@new_calendar_import, url: add_calendar_path(notebook: @current_notebook)) do |form| %>
-
-      <div class="form-group">
-        <%= form.label :url, "URL" %>
-        <%= form.text_field :url, class: "form-control input-sm" %>
-        <%= form.submit "Create", class: "btn btn-primary" %>
-      </div>
-
-    <% end %>
-  </div>
 </div>
