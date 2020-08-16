@@ -36,11 +36,12 @@
 
   <nav class="tabnav-tabs" aria-label="Foo bar">
     <div class="UnderlineNav-body">
-      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= any_search_tabnav?(@current_notebook.saved_searches, @search_query) %> accesskey="1">
+      <% saved_searches = @current_notebook.saved_searches.limit(6) %>
+      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= any_search_tabnav?(saved_searches, @search_query) %> accesskey="1">
         <h5><%= octicon "zap" %></h5>
       </a>
 
-      <% @current_notebook.saved_searches.limit(6).each_with_index do |saved_search, i| %>
+      <% saved_searches.limit(6).each_with_index do |saved_search, i| %>
         <span class="tabnav-tab" <%= search_tabnav(saved_search, @search_query) %>>
           <a class="<%= search_tabnav_colour(saved_search, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a><% if search_tabnav(saved_search, @search_query) %>
 
