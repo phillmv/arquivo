@@ -1,5 +1,9 @@
 class Importer
   attr_accessor :import_path
+
+  # pattern is notebook/year/month/day/identifier
+  NOTEBOOK_GLOB = "/*" #notebook
+  DIR_GLOB = "/*/*/*/*" #year/month/day/identifier
   def initialize(import_path)
     @import_path = import_path
   end
@@ -7,34 +11,46 @@ class Importer
   def import!
     raise "Path bad" unless File.exist?(import_path)
 
-    # pattern is notebook/year/month/day/identifier
-    dir_pattern = "/*/*/*/*/*"
-    expand_import_path = File.join(import_path, dir_pattern)
-    entry_folders = Dir[expand_import_path]
+    notebook_paths = File.join(import_path, NOTEBOOK_GLOB)
 
-    entry_folders.each do |path|
-      # list yaml files in this folder
-      # prob a more efficient way, tbd
-      entry_yaml = Dir.entries(path).select { |f| f.index("yaml") }
-      entry_yaml_path = File.join(path, entry_yaml)
+    Dir[notebook_paths].each do |notebook_path|
 
-      # load in the attr
-      begin
-        entry_attributes = YAML.load(File.read(entry_yaml_path))
-      rescue Exception => e
-        puts e
-        binding.pry
-        next
+      expand_import_path = File.join(notebook_path, DIR_GLOB)
+      entry_folders = Dir[expand_import_path]
+
+      entry_folders.each do |path|
+        # list yaml files in this folder
+        # prob a more efficient way, tbd
+        entry_yaml = Dir.entries(path).select { |f| f.index("yaml") }
+        entry_yaml_path = File.join(path, entry_yaml)
+
+        # load in the attr
+        begin
+          entry_attributes = YAML.load(File.read(entry_yaml_path))
+
+          # avoid writing to git until all the entries are done
+          entry_attributes.merge!(skip_local_sync: true)
+        rescue Exception => e
+          puts e
+          binding.pry
+          next
+        end
+
+        Entry.transaction do
+          entry = upsert_entry!(entry_attributes)
+
+          attach_files(entry, path)
+        end
       end
 
-      Entry.transaction do
-        entry = upsert_entry!(entry_attributes)
-
-        attach_files(entry, path)
-      end
-
+      # we're done processing all the entries for this notebook_path.
+      # let's sync it to our git repo
+      notebook_name = notebook_path.split("/").last
+      notebook = Notebook.find_or_create_by(name: notebook_name)
+      LocalSyncer.new().write_notebook(notebook, notebook_path)
     end
 
+    # sanity check, tbd probably can delete
     Entry.select("notebook").distinct.pluck(:notebook).each do |name|
       Notebook.find_or_create_by(name: name)
     end

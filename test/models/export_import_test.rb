@@ -83,4 +83,39 @@ class ExportImportTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "import smoke screen with local sync" do
+    notebook = Notebook.create(name: "mynotebook")
+
+    entries = create_list(:entry, 5, notebook: notebook)
+
+    assert_equal 5, Entry.count
+    assert_equal 1, Notebook.count
+
+    begin
+      enable_local_sync
+
+      Dir.mktmpdir do |export_import_path|
+        Exporter.new(export_import_path).export!
+
+        Entry.destroy_all
+        assert_equal Entry.count, 0
+
+        # now that we're set up, turn on git sync
+        Importer.new(export_import_path).import!
+
+        # because this was triggered as an import,
+        # we have only 1 commit, from the notebook import
+        # (i.e. this isn't being fired on every Entry#save)
+        repo_path = File.join(Setting.get(:arquivo, :storage_path), "arquivo", "mynotebook")
+        repo = Git.open(repo_path)
+        assert_equal 1, repo.log.count
+        assert repo.log.last.message.index("import from")
+
+        assert_equal 5, Entry.count
+      end
+    ensure
+      disable_local_sync
+    end
+  end
 end

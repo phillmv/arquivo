@@ -1,4 +1,5 @@
 class Setting < KeyValue
+  # fyi, this gets overridden in test_helper
   DEFAULTS = {
     :arquivo => {
       storage_path: File.join(ENV["HOME"], "Documents")
@@ -12,11 +13,11 @@ class Setting < KeyValue
   end
 
   def self.get(namespace, key)
-    kv = super
-    if kv.nil?
-      default(namespace, key)
+    v = super
+    if v.nil?
+      DEFAULTS[namespace][key]
     else
-      kv
+      v
     end
   end
 end

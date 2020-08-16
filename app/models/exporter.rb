@@ -13,11 +13,11 @@ class Exporter
     entries.with_attached_files.find_each do |entry|
       puts "handling #{entry.notebook}/#{entry.identifier}"
 
-      export_entry!(entry, entry_folder_path)
+      export_entry!(entry)
     end
   end
 
-  def export_entry!(entry, export_path)#entry_folder_path)
+  def export_entry!(entry)
     # set up folders
     entry_folder_path = entry.to_folder_path(export_path)
     FileUtils.mkdir_p(entry_folder_path)

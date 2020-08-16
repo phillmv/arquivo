@@ -27,6 +27,7 @@ class Entry < ApplicationRecord
 
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
+  attr_accessor :skip_local_sync # skip sync to git
   after_save :process_tags, :sync_to_git
 
   def set_identifier
@@ -77,7 +78,9 @@ class Entry < ApplicationRecord
   end
 
   def sync_to_git
-    EntrySync.new(self).write!
+    unless self.skip_local_sync
+      LocalSyncer.new().write_entry(self)
+    end
   end
 
   def note?
