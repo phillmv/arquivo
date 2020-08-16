@@ -79,7 +79,7 @@ class Entry < ApplicationRecord
 
   def sync_to_git
     unless self.skip_local_sync
-      LocalSyncer.new().write_entry(self)
+      LocalSyncer.sync_entry(self)
     end
   end
 

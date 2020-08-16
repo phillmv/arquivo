@@ -1,10 +1,24 @@
-# Every notebook gets stored locally in our repo
+# Every notebook gets stored locally in our git repo, which is handled by this
+# class. #write_entry
+# The name "LocalSyncer" feels awkward, which is likely a sign that
+# this will be renamed soon. Maybe just GitAdapter? I need a better name
+# for the concept of a local synced repo, especially since we may end up
+# using this class as a kind of exporter as well.
 class LocalSyncer
-  attr_reader :arquivo_path
-  def initialize(path = nil)
-    path = path || Setting.get(:arquivo, :storage_path)
+  attr_reader :arquivo_path, :lockfile
+  def initialize(path)
     @arquivo_path = File.join(path, "arquivo")
     @lockfile = File.join(@arquivo_path, "sync.lock")
+  end
+
+  def self.sync_entry(entry, path = nil)
+    working_dir = path || Setting.get(:arquivo, :storage_path)
+    self.new(working_dir).write_entry(entry)
+  end
+
+  def self.sync_notebook(notebook, msg_suffix, path = nil)
+    working_dir = path || Setting.get(:arquivo, :storage_path)
+    self.new(working_dir).write_notebook(notebook, msg_suffix)
   end
 
   def write_entry(entry)
@@ -83,9 +97,9 @@ class LocalSyncer
       return
     end
 
-    FileUtils.mkdir_p(@arquivo_path)
+    FileUtils.mkdir_p(arquivo_path)
     counter = 0
-    while File.exist?(@lockfile)
+    while File.exist?(lockfile)
       counter += 1
       sleep(0.5)
       if counter >= 60
@@ -95,10 +109,10 @@ class LocalSyncer
     end
 
     begin
-      File.write(@lockfile, $$)
+      File.write(lockfile, $$)
       yield
     ensure
-      File.delete(@lockfile)
+      File.delete(lockfile)
     end
   end
 end

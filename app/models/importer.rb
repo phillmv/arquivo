@@ -47,7 +47,7 @@ class Importer
       # let's sync it to our git repo
       notebook_name = notebook_path.split("/").last
       notebook = Notebook.find_or_create_by(name: notebook_name)
-      LocalSyncer.new().write_notebook(notebook, notebook_path)
+      LocalSyncer.sync_notebook(notebook, notebook_path)
     end
 
     # sanity check, tbd probably can delete
