@@ -3,7 +3,7 @@ class SettingsController < ApplicationController
     @new_calendar_import = CalendarImport.new
     @calendar_imports = current_notebook.calendar_imports
 
-    @path_setting = Setting.get(:arquivo, :storage_path)
+    @path_setting = Setting.fetch(:arquivo, :storage_path)
   end
 
   def add_calendar

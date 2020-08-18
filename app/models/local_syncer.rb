@@ -6,19 +6,18 @@
 # using this class as a kind of exporter as well.
 class LocalSyncer
   attr_reader :arquivo_path, :lockfile
-  def initialize(path)
-    @arquivo_path = File.join(path, "arquivo")
+  def initialize(path = nil)
+    working_dir = path || Setting.get(:arquivo, :storage_path)
+    @arquivo_path = File.join(working_dir, "arquivo")
     @lockfile = File.join(@arquivo_path, "sync.lock")
   end
 
   def self.sync_entry(entry, path = nil)
-    working_dir = path || Setting.get(:arquivo, :storage_path)
-    self.new(working_dir).write_entry(entry)
+    self.new(path).write_entry(entry)
   end
 
   def self.sync_notebook(notebook, msg_suffix, path = nil)
-    working_dir = path || Setting.get(:arquivo, :storage_path)
-    self.new(working_dir).write_notebook(notebook, msg_suffix)
+    self.new(path).write_notebook(notebook, msg_suffix)
   end
 
   def write_entry(entry)
@@ -44,6 +43,28 @@ class LocalSyncer
 
       repo = open_repo(notebook_path(notebook))
       add_and_commit!(repo, notebook_path(notebook), commit_msg)
+    end
+  end
+
+  def entry_log(entry)
+    repo = open_repo(notebook_path(entry.notebook))
+    full_filepath = entry.to_full_filepath(arquivo_path)
+
+    if File.exist?(full_filepath)
+      repo.log.path(full_filepath).map { |c| [c.sha, c.date] }
+    else
+      []
+    end
+  end
+
+  def get_revision(entry, sha)
+    repo = open_repo(notebook_path(entry.notebook))
+    full_filepath = entry.to_full_filepath(arquivo_path)
+
+    if File.exist?(full_filepath)
+      repo.object("#{sha}:#{entry.to_relative_filepath}").contents
+    else
+      nil
     end
   end
 

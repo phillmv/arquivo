@@ -82,6 +82,7 @@ class Entry < ApplicationRecord
       LocalSyncer.sync_entry(self)
     end
   end
+  # --
 
   def note?
     kind.nil?
@@ -131,6 +132,11 @@ class Entry < ApplicationRecord
                           "occurred_at",
                           "created_at",
                           "updated_at")
+  end
+
+  def revisions
+    @history ||= EntryHistory.new(self)
+    @history.revisions
   end
 
   def to_param
