@@ -41,7 +41,7 @@ class Search
     sql_query = Entry.for_notebook(notebook).order(occurred_at: :desc).hitherto
 
     sql_where = tokens.map do |s|
-      ["body like ? or subject like ?", "%#{s}%", "%#{s}%"]
+      ["body like ? or subject like ? or url like ?", "%#{s}%", "%#{s}%", "%#{s}%"]
     end
 
     sql_where.each do |where|
