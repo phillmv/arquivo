@@ -15,6 +15,7 @@
         </a><a href="<%= edit_entry_path(entry, notebook: entry.notebook)%>" class="Box-btn-octicon btn-octicon unselectable mr-1">
           <%= octicon("pencil") %> edit
         </a>
+        <a href="<%= new_entry_path(notebook: entry.notebook, in_reply_to: entry.identifier)%>" class="Box-btn-octicon btn-octicon unselectable mr-1"><%= octicon("reply") %> Add note</a>
       </div>
   </div>
 </div>
