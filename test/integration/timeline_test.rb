@@ -27,9 +27,9 @@ class TimelineTest < ActionDispatch::IntegrationTest
     assert_response :success
 
     # entries split across three days
-    assert_select ".entry-date h3 a", @yesterday.strftime("%Y-%m-%d")
-    assert_select ".entry-date h3 a", (@yesterday - 1.day).strftime("%Y-%m-%d")
-    assert_select ".entry-date h3 a", (@yesterday - 2.days).strftime("%Y-%m-%d")
+    assert_select ".entry-date h3 a", @yesterday.strftime("%Y-%m-%d (%A)")
+    assert_select ".entry-date h3 a", (@yesterday - 1.day).strftime("%Y-%m-%d (%A)")
+    assert_select ".entry-date h3 a", (@yesterday - 2.days).strftime("%Y-%m-%d (%A)")
 
     # we display a calendar entry
     assert_select ".calendar-entry h3 a", @calendar_entry.subject
