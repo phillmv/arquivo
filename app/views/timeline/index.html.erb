@@ -11,19 +11,35 @@
   <div>
     <div class="TimelineItem-start"></div>
 
-    <% @entries&.each do |day, entries| %>
+    <% prev_day = nil; @entries&.each do |day, entries| %>
+
+      <% if prev_day %>
+        <% delta = (prev_day - day).to_i %>
+        <% if delta > 2 %>
+
+          <div class="TimelineItem TimelineItem--condensed entry-date pt-4 pb-2">
+            <div class="TimelineItem-badge">
+              <%= octicon("calendar") %>
+            </div>
+
+            <div class="TimelineItem-body"><%= "#{delta} days later…" %></div>
+          </div>
+        <% end %>
+      <% end %>
 
       <div>
         <div class="TimelineItem entry-date">
           <div class="TimelineItem-badge bg-blue text-white">
             <%= octicon("calendar") %>
           </div>
-          <h3><a href="<%= calendar_daily_path(day, notebook: @current_notebook)%>"><%= day %></a></h3>
+          <h3><a href="<%= calendar_daily_path(day, notebook: @current_notebook)%>"><%= day.strftime("%Y-%m-%d (%A)") %></a></h3>
         </div>
         <% entries.each do |entry| %>
           <%= render partial: "entries/list_entry", locals: { entry: entry } %>
         <% end %>
       </div>
+
+      <% prev_day = day %>
     <% end %>
 
   </div>

@@ -4,7 +4,7 @@ class TimelineController < ApplicationController
       order(occurred_at: :desc).paginate(page: params[:page])
 
     @entries = @all_entries.group_by do |e|
-      e.occurred_at_date
+      e.occurred_date
     end
   end
 
@@ -26,7 +26,7 @@ class TimelineController < ApplicationController
         find(query: @search_query).paginate(page: params[:page])
 
       @entries = @all_entries.group_by do |e|
-        e.occurred_at_date
+        e.occurred_date
       end
 
       @has_todo = !!@search_query.index("has:todo")
