@@ -21,7 +21,14 @@ class EntriesController < ApplicationController
       @parent_entry = Entry.find_by!(notebook: @current_notebook.name, identifier: parent_identifier)
     end
 
-    @entry = Entry.new(occurred_at: Time.now)
+    if params[:occurred_at]
+      occurred_at = DateTime.parse(params[:occurred_at])
+    else
+      occurred_at = Time.current
+    end
+
+    @entry = Entry.new(occurred_at: occurred_at)
+
     if @parent_entry
       @entry.copy_parent(@parent_entry)
     end

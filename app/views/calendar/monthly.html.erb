@@ -18,7 +18,9 @@
         </div>
       </a>
     <% else %>
-      <%= date.day %>
+      <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block" class="link-gray">
+        <%= date.day %>
+      </a>
     <% end %>
   <% end %>
 </div>
