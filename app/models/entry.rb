@@ -116,6 +116,10 @@ class Entry < ApplicationRecord
     "#meeting #{to.present? && to&.split(", ").map { |s| "@#{s.split("@").first}" }.join(" ")}"
   end
 
+  def tags
+    EntryTagger.new(self).extract_tags
+  end
+
   # -- little hack to split date from time in UI
   # if #update gets an occurred_date= attribute, it'll set the ivar
   # which is how we'll know to update the actual database column

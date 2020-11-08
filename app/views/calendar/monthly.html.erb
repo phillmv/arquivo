@@ -13,9 +13,14 @@
     <% if entries.any? %>
       <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block">
         <%= date.day %>
-        <div class="pt-2">
+        <div class="py-2">
           <%= entries.count %> entries
         </div>
+
+        <%= entries.select(&:note?).reduce(Set.new) do |set, e| %>
+          <% set.merge(e.tags) %>
+        <% end.to_a.join(" ") %>
+
       </a>
     <% else %>
       <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block" class="link-gray">
