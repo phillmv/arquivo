@@ -49,7 +49,7 @@
 <div class="context-container pl-6 mt-2">
   <h2>Recent Tags</h2>
   <ul class="list-style-none">
-    <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(12).each do |topic| %>
+    <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(30).each do |topic| %>
       <li class="pb-2">
         <a href="<%= search_path(query: topic, notebook: @current_notebook)%>">
           <%=topic%><br>
@@ -59,13 +59,13 @@
     <% end %>
   </ul>
 
-  <h2>Recent Entries</h2>
+  <% if false%><h2>Recent Entries</h2>
   <ul class="list-style-none">
     <% @recent_entries.each do |entry| %>
       <li class="pb-2"><a href="<%= entry_path(entry, notebook: @current_notebook)%>"><%= entry.truncated_description.truncate(30) %><br>
           <span class="muted-link"><%= time_ago_in_words(entry.occurred_at, include_seconds: true) %> ago</span></a></li>
     <% end %>
-  </ul>
+  </ul><% end %>
 
 
 </div>
