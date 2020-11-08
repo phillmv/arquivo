@@ -205,21 +205,23 @@ function setEntryFoldToggleHandler() {
     }
   });
 
-  document.addEventListener('dblclick', (e) => {
-    var elem = e.target;
-    var entry_body;
-    if(!elem.matches(".show-on-fold") && (entry_body = elem.closest(".Box-body"))) {
-      entry_body.classList.add("truncate");
-
-      if (!isScrolledIntoView(entry_body)) {
-        entry_body.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-          inline: "nearest"
-        });
-      }
-    }
-  });
+  // Commented out for now: double clicking to refold not actually that useful,
+  // but not yet ready to delete this.
+  // document.addEventListener('dblclick', (e) => {
+  //   var elem = e.target;
+  //   var entry_body;
+  //   if(!elem.matches(".show-on-fold") && (entry_body = elem.closest(".Box-body"))) {
+  //     entry_body.classList.add("truncate");
+  //
+  //     if (!isScrolledIntoView(entry_body)) {
+  //       entry_body.scrollIntoView({
+  //         behavior: "smooth",
+  //         block: "start",
+  //         inline: "nearest"
+  //       });
+  //     }
+  //   }
+  // });
 }
 
 function isScrolledIntoView(el) {
