@@ -1,13 +1,16 @@
+<% if @has_todo %>
+  <% entry_body = EntryRenderer.new(entry).todo_to_html %>
+<% else %>
+  <% entry_body = EntryRenderer.new(entry).to_html %>
+<% end %>
+
 <div class="entry-box <%= "entry-threaded" if threaded %>">
-  <div class="Box-body markdown-body <%= truncate_class(entry, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
+  <div class="Box-body markdown-body <%= truncate_class(entry_body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
     <%= render partial: "entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
-      <% if @has_todo %>
-        <%= EntryRenderer.new(entry).todo_to_html %>
-      <% else %>
-        <%= EntryRenderer.new(entry).to_html %>
-      <% end %>
+      <%= entry_body %>
     </div>
+    <%# task click to update requires the following hidden form: %>
     <div class="entry-edit d-none">
       <%= form_with(model: entry, url: entry_path(entry, notebook: entry.notebook)) do |form| %>
         <%# if the js-task-list-field ends up as a text_area, on the "in_reply_to"

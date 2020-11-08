@@ -1,12 +1,12 @@
 module TimelineHelper
-  def truncate_class(entry, collapsed = false)
+  def truncate_class(entry_body, collapsed = false)
     if collapsed
-      if (entry.body&.size || 0) > 180
+      if (entry_body&.size || 0) > 220
       "truncate truncate-more"
       else
         ""
       end
-    elsif(entry.body&.size || 0) > 768
+    elsif(entry_body&.size || 0) > 1024
       "truncate"
     else
       ""
