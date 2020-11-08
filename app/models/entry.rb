@@ -116,9 +116,28 @@ class Entry < ApplicationRecord
     "#meeting #{to.present? && to&.split(", ").map { |s| "@#{s.split("@").first}" }.join(" ")}"
   end
 
-  def occurred_at_date
-    occurred_at.strftime("%Y-%m-%d")
+  # -- little hack to split date from time in UI
+  # if #update gets an occurred_date= attribute, it'll set the ivar
+  # which is how we'll know to update the actual database column
+  # meanwhile we just use a different ivar name for caching the string manip
+
+  attr_writer :occurred_date, :occurred_time
+  before_save :set_occurred_date
+
+  def set_occurred_date
+    if @occurred_date
+      self.occurred_at = "#{@occurred_date} #{@occurred_time}"
+    end
   end
+
+  def occurred_date
+    @occurred_date_cache ||= occurred_at.to_date
+  end
+
+  def occurred_time
+    @occurred_time_cache ||= occurred_at.strftime("%H:%M:%S %z")
+  end
+
 
   # this is actually pretty complicated to do properly?
   # https://github.com/middleman/middleman/blob/master/middleman-core/lib/middleman-core/util/data.rb

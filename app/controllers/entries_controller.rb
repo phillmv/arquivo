@@ -160,11 +160,11 @@ class EntriesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def entry_params
-      params.require(:entry).permit(:body, :url, :subject, :occurred_at, :in_reply_to, :hide, files: [])
+      params.require(:entry).permit(:body, :url, :subject, :occurred_at, :in_reply_to, :hide, :occurred_date, :occurred_time, files: [])
     end
 
     def create_entry_params
-      params.require(:entry).permit(:identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, files: [])
+      params.require(:entry).permit(:identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, :occurred_date, :occurred_time, files: [])
     end
 
     def bookmark_params

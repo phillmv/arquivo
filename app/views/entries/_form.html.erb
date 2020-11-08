@@ -45,15 +45,16 @@
   <% end %>
 
     <% unless skip_metadata %>
-      <div class="pb-5">
-        <details class="details-reset float-left">
-          <summary class="btn mr-2">Metadata</summary>
-          <dl class="form-group">
-            <dt><%= form.label :occurred_at %></dt>
-            <dd><%= form.text_field :occurred_at, class: "form-control input-sm" %></dd>
-          </dl>
-        </details>
-      </div>
+      <!-- <div class="pb&#45;5"> -->
+      <!--   <details class="details&#45;reset float&#45;left"> -->
+      <!--     <summary class="btn mr&#45;2">Metadata</summary> -->
+      <!--     <div class="py&#45;3"> -->
+      <!--     </div> -->
+      <!--   </details> -->
+      <!--  -->
+      <!-- </div> -->
+      <%= form.label :occured_date, value: "Occurred:", class: "mr-2 Label Label--gray-darker" %>
+      <%= form.text_field :occurred_date, class: "form-control input-sm", style: "width: 7.3em;" %> @ <%= form.text_field :occurred_time, class: "form-control input-sm", style: "width: 9.3em;" %>
     <% end %>
 
 
