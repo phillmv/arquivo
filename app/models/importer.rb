@@ -18,6 +18,8 @@ class Importer
       expand_import_path = File.join(notebook_path, DIR_GLOB)
       entry_folders = Dir[expand_import_path]
 
+      updated_entry_ids = []
+
       entry_folders.each do |path|
         # list yaml files in this folder
         # prob a more efficient way, tbd
@@ -37,9 +39,13 @@ class Importer
         end
 
         Entry.transaction do
-          entry = upsert_entry!(entry_attributes)
+          entry, updated = upsert_entry!(entry_attributes)
 
           attach_files(entry, path)
+
+          if updated
+            updated_entry_ids << entry.identifier
+          end
         end
       end
 
@@ -47,7 +53,10 @@ class Importer
       # let's sync it to our git repo
       notebook_name = notebook_path.split("/").last
       notebook = Notebook.find_or_create_by(name: notebook_name)
-      LocalSyncer.sync_notebook(notebook, notebook_path)
+      if updated_entry_ids.any?
+        # TODO: any way to just keep track of what got synced? yeesh this is time consuming
+        LocalSyncer.sync_notebook(notebook, notebook_path)
+      end
     end
 
     # sanity check, tbd probably can delete
@@ -98,15 +107,19 @@ class Importer
     notebook, identifier = entry_attributes.fetch_values("notebook", "identifier")
     # find or update the entry
     entry = Entry.find_by(notebook: notebook, identifier: identifier)
+    updated = false
 
     if entry
       if entry.updated_at < entry_attributes["updated_at"]
         entry.update(entry_attributes)
+        updated = true
       end
 
-      entry
     else
-      Entry.create(entry_attributes)
+      entry = Entry.create(entry_attributes)
+      updated = true
     end
+
+    [entry, updated]
   end
 end
