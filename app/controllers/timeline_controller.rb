@@ -6,6 +6,18 @@ class TimelineController < ApplicationController
     @entries = @all_entries.group_by do |e|
       e.occurred_date
     end
+
+    h = {}
+    Entry.for_notebook("work").order(occurred_at: :asc).find_each do |e|
+      e.bigrams.each do |tri|
+        h[tri] ||=  {}
+        h[tri][:count] ||= 0
+        h[tri][:count] += 1
+        h[tri][:occurred_at] = e.occurred_at
+      end
+    end
+      
+    @bigrams = h.sort_by {|k, v| v[:occurred_at]}.last(20)
   end
 
   def agenda

@@ -49,6 +49,18 @@
 <div class="context-container pl-6 mt-2">
   <h2>Recent Tags</h2>
   <ul class="list-style-none">
+    <% @bigrams.each do |topic, h| %>
+      <li class="pb-2">
+        <a href="<%= search_path(query: topic.to_a.join(" "), notebook: @current_notebook)%>">
+          <%=topic.to_a.join(" ")%><br>
+          <span class="muted-link"><%= time_ago_in_words(h[:occurred_at], include_seconds: true) %> ago</span>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+
+    <h2>Recent Tags</h2>
+  <ul class="list-style-none">
     <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(30).each do |topic| %>
       <li class="pb-2">
         <a href="<%= search_path(query: topic, notebook: @current_notebook)%>">
@@ -58,6 +70,7 @@
       </li>
     <% end %>
   </ul>
+
 
   <% if false%><h2>Recent Entries</h2>
   <ul class="list-style-none">
