@@ -20,6 +20,10 @@ Rails.application.routes.draw do
     get '/save_bookmark', to: "entries#save_bookmark", as: :save_bookmark
     post "/create_or_update", to: "entries#create_or_update", as: :create_or_update_entry
     patch "/create_or_update", to: "entries#create_or_update"
+
+    get "tags/:query", to: "notebooks#tags"
+    get "tags/", to: "notebooks#tags"
+
     resources :entries, path: "/" do
       member do
         get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }

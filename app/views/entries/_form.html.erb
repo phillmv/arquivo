@@ -58,9 +58,11 @@
     <% end %>
 
 
-  <div class="form-group">
+  <div class="form-group" style="position: relative">
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
-    <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
+      <text-expander keys="#">
+        <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
+      </text-expander>
     <% unless bookmark %>
       <%= form.file_field :files, multiple: true, "data-direct-upload-url" => direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook) %>
 

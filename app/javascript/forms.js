@@ -2,6 +2,8 @@ import autosize from '@github/textarea-autosize';
 // import '@github/file-attachment-element';
 import { DirectUpload} from "@rails/activestorage";
 
+import '@github/text-expander-element'
+
 // TODO: tbh, convert this to js and remove coffeescript as a dependency ;p
 import TaskList from "task_list";
 
@@ -61,6 +63,11 @@ document.addEventListener("turbolinks:load", function(){
   setTaskListHandler()
   savedSearch();
 
+  // text_expand_pls();
+
+  // TODO: document this, you fool
+  // pretty sure this is about ensuring the main entry is in view
+  // when displaying long threads in the show action
   var entry;
   if (entry = document.querySelector('.entry-show')) {
     entry.scrollIntoView({
@@ -71,11 +78,54 @@ document.addEventListener("turbolinks:load", function(){
   }
 });
 
+function text_expand_pls(){
+    const expander = document.querySelector('text-expander')
+  expander.connectedCallback();
+    expander.addEventListener('text-expander-change', event => {
+      const {key, provide, text} = event.detail
+      if (key === '#') {
+
+        var notebook = window.location.pathname.split("/")[1]
+        var query = encodeURIComponent(text)
+
+        // TODO: dear LORD clean this up, catch errors, etc
+        provide(
+          fetch(`/${notebook}/tags/${query}`).
+          then( response => response.json() ).
+          then( data => {
+
+            const menu = document.createElement('ul')
+            menu.role = 'listbox'
+            menu.classList.add("suggester")
+            menu.classList.add("suggester-container")
+            menu.classList.add("list-style-none")
+            for (const tag of data) {
+              const item = document.createElement('li')
+              item.setAttribute('role', 'option')
+              item.textContent = tag.name
+              item.id = `option-${tag.id}`
+              menu.append(item)
+            }
+
+            return {matched: data.length > 0, fragment: menu};
+          }))
+
+      }
+    })
+
+    expander.addEventListener('text-expander-value', function(event) {
+      const {key, item}  = event.detail
+      if (key === '#') event.detail.value = item.textContent
+    })
+ }
+
 document.addEventListener("DOMContentLoaded", function(){
   setTextAreaHandler();
   setFileUploadHandler();
   setEntryFoldToggleHandler();
   setFilterHandler();
+
+  text_expand_pls();
    // setTaskListHandler()
 
   /* TODO: deprecated, used to work, left here for reference only, for now
