@@ -63,7 +63,7 @@ document.addEventListener("turbolinks:load", function(){
   setTaskListHandler()
   savedSearch();
 
-  // text_expand_pls();
+  text_expand_pls();
 
   // TODO: document this, you fool
   // pretty sure this is about ensuring the main entry is in view
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function(){
   setEntryFoldToggleHandler();
   setFilterHandler();
 
-  text_expand_pls();
+  // text_expand_pls();
    // setTaskListHandler()
 
   /* TODO: deprecated, used to work, left here for reference only, for now
