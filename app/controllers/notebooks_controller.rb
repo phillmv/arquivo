@@ -9,4 +9,14 @@ class NotebooksController < ApplicationController
 
     render json: query
   end
+
+  def contacts
+    query = Contact.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(8).select(:id, :name)
+    if params[:query]
+      query = query.where("name like ?", "%#{params[:query]}%")
+    end
+
+    render json: query
+  end
+
 end

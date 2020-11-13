@@ -24,6 +24,9 @@ Rails.application.routes.draw do
     get "tags/:query", to: "notebooks#tags"
     get "tags/", to: "notebooks#tags"
 
+    get "contacts/:query", to: "notebooks#contacts"
+    get "contacts/", to: "notebooks#contacts"
+
     resources :entries, path: "/" do
       member do
         get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }

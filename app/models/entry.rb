@@ -34,7 +34,7 @@ class Entry < ApplicationRecord
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
-  after_save :process_tags, :sync_to_git
+  after_save :sync_to_git, :process_tags, :process_contacts
 
   def set_identifier
     self.occurred_at ||= Time.current
@@ -79,6 +79,10 @@ class Entry < ApplicationRecord
   end
 
   # -- after_save
+  def process_contacts
+    EntryContactMaker.new(self).make!
+  end
+
   def process_tags
     EntryTagger.new(self).process!
   end
