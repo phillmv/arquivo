@@ -28,6 +28,9 @@ class Entry < ApplicationRecord
   has_many :tag_entries
   has_many :db_tags, through: :tag_entries, source: :tag
 
+  has_many :contact_entries
+  has_many :contacts, through: :contact_entries
+
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git

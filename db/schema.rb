@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_13_014615) do
+ActiveRecord::Schema.define(version: 2020_11_13_024023) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -53,13 +53,25 @@ ActiveRecord::Schema.define(version: 2020_11_13_014615) do
     t.index ["contact_id"], name: "index_contact_email_addresses_on_contact_id"
   end
 
+  create_table "contact_entries", force: :cascade do |t|
+    t.integer "entry_id", null: false
+    t.integer "contact_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["contact_id"], name: "index_contact_entries_on_contact_id"
+    t.index ["entry_id"], name: "index_contact_entries_on_entry_id"
+  end
+
   create_table "contacts", force: :cascade do |t|
-    t.string "handle"
+    t.string "name"
     t.string "first_name"
     t.string "last_name"
     t.text "notes"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "notebook", default: "", null: false
+    t.index ["name"], name: "index_contacts_on_name"
+    t.index ["notebook"], name: "index_contacts_on_notebook"
   end
 
   create_table "entries", force: :cascade do |t|
@@ -169,5 +181,7 @@ ActiveRecord::Schema.define(version: 2020_11_13_014615) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "contact_email_addresses", "contacts"
+  add_foreign_key "contact_entries", "contacts"
+  add_foreign_key "contact_entries", "entries"
   add_foreign_key "i_calendar_entries", "calendar_imports"
 end
