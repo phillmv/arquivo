@@ -10,7 +10,7 @@ class EntryTagger
   end
 
   def process!
-    extract_tags.each do |name|
+    tag_list = extract_tags.map do |name|
       Tag.transaction do
         tag = Tag.find_by(notebook: entry.notebook,
                           name: name)
@@ -20,11 +20,21 @@ class EntryTagger
             tag.update(updated_at: entry.updated_at)
           end
         else
-          Tag.create(notebook: entry.notebook,
+          tag = Tag.create(notebook: entry.notebook,
                      name: name,
                      updated_at: entry.updated_at)
         end
+
+        tag
       end
     end
+
+    old_tags = entry.db_tags - tag_list
+
+    entry.db_tags = tag_list
+
+    old_tags.each(&:apoptosis!)
+
+    tag_list
   end
 end

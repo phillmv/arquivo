@@ -25,6 +25,9 @@ class Entry < ApplicationRecord
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
+  has_many :tag_entries
+  has_many :db_tags, through: :tag_entries, source: :tag
+
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
