@@ -58,8 +58,10 @@ class Search
                     sql_query.where("kind is null")
                   when "has:todo"
                     sql_query.where("body like ?", "%- [ ]%")
+                    # sql_query.with_todos
                   when "has:done"
-                    sql_query.where("body like ?", "%- [x]%")
+                    # sql_query.where("body like ?", "%- [x]%")
+                    sql_query.with_completed_todos
                   when "not:todo"
                     sql_query.where("body not like ?", "%- [ ]%")
                   when "not:calendar"

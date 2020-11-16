@@ -26,4 +26,12 @@ class EntryRenderer
   def todo_to_html
     @todo_to_html ||= PIPELINE.to_html(entry.body, entry: entry, todo_only: true).html_safe
   end
+
+  def task_list_items
+    PIPELINE.call(entry.body, entry: entry)[:task_list_items]
+  end
+
+  def gimme_html(str)
+    PIPELINE.to_html(str, entry: entry).html_safe
+  end
 end

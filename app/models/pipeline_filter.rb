@@ -1,6 +1,7 @@
 module PipelineFilter
   # we just want to tweak the default whitelist a little bit
   # and allow the data-sourcepos attribute to go thru
+  # without this change the data-sourcepos gets stripped
   ENTRY_SANITIZATION_WHITELIST = HTML::Pipeline::SanitizationFilter::WHITELIST.dup
   ESW = ENTRY_SANITIZATION_WHITELIST
   ESW[:attributes] = ESW[:attributes].dup
@@ -14,13 +15,13 @@ module PipelineFilter
   # instead must have a filter transform AFTER sanitization
 
   ENTRY_PIPELINE = HTML::Pipeline.new [
-    PipelineFilter::MarkdownFilter,
-    HTML::Pipeline::SanitizationFilter,
-    PipelineFilter::MyTaskListFilter,
-    PipelineFilter::HashtagFilter,
-    PipelineFilter::MentionFilter,
-    HTML::Pipeline::TableOfContentsFilter,
-    HTML::Pipeline::ImageMaxWidthFilter,
+    PipelineFilter::MarkdownFilter, # convert to HTML
+    HTML::Pipeline::SanitizationFilter, # strip scary tags
+    PipelineFilter::MyTaskListFilter, # convert task markdown to html
+    PipelineFilter::HashtagFilter, # link hashtags
+    PipelineFilter::MentionFilter, # link mentions
+    HTML::Pipeline::TableOfContentsFilter, # add ids to headers
+    HTML::Pipeline::ImageMaxWidthFilter, # max 100% for imgs
   ], { unsafe: true,
        commonmarker_render_options: [:SOURCEPOS],
        whitelist: ENTRY_SANITIZATION_WHITELIST

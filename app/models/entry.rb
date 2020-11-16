@@ -22,6 +22,9 @@ class Entry < ApplicationRecord
   scope :bookmarks, -> { where(kind: "pinboard") }
   scope :except_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
 
+  scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
+  scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
+
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
@@ -31,10 +34,13 @@ class Entry < ApplicationRecord
   has_many :contact_entries
   has_many :contacts, through: :contact_entries
 
+  has_one :todo_list
+  has_many :todo_list_items, through: :todo_list
+
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
-  after_save :sync_to_git, :process_tags, :process_contacts
+  after_save :sync_to_git, :process_tags, :process_contacts, :process_todo_list
 
   def set_identifier
     self.occurred_at ||= Time.current
@@ -79,6 +85,9 @@ class Entry < ApplicationRecord
   end
 
   # -- after_save
+  def process_todo_list
+    TodoListMaker.new(self).make!
+  end
   def process_contacts
     EntryContactMaker.new(self).make!
   end

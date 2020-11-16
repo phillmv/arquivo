@@ -61,7 +61,11 @@
     <%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform", class: "col-12" } do |form| %>
 
       <div class="position-relative d-inline-flex col-12">
-        <%= form.text_field :search_query, class: "form-control pl-5 col-12", value: @search_query, name: "query", placeholder: "Type and hit enter to search. Ctrl+L to focus." %>
+
+
+        <text-expander keys="# @" class="col-12">
+          <%= form.text_field :search_query, class: "form-control pl-5 col-12", value: @search_query, name: "query", placeholder: "Type and hit enter to search. Ctrl+L to focus.", autocomplete: "off" %>
+        </text-expander>
         <%= octicon "search", class: "subnav-search-icon", style: "z-index: 3" %>
         <span class="input-group-button">
           <%= form.submit "Search", class: "btn" %>

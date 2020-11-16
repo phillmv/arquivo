@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_13_024023) do
+ActiveRecord::Schema.define(version: 2020_11_15_173150) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -167,6 +167,31 @@ ActiveRecord::Schema.define(version: 2020_11_13_024023) do
     t.index ["notebook"], name: "index_tags_on_notebook"
   end
 
+  create_table "todo_list_items", force: :cascade do |t|
+    t.string "notebook", null: false
+    t.integer "entry_id", null: false
+    t.integer "todo_list_id", null: false
+    t.boolean "checked", default: false
+    t.string "source"
+    t.datetime "occurred_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["checked"], name: "index_todo_list_items_on_checked"
+    t.index ["entry_id"], name: "index_todo_list_items_on_entry_id"
+    t.index ["notebook"], name: "index_todo_list_items_on_notebook"
+    t.index ["occurred_at"], name: "index_todo_list_items_on_occurred_at"
+    t.index ["source"], name: "index_todo_list_items_on_source"
+    t.index ["todo_list_id"], name: "index_todo_list_items_on_todo_list_id"
+  end
+
+  create_table "todo_lists", force: :cascade do |t|
+    t.integer "entry_id", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entry_id"], name: "index_todo_lists_on_entry_id"
+  end
+
   create_table "view_preferences", force: :cascade do |t|
     t.string "notebook", null: false
     t.string "identifier"
@@ -184,4 +209,7 @@ ActiveRecord::Schema.define(version: 2020_11_13_024023) do
   add_foreign_key "contact_entries", "contacts"
   add_foreign_key "contact_entries", "entries"
   add_foreign_key "i_calendar_entries", "calendar_imports"
+  add_foreign_key "todo_list_items", "entries"
+  add_foreign_key "todo_list_items", "todo_lists"
+  add_foreign_key "todo_lists", "entries"
 end
