@@ -1,5 +1,6 @@
 class Contact < ApplicationRecord
-  has_many :entries
+  has_many :contact_entries
+  has_many :entries, through: :contact_entries
 
   def see_ya!
     if entries.reload.empty?
