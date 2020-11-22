@@ -48,13 +48,16 @@
 
 <div class="context-container pl-6 mt-2">
 
-  <h2>Recent TODOs</h2>
-  <% TodoListItem.where(notebook: @current_notebook.name, checked: false).order(occurred_at: :desc).limit(15).each do |tli| %>
-    <a href="<%= entry_path(tli.entry, notebook: @current_notebook)%>">
-      <%= EntryRenderer.new(tli.entry).gimme_html("- #{tli.source}") %>
-    </a>
-  <% end %>
-  </ul>
+  <h2>Open tasks</h2>
+  <div class="recent-todos pt-2">
+    <% TodoListItem.where(notebook: @current_notebook.name, checked: false).order(occurred_at: :desc).limit(15).each do |tli| %>
+      <div class="pb-2">
+        <a href="<%= entry_path(tli.entry, notebook: @current_notebook)%>">
+          <%= EntryRenderer.new(tli.entry).gimme_html("- #{tli.source}") %>
+        </a>
+      </div>
+    <% end %>
+  </div>
 
   <h2>Recent Tags</h2>
   <ul class="list-style-none">

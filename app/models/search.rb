@@ -57,8 +57,8 @@ class Search
                   when "is:note"
                     sql_query.where("kind is null")
                   when "has:todo"
-                    sql_query.where("body like ?", "%- [ ]%")
-                    # sql_query.with_todos
+                    # sql_query.where("body like ?", "%- [ ]%")
+                    sql_query.with_todos
                   when "has:done"
                     # sql_query.where("body like ?", "%- [x]%")
                     sql_query.with_completed_todos
