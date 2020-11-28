@@ -91,13 +91,14 @@ class LocalSyncer
     end
   end
 
+  FINE_GIT_ERRORS = [ "nothing to commit", "nothing added to commit but untracked files" ]
 
   def add_and_commit!(repo, path, msg)
     repo.add(path)
     begin
       repo.commit(msg)
     rescue Git::GitExecuteError => e
-      unless e.message.index('nothing to commit')
+      unless FINE_GIT_ERRORS.any? { |s| e.message.index(s) }
         raise e
       end
     end
