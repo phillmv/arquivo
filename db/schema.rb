@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_15_173150) do
+ActiveRecord::Schema.define(version: 2020_11_28_155920) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -165,6 +165,15 @@ ActiveRecord::Schema.define(version: 2020_11_15_173150) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["notebook"], name: "index_tags_on_notebook"
+  end
+
+  create_table "temporary_entry_blobs", force: :cascade do |t|
+    t.string "notebook", null: false
+    t.string "entry_identifier", null: false
+    t.string "filename", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["notebook", "entry_identifier", "filename"], name: "idx_temp_entry_blob"
   end
 
   create_table "todo_list_items", force: :cascade do |t|
