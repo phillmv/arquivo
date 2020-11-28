@@ -48,7 +48,7 @@
 
 <div class="context-container pl-6 mt-2">
 
-  <h2>Open tasks</h2>
+  <h2>Tasks</h2>
   <div class="recent-todos pt-2">
     <% TodoListItem.where(notebook: @current_notebook.name, checked: false).order(occurred_at: :desc).limit(15).each do |tli| %>
       <div class="pb-2">
