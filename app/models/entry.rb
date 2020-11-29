@@ -40,7 +40,7 @@ class Entry < ApplicationRecord
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
-  after_save :sync_to_git, :process_tags, :process_contacts, :process_todo_list
+  after_save :sync_to_git, :process_tags, :process_contacts, :process_todo_list, :clear_temp_entry_blobs
 
   def set_identifier
     self.occurred_at ||= Time.current
@@ -100,6 +100,13 @@ class Entry < ApplicationRecord
     unless self.skip_local_sync
       LocalSyncer.sync_entry(self)
     end
+  end
+
+  # clear this cache! this table/cache is only checked in between commits to
+  # Entries, so clearing the table after saves should be safe.
+  def clear_temp_entry_blobs
+    TemporaryEntryBlob.where(notebook: self.notebook,
+                             entry_identifier: self.identifier).delete_all
   end
   # --
 
