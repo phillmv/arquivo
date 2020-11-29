@@ -20,10 +20,10 @@ export const uploadFile = (file, file_input) => {
 
       // only set the img tag if it looks like an image!
       if (blob.filename.match(/\.(gif|jpe?g|tiff?|png|webp|bmp)$/)) {
-        attachment_link = `\n![${blob.filename}](${blob.file_path})`
+        attachment_link = `![${blob.filename}](${blob.file_path})`
       }
       else {
-        attachment_link = `\n[${blob.filename}](${blob.file_path})`
+        attachment_link = `[${blob.filename}](${blob.file_path})`
       }
 
       textarea.setRangeText(attachment_link, textarea.selectionStart, textarea.selectionEnd, "end");
