@@ -92,7 +92,7 @@ class EntriesController < ApplicationController
           if request.referer =~ /agenda/
             redirect_back(fallback_location: timeline_path(notebook: current_notebook))
           else
-            redirect_to timeline_path(notebook: current_notebook), notice: 'Entry was successfully created.'
+            redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully created.'
           end
         end
         format.json { render :show, status: :created, location: @entry }
