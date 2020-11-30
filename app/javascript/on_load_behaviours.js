@@ -12,6 +12,14 @@ document.onkeyup = function(e) {
     var len = document.searchform.query.value.length;
     document.searchform.query.setSelectionRange(len, len);
   }
+
+  if(e.ctrlKey && e.which == 78) {
+    var notebook = window.location.pathname.split("/")[1]
+    if (document.activeElement.id != "entry_body") {
+      window.location = `/${notebook}/new`
+    }
+  }
+
 }
 
 document.addEventListener("turbolinks:load", function(){
