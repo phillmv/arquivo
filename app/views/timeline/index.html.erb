@@ -59,17 +59,19 @@
     <% end %>
   </div>
 
-  <h2>Recent Tags</h2>
-  <ul class="list-style-none">
-    <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(30).each do |topic| %>
-      <li class="pb-2">
-        <a href="<%= search_path(query: topic, notebook: @current_notebook)%>">
-          <%=topic%><br>
-          <span class="muted-link"><%= time_ago_in_words(topic.updated_at, include_seconds: true) %> ago</span>
-        </a>
-      </li>
-    <% end %>
-  </ul>
+  <% if false %>
+    <h2>Recent Tags</h2>
+    <ul class="list-style-none">
+      <% Tag.where(notebook: @current_notebook.name).order(updated_at: :desc).limit(30).each do |topic| %>
+        <li class="pb-2">
+          <a href="<%= search_path(query: topic, notebook: @current_notebook)%>">
+            <%=topic%><br>
+            <span class="muted-link"><%= time_ago_in_words(topic.updated_at, include_seconds: true) %> ago</span>
+          </a>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
 
   <% if false%><h2>Recent Entries</h2>
   <ul class="list-style-none">
