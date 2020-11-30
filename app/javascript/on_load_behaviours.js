@@ -15,10 +15,61 @@ document.onkeyup = function(e) {
 
   if(e.ctrlKey && e.which == 78) {
     var notebook = window.location.pathname.split("/")[1]
-    if (document.activeElement.id != "entry_body") {
+    if (!document.querySelector("textarea#entry_body")) {
       window.location = `/${notebook}/new`
     }
   }
+
+  if(e.ctrlKey && e.code == "BracketLeft") {
+    var [dontcare, notebook, path1, path2] = window.location.pathname.split("/")
+    var path_location = [path1, path2 ].join("/")
+
+      switch(path_location) {
+        case "agenda/":
+          if(document.querySelector("textarea#entry_body").value == "") {
+            window.location = `/${notebook}`
+          }
+          break;
+        case "calendar/weekly":
+          window.location = `/${notebook}/agenda`
+          break;
+        case "calendar/":
+          window.location = `/${notebook}/calendar/weekly`
+          break;
+      }
+  }
+
+  if(e.ctrlKey && e.code == "BracketRight") {
+    var [dontcare, notebook, path1, path2] = window.location.pathname.split("/")
+    var path_location = [path1, path2].join("/")
+
+      switch(path_location) {
+        case "timeline/":
+          window.location = `/${notebook}/agenda`
+          break;
+        case "agenda/":
+          if(document.querySelector("textarea#entry_body").value == "") {
+            window.location = `/${notebook}/calendar/weekly`
+          }
+          break;
+        case "calendar/weekly":
+          window.location = `/${notebook}/calendar`
+          break;
+      }
+    }
+
+  if(e.ctrlKey && e.code == "KeyK") {
+    var details = document.querySelector("details")
+    if (details.open) {
+      details.open = false
+    }
+    else {
+      details.open = true
+    }
+
+    details.querySelector("summary").focus()
+  }
+  
 
 }
 
