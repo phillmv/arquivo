@@ -21,7 +21,8 @@ document.addEventListener("turbolinks:load", function(){
   // pretty sure this is about ensuring the main entry is in view
   // when displaying long threads in the show action
   var entry;
-  if (entry = document.querySelector('.entry-show')) {
+  if (document.querySelector('.entry-threaded')) {
+    entry = document.querySelector('.entry-show')
     entry.scrollIntoView({
       behavior: "smooth",
       block: "start",
