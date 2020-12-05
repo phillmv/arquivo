@@ -6,6 +6,7 @@ class ActiveStorage::DirectUploadsController < ActiveStorage::BaseController
     # if it doesn't, we want to guarantee that this url will work, by creating the entry
     @entry = nil
 
+
     if params[:id].blank?
       raise "why are we calling this without an identifier?"
     end
@@ -20,7 +21,6 @@ class ActiveStorage::DirectUploadsController < ActiveStorage::BaseController
 
     blob_args = blob_params.dup
 
-    # TODO: TEST!!!!
     while TemporaryEntryBlob.filename_taken?(@entry, blob_args[:filename])
       blob_args[:filename] = TemporaryEntryBlob.increment_filename_number(blob_args[:filename])
     end
