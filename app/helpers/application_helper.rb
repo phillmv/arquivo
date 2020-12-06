@@ -20,6 +20,7 @@ module ApplicationHelper
     end
   end
 
+  #--- potentially deprecated
   def any_search_tabnav?(saved_searches, search_query)
     if saved_searches.none? { |ss| ss.query == search_query }
       "aria-current='page'"
@@ -34,6 +35,21 @@ module ApplicationHelper
 
   def search_tabnav_colour(saved_search, search_query)
     if search_tabnav(saved_search, search_query)
+      "text-gray-dark"
+    else
+      "text-gray"
+    end
+  end
+  # - end potential deprecation
+
+  def current_search_tabnav(str, search)
+    if str == search
+      "aria-current='page'"
+    end
+  end
+
+  def current_search_tabnav_colour(saved_search, search_query)
+    if current_search_tabnav(saved_search, search_query)
       "text-gray-dark"
     else
       "text-gray"

@@ -1,5 +1,6 @@
 class Search
   FILTERS = Set.new([
+    "is:everything",
     "is:calendar",
     "is:bookmark",
     "is:note",
@@ -50,12 +51,14 @@ class Search
 
     filters.each do |op|
       sql_query = case op
+                  when "is:everything"
+                    sql_query
                   when "is:calendar"
                     sql_query.calendars
                   when "is:bookmark"
                     sql_query.bookmarks
                   when "is:note"
-                    sql_query.where("kind is null")
+                    sql_query.notes
                   when "has:todo"
                     # sql_query.where("body like ?", "%- [ ]%")
                     sql_query.with_todos

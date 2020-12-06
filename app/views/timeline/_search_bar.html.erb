@@ -1,4 +1,5 @@
 <div class="tabnav mt-2">
+  <% if false %>
   <%= form_for SavedSearch.new, url: save_search_path(notebook: @current_notebook), html: { class: "" }, method: :post do |form| %>
     <%= form.hidden_field :query %>
     <details class="details-reset details-overlay details-overlay-dark float-right" style="margin-left: -2px">
@@ -33,15 +34,29 @@
       </details-dialog>
     </details>
   <% end %>
+  <% end %>
 
   <nav class="tabnav-tabs" aria-label="Foo bar">
     <div class="UnderlineNav-body">
-      <% saved_searches = @current_notebook.saved_searches.limit(6) %>
-      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= any_search_tabnav?(saved_searches, @search_query) %> accesskey="1">
+      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= current_search_tabnav(nil, @search_query) %> accesskey="1">
         <h5><%= octicon "zap" %></h5>
       </a>
 
-      <% saved_searches.limit(6).each_with_index do |saved_search, i| %>
+      <% [
+          ["Tasks", "checklist", "has:todo"],
+          ["Bookmarks", "bookmark", "is:bookmark"],
+          ["Calendar", "calendar", "is:calendar"],
+          ["Everything", "archive", "is:everything"],
+          ["Last 2 weeks", "ellipsis", "is:everything sort:asc after:#{2.weeks.ago.to_date}"]
+        ].each_with_index do |(name, icon, search_string), i| %>
+      <span class="tabnav-tab" <%= current_search_tabnav(search_string, @search_query) %>>
+          <a class="<%= current_search_tabnav_colour(search_string, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: search_string) %>" accesskey="<%= i + 2 %>"> <%= octicon icon %> <%= name %></a> 
+        </span>
+      <% end %>
+
+      <%# potentially deprecated %>
+      <%# <% saved_searches = @current_notebook.saved_searches.limit(6) %>
+      <% if false #saved_searches.limit(6).each_with_index do |saved_search, i| %>
         <span class="tabnav-tab" <%= search_tabnav(saved_search, @search_query) %>>
           <a class="<%= search_tabnav_colour(saved_search, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a><% if search_tabnav(saved_search, @search_query) %>
 
