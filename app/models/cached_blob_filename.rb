@@ -3,10 +3,10 @@
 #
 # becaues of how DirectUpload works, the blob won't be associated with the entry
 # until after the blob is uploaded / the url has been returned to the entry page
-class TemporaryEntryBlob < ApplicationRecord
+class CachedBlobFilename < ApplicationRecord
   belongs_to :entry, foreign_key: :entry_identifier, primary_key: :identifier
 
-  def self.filename_taken?(entry, filename)
+  def self.taken?(entry, filename)
     entry.files.blobs.find_by(filename: filename) ||
       find_by(notebook: entry.notebook,
               entry_identifier: entry.identifier,

@@ -23,7 +23,7 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
     blob = JSON.load(response.body)
     assert_equal files_entry_path(@entry, notebook: @current_notebook, filename: "test_image.jpg"), blob["file_path"]
 
-    assert_equal 1, TemporaryEntryBlob.where(entry: @entry, notebook: @entry.notebook).count
+    assert_equal 1, CachedBlobFilename.where(entry: @entry, notebook: @entry.notebook).count
 
     # now we upload a new file w/same name
 
@@ -37,10 +37,10 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
 
     assert_equal files_entry_path(@entry, notebook: @current_notebook, filename: "test_image2.jpg"), blob["file_path"]
 
-    assert_equal 2, TemporaryEntryBlob.where(entry: @entry, notebook: @entry.notebook).count
+    assert_equal 2, CachedBlobFilename.where(entry: @entry, notebook: @entry.notebook).count
 
     # at some later point we save touch the file, ideally when we hit update, thereby triggering the clean up job
-    # so these TempEntryBlob entries don't linger around.
+    # so these CachedBlobFilename entries don't linger around.
 
     # in the browser, the js then hits up the direct_upload.url from the response
     # and the file is uploaded, and a key is returned which is then inserted
@@ -48,6 +48,6 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
     # so let's just skip ahead and pretend we're hitting the entries endpoint
     @entry.save
 
-    assert_equal 0, TemporaryEntryBlob.where(entry: @entry, notebook: @entry.notebook).count
+    assert_equal 0, CachedBlobFilename.where(entry: @entry, notebook: @entry.notebook).count
   end
 end
