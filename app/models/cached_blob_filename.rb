@@ -19,7 +19,7 @@ class CachedBlobFilename < ApplicationRecord
            filename: filename)
   end
 
-  def self.increment_filename_number(filename)
+  def self.increment_filename(filename)
     file_ext = File.extname(filename)
     basename = filename.delete_suffix(file_ext)
 

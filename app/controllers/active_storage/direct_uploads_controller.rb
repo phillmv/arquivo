@@ -4,12 +4,13 @@ class ActiveStorage::DirectUploadsController < ActiveStorage::BaseController
     # to the entry's identifier (as opposed to the default signed blob url)
     # if the entry already exists, great
     # if it doesn't, we want to guarantee that this url will work, by creating the entry
-    @entry = nil
-
-    if params[:id].blank?
+    if (identifier = params[:id]).blank?
       raise "why are we calling this without an identifier?"
     end
-    identifier = params[:id]
+
+    blob_args = blob_params.dup
+    filename = blob_args[:filename]
+    @entry = nil
 
     Entry.transaction do
       @entry = Entry.for_notebook(params[:notebook]).find_by(identifier: identifier)
@@ -18,14 +19,14 @@ class ActiveStorage::DirectUploadsController < ActiveStorage::BaseController
       end
     end
 
-    blob_args = blob_params.dup
-
-    while CachedBlobFilename.taken?(@entry, blob_args[:filename])
-      blob_args[:filename] = CachedBlobFilename.increment_filename_number(blob_args[:filename])
+    while CachedBlobFilename.taken?(@entry, filename)
+      filename = CachedBlobFilename.increment_filename(filename)
     end
 
+    CachedBlobFilename.add(@entry, filename)
+
+    blob_args[:filename] = filename
     blob = ActiveStorage::Blob.create_before_direct_upload!(**blob_args)
-    CachedBlobFilename.add(@entry, blob.filename)
 
     render json: direct_upload_json(blob, @entry)
   end
