@@ -17,6 +17,7 @@ class Entry < ApplicationRecord
   # ---
   scope :today, -> { where("occurred_at >= ? and occurred_at <= ?", Time.current.beginning_of_day, Time.current.end_of_day) }
 
+  scope :notes , -> { where("kind is null") }
   scope :except_calendars, -> { where("kind is null OR kind != ?", "calendar") }
   scope :calendars, -> { where(kind: "calendar") }
   scope :bookmarks, -> { where(kind: "pinboard") }

@@ -1,6 +1,6 @@
 class TimelineController < ApplicationController
   def index
-    @all_entries = Entry.for_notebook(current_notebook).visible.hitherto.
+    @all_entries = Entry.for_notebook(current_notebook).notes.visible.hitherto.
       order(occurred_at: :desc).paginate(page: params[:page])
 
     @entries = @all_entries.group_by do |e|
