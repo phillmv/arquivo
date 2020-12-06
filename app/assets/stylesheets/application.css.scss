@@ -18,38 +18,69 @@
   // you define the smallest sets first which are then overrided by… larger
   // breakpoints?
   // answer: gotta define the sizes in all the diff breakpoints
-  @extend .col-sm-11, .mx-sm-4;
-  @extend .col-md-8, .mx-md-4;
-  @extend .col-lg-6, .ml-lg-4;
+  // @extend .col-sm-11, .mx-sm-4;
+  @extend .col-sm-11;
+  @extend .col-md-8;
+  @extend .col-lg-6;
   @extend .mb-lg-4;
+
+  @include breakpoint(sm) {
+    margin-right: $spacer-4;
+    margin-left: $spacer-4;
+  }
+
+  @include breakpoint(md) {
+    margin-right: $spacer-0;
+    margin-left: $spacer-0;
+  }
 }
 
 .sidebar-container {
   @extend .float-left;
-  @extend .col-md-2;
+  @extend .col-md-3;
   @extend .col-lg-2;
   @extend .hide-sm, .hide-md;
-  @extend .ml-sm-4;
-  @extend .mr-sm-4;
+
+  @include breakpoint(md) {
+    margin-left: $spacer-4;
+  }
+
+  @include breakpoint(xl) {
+    margin-left: $spacer-0;
+    margin-right: $spacer-0;
+  }
+
+
 }
 
 .context-container {
   @extend .float-left;
-  @extend .col-md-2;
-  @extend .col-lg-2;
-  @extend .hide-sm, .hide-md, .hide-lg;
+  @extend .col-lg-3;
+  @extend .col-xl-4;
+  @include breakpoint(lg) {
+    padding-left: $spacer-8;
+  }
+  @extend .hide-sm, .hide-md;
 }
 
 
 .calendar-container {
   @extend .float-left;
-  @extend .col-sm-11, .mx-sm-4;
-  // @extend .col-sm-10, .offset-1;
+  @extend .col-sm-11;
   @extend .col-md-8;
   @extend .col-lg-9;
-  // .ml-lg-0 cancels the offset
-  @extend .ml-lg-0, .pl-lg-4;
   @extend .mb-lg-4;
+
+  @include breakpoint(sm) {
+    margin-right: $spacer-4;
+    margin-left: $spacer-4;
+  }
+
+  @include breakpoint(md) {
+    margin-right: $spacer-0;
+    margin-left: $spacer-0;
+  }
+
 }
 
 // settings
