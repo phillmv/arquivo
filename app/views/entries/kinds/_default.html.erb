@@ -8,7 +8,11 @@
   <div class="Box-body markdown-body <%= truncate_class(entry_body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
     <%= render partial: "entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
-      <%= entry_body %>
+      <% if @search_tokens %>
+        <%= highlight entry_body, @search_tokens, sanitize: false%>
+      <% else %>
+        <%= entry_body %>
+      <% end %>
     </div>
     <%# task click to update requires the following hidden form: %>
     <div class="entry-edit d-none">

@@ -1,4 +1,6 @@
 class Search
+  attr_reader :tokens
+
   FILTERS = Set.new([
     "is:everything",
     "is:calendar",
@@ -25,19 +27,25 @@ class Search
     @notebook = notebook
   end
 
-  def find(query:)
-    tokens = []
+  def parse_query(query:)
+    @tokens = []
 
     # super lazy quick way of doing this
     query.gsub(/"([^"]*)"/) do |match|
-      tokens << match.gsub('"', '')
+      @tokens << match.gsub('"', '')
       ""
     end.split do |s|
-      tokens << s
+      @tokens << s
     end
 
-    filters, tokens = parse_filters(tokens)
-    operators, tokens = parse_operators(tokens)
+    @filters, @tokens = parse_filters(@tokens)
+    @operators, @tokens = parse_operators(@tokens)
+
+    return [@tokens, @filters, @operators]
+  end
+
+  def find(query:)
+    tokens, filters, operators = parse_query(query: query)
 
     sql_query = Entry.for_notebook(notebook).order(occurred_at: :desc).hitherto
 
