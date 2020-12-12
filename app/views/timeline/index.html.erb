@@ -50,7 +50,7 @@
       <div class="pb-2">
         <a href="<%= entry_path(tli.entry, notebook: @current_notebook)%>">
           <%= EntryRenderer.new(tli.entry).gimme_html("- #{tli.source}") %>
-          <span class="muted-link"><%= tli.tags.map(&:name).join(" ") %> <%= time_ago_in_words(tli.updated_at, include_seconds: true) %> ago</span>
+          <span class="muted-link"><%= tli.tags.map(&:name).join(" ") %> <%= time_ago_in_words(tli.occurred_at, include_seconds: true) %> ago</span>
         </a>
       </div>
     <% end %>
