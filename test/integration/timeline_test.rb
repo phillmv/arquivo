@@ -23,7 +23,7 @@ class TimelineTest < ActionDispatch::IntegrationTest
   end
 
   test "timeline smoke test" do
-    get timeline_path(notebook: "test")
+    get search_path(notebook: "test", query: "is:everything")
     assert_response :success
 
     # entries split across three days
