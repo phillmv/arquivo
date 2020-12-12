@@ -29,9 +29,8 @@ class EntryTagger
       end
     end
 
-    old_tags = entry.db_tags - tag_list
-
-    entry.db_tags = tag_list
+    old_tags = entry.tags - tag_list
+    entry.tags = tag_list
 
     old_tags.each(&:apoptosis!)
 

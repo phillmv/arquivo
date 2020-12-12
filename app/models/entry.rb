@@ -30,7 +30,7 @@ class Entry < ApplicationRecord
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
   has_many :tag_entries
-  has_many :db_tags, through: :tag_entries, source: :tag
+  has_many :tags, through: :tag_entries
 
   has_many :contact_entries
   has_many :contacts, through: :contact_entries
@@ -144,7 +144,7 @@ class Entry < ApplicationRecord
     "#meeting #{to.present? && to&.split(", ").map { |s| "@#{s.split("@").first}" }.join(" ")}"
   end
 
-  def tags
+  def extract_tags
     EntryTagger.new(self).extract_tags
   end
 
