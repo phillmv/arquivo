@@ -51,9 +51,11 @@
     </div>
 
     <%# by definition can't render show w/o an existing entry %>
+    <%# here we set up a for the purposes of updating task lists automagically. %>
+    <%# id is set to entry_body_tasklist to allow for reliably detecting when an entry textarea is present %>
     <div class="entry-edit d-none">
       <%= form_with(model: @entry, url: entry_path(@entry, notebook: @entry.notebook)) do |form| %>
-        <%= form.text_area :body, class: "js-task-list-field" %>
+        <%= form.text_area :body, class: "js-task-list-field", id: "entry_body_tasklist" %>
       <% end %>
     </div>
 

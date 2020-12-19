@@ -5,58 +5,72 @@ import 'text_expanding';
 import 'textarea_sizing';
 import 'task_list_handler';
 
-// press control L to get to the search field
+function safe_to_navigate_away_from_entry() {
+  if (window.entry_body) {
+    if (window.entry_body.value == "") {
+      return true
+    } else {
+      return false
+    }
+  } else {
+    // not being edited
+    return true
+  }
+}
+
 document.onkeyup = function(e) {
+  // press control L to get to the search field
   if(e.ctrlKey && e.which == 76) {
     document.searchform.query.focus()
     var len = document.searchform.query.value.length;
     document.searchform.query.setSelectionRange(len, len);
   }
 
-  if(e.ctrlKey && e.which == 78) {
-    var notebook = window.location.pathname.split("/")[1]
-    if (!document.querySelector("textarea#entry_body")) {
-      window.location = `/${notebook}/new`
+  var current_notebook = window.current_notebook;
+  if (current_notebook) {
+
+    if(e.ctrlKey && e.which == 78) {
+      if (safe_to_navigate_away_from_entry()) {
+        window.location.pathname = `/${current_notebook.name}/new`
+      }
     }
-  }
 
-  if(e.ctrlKey && e.code == "BracketLeft") {
-    var [dontcare, notebook, path1, path2] = window.location.pathname.split("/")
-    var path_location = [path1, path2 ].join("/")
-
-      switch(path_location) {
-        case "agenda/":
-          if(document.querySelector("textarea#entry_body").value == "") {
-            window.location = `/${notebook}`
+    if(e.ctrlKey && e.code == "BracketLeft") {
+      switch(window.current_action.name) {
+        case "timeline/agenda":
+          if(safe_to_navigate_away_from_entry()) {
+            window.location.pathname = `/${current_notebook.name}`
           }
           break;
         case "calendar/weekly":
-          window.location = `/${notebook}/agenda`
+          window.location.pathname = `/${current_notebook.name}/agenda`
           break;
-        case "calendar/":
-          window.location = `/${notebook}/calendar/weekly`
+        case "calendar/monthly":
+          window.location.pathname = `/${current_notebook.name}/calendar/weekly`
           break;
+        default:
+          if(safe_to_navigate_away_from_entry()) {
+            window.location.pathname = `/${current_notebook.name}`
+          }
       }
-  }
+    }
 
-  if(e.ctrlKey && e.code == "BracketRight") {
-    var [dontcare, notebook, path1, path2] = window.location.pathname.split("/")
-    var path_location = [path1, path2].join("/")
-
-      switch(path_location) {
-        case "timeline/":
-          window.location = `/${notebook}/agenda`
+    if(e.ctrlKey && e.code == "BracketRight") {
+      switch(window.current_action.name) {
+        case "timeline/index":
+          window.location.pathname = `/${current_notebook.name}/agenda`
           break;
-        case "agenda/":
-          if(document.querySelector("textarea#entry_body").value == "") {
-            window.location = `/${notebook}/calendar/weekly`
+        case "timeline/agenda":
+          if(safe_to_navigate_away_from_entry()) {
+            window.location.pathname = `/${current_notebook.name}/calendar/weekly`
           }
           break;
         case "calendar/weekly":
-          window.location = `/${notebook}/calendar`
+          window.location.pathname = `/${current_notebook.name}/calendar`
           break;
       }
     }
+  }
 
   if(e.ctrlKey && e.code == "KeyK") {
     var details = document.querySelector("details")

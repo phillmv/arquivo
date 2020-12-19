@@ -7,8 +7,11 @@
     <link rel="icon" href="/favicon.svg">
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload', 'defer': 'defer' %>
+    <% if @current_notebook %>
+      <meta id="current_notebook" name="<%=@current_notebook%>">
+    <% end %>
+    <meta id="current_action" name="<%=current_action%>">
   </head>
-
   <body>
     <div class="container-xl clearfix pt-1">
       <%= yield %>
