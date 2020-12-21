@@ -8,6 +8,7 @@ class Search
     "is:note",
     "has:todo",
     "has:done",
+    "has:file",
     "not:todo",
     "not:note",
     "not:calendar",
@@ -73,6 +74,8 @@ class Search
                   when "has:done"
                     # sql_query.where("body like ?", "%- [x]%")
                     sql_query.with_completed_todos
+                  when "has:file"
+                    sql_query.with_files.group(:id)
                   when "not:todo"
                     sql_query.where("body not like ?", "%- [ ]%")
                   when "not:calendar"

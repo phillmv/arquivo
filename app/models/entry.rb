@@ -26,6 +26,8 @@ class Entry < ApplicationRecord
   scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
   scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
 
+  scope :with_files, -> { joins(:files_attachments) }
+
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
