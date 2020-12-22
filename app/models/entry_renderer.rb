@@ -17,14 +17,21 @@ class EntryRenderer
     if !attribute
       ""
     else
-      PIPELINE.to_html(attribute, entry: entry).html_safe
+      render_html(attribute)
     end
+  end
+
+  def render_html(str, options = {})
+    pipeline_opt = { entry: entry }
+    pipeline_opt = pipeline_opt.merge(options)
+
+    PIPELINE.to_html(str, pipeline_opt).html_safe
   end
 
   # i don't love this - maybe this should be folded into #to_html
   # but for now this is easy to cache
   def todo_to_html
-    @todo_to_html ||= PIPELINE.to_html(entry.body, entry: entry, todo_only: true).html_safe
+    @todo_to_html ||= render_html(entry.body, todo_only: true)
   end
 
   def task_list_items
