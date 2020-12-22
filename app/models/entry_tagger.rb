@@ -5,12 +5,12 @@ class EntryTagger
     @entry = entry
   end
 
-  def extract_tags
-    entry.body&.scan(PipelineFilter::HashtagFilter::HASHTAG_REGEX)&.flatten || []
+  def extract_tags(body)
+    body&.scan(PipelineFilter::HashtagFilter::HASHTAG_REGEX)&.flatten || []
   end
 
   def process!
-    tag_list = extract_tags.map do |name|
+    tag_list = extract_tags(entry.body).map do |name|
       Tag.transaction do
         tag = Tag.find_by(notebook: entry.notebook,
                           name: name)
