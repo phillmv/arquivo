@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_21_210813) do
+ActiveRecord::Schema.define(version: 2020_12_22_204138) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -150,6 +150,17 @@ ActiveRecord::Schema.define(version: 2020_12_21_210813) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["entry_id"], name: "index_link_entries_on_entry_id"
     t.index ["link_id"], name: "index_link_entries_on_link_id"
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.string "notebook"
+    t.string "identifier"
+    t.string "url"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["identifier"], name: "index_links_on_identifier"
+    t.index ["notebook"], name: "index_links_on_notebook"
+    t.index ["url"], name: "index_links_on_url"
   end
 
   create_table "notebooks", force: :cascade do |t|
