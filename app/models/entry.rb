@@ -40,10 +40,13 @@ class Entry < ApplicationRecord
   has_one :todo_list
   has_many :todo_list_items, through: :todo_list
 
+  has_many :link_entries
+  has_many :links, through: :link_entries
+
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
-  after_save :sync_to_git, :process_tags, :process_contacts, :process_todo_list, :clear_cached_blob_filenames
+  after_save :sync_to_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
 
   def set_identifier
     self.occurred_at ||= Time.current
@@ -104,6 +107,10 @@ class Entry < ApplicationRecord
     unless self.skip_local_sync
       LocalSyncer.sync_entry(self)
     end
+  end
+
+  def process_link_entries
+    EntryLinker.new(self).link!
   end
 
   # clear this cache! this table/cache is only checked in between commits to

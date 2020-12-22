@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_06_174733) do
+ActiveRecord::Schema.define(version: 2020_12_21_210813) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -143,6 +143,15 @@ ActiveRecord::Schema.define(version: 2020_12_06_174733) do
     t.index ["namespace", "key"], name: "index_key_values_on_namespace_and_key"
   end
 
+  create_table "link_entries", force: :cascade do |t|
+    t.integer "entry_id", null: false
+    t.integer "link_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["entry_id"], name: "index_link_entries_on_entry_id"
+    t.index ["link_id"], name: "index_link_entries_on_link_id"
+  end
+
   create_table "notebooks", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
@@ -218,6 +227,7 @@ ActiveRecord::Schema.define(version: 2020_12_06_174733) do
   add_foreign_key "contact_entries", "contacts"
   add_foreign_key "contact_entries", "entries"
   add_foreign_key "i_calendar_entries", "calendar_imports"
+  add_foreign_key "link_entries", "entries"
   add_foreign_key "todo_list_items", "entries"
   add_foreign_key "todo_list_items", "todo_lists"
   add_foreign_key "todo_lists", "entries"
