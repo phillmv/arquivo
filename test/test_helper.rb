@@ -26,4 +26,11 @@ class ActiveSupport::TestCase
   def disable_local_sync
     Rails.application.config.skip_local_sync = true
   end
+
+  # https://gist.github.com/furugomu/a92b794dcf8cd60c723abecbc8ac4419
+  # context 'foo' => class Context_foo < self
+  def self.context(name, &block)
+    class_name = "Context_#{name.gsub(/[[:^word:]]+/, '_')}".to_sym
+    const_set(class_name, Class.new(self, &block))
+  end
 end
