@@ -6,7 +6,7 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
     @file_path = File.join(Rails.root, "test", "fixtures", "test_image.jpg")
   end
 
-  test "files uploaded to the same entry " do
+  test "files direct uploaded to the same entry are renamed if filenames collide" do
 
     assert_equal 0, @current_notebook.entries.count
     @entry = @current_notebook.entries.new
