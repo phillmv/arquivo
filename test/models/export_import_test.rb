@@ -9,6 +9,9 @@ class ExportImportTest < ActiveSupport::TestCase
     # TODO: figure out how to add attachment
     # TODO: reminder about attachment filename class for sanitizing
     # identifiers
+
+    Notebook.create(name: "test1")
+    Notebook.create(name: "test2")
     entry_sets = {
       "test1" => create_list(:entry, 10, notebook: "test1"),
       "test2" => create_list(:entry, 10, notebook: "test2"),
@@ -50,11 +53,13 @@ class ExportImportTest < ActiveSupport::TestCase
     notebooks = ["work", "journal", "dev"]
 
     entries = notebooks.map do |notebook|
+      Notebook.create(name: notebook)
       create_list(:entry, 3, notebook: notebook)
     end.flatten
 
     assert_equal Entry.count, 9
     # assert 0 to confirm notebooks are created on import
+    Notebook.delete_all
     assert_equal Notebook.count, 0
 
     Dir.mktmpdir do |export_import_path|

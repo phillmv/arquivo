@@ -15,6 +15,10 @@ class Importer
 
     Dir[notebook_paths].each do |notebook_path|
 
+      # entries are tied to notebooks, so let's create it first
+      notebook_name = notebook_path.split("/").last
+      notebook = Notebook.find_or_create_by(name: notebook_name)
+
       expand_import_path = File.join(notebook_path, DIR_GLOB)
       entry_folders = Dir[expand_import_path]
 
@@ -51,8 +55,6 @@ class Importer
 
       # we're done processing all the entries for this notebook_path.
       # let's sync it to our git repo
-      notebook_name = notebook_path.split("/").last
-      notebook = Notebook.find_or_create_by(name: notebook_name)
       if updated_entry_ids.any?
         # TODO: any way to just keep track of what got synced? yeesh this is time consuming
         LocalSyncer.sync_notebook(notebook, notebook_path)
