@@ -1,12 +1,51 @@
 require 'test_helper'
 
 class LocalSyncerTest < ActiveSupport::TestCase
+  test "without enable_local_sync we don't write to a git repo" do
+    notebook = Notebook.create(name: "test")
+
+    assert Rails.application.config.skip_local_sync
+
+    arquivo_path = LocalSyncer.new.arquivo_path
+    refute File.exist?(arquivo_path)
+    refute arquivo_path.index("Documents")
+    refute arquivo_path.index(ENV["HOME"])
+
+    entry = notebook.entries.create(body: "foo")
+    assert_equal 1, Entry.count
+
+    # because local_sync is turned off,
+    # we don't get any history from the repo
+    # and the arquivo_path still does not exist
+    refute File.exist?(arquivo_path)
+
+    assert entry.revisions.empty?
+  end
+
+  test "with enable_local_sync we do write to a git repo and get history" do
+    enable_local_sync do
+      notebook = Notebook.create(name: "test")
+
+      # still set to a temp dir tho
+      arquivo_path = LocalSyncer.new.arquivo_path
+      refute File.exist?(arquivo_path)
+      refute arquivo_path.index("Documents")
+      refute arquivo_path.index(ENV["HOME"])
+
+      entry = notebook.entries.create(body: "foo")
+      assert_equal 1, Entry.count
+
+      # because local_sync is turned on,
+      # we now get history from the repo
+      assert File.exist?(arquivo_path)
+
+      refute entry.revisions.empty?
+    end
+  end
+
   test "when an entry is updated, we write to a local repo" do
     notebook = Notebook.create(name: "test-notebook")
-
-    begin
-      enable_local_sync
-
+    enable_local_sync do
       # in the beginning, there is no folder
       arquivo_path = LocalSyncer.new.arquivo_path
       refute File.exist?(arquivo_path)
@@ -34,8 +73,6 @@ class LocalSyncerTest < ActiveSupport::TestCase
       # we cache revisions, so we have to re-instantiate the whole object
       entry = Entry.find(entry.id)
       assert_equal 2, entry.revisions.count
-    ensure
-      disable_local_sync
     end
   end
 
@@ -47,8 +84,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
     assert_equal 5, Entry.count
     assert_equal 1, Notebook.count
 
-    begin
-      enable_local_sync
+    enable_local_sync do
 
       Dir.mktmpdir do |export_import_path|
         Exporter.new(export_import_path).export!
@@ -62,7 +98,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
         # because this was triggered as an import,
         # we have only 1 commit, from the notebook import
         # (i.e. this isn't being fired on every Entry#save)
-        repo_path = File.join(Setting.get(:arquivo, :storage_path), "arquivo", "mynotebook")
+        repo_path = File.join(Setting.get(:arquivo, :arquivo_path), "mynotebook")
         repo = Git.open(repo_path)
         assert_equal 1, repo.log.count
         assert repo.log.last.message.index("import from")

@@ -55,7 +55,7 @@ class Importer
 
       # we're done processing all the entries for this notebook_path.
       # let's sync it to our git repo
-      if updated_entry_ids.any?
+      if updated_entry_ids.any? && !Rails.application.config.skip_local_sync
         # TODO: any way to just keep track of what got synced? yeesh this is time consuming
         LocalSyncer.sync_notebook(notebook, notebook_path)
       end

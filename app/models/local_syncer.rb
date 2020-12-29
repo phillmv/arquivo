@@ -25,7 +25,7 @@ class LocalSyncer
       exporter = Exporter.new(arquivo_path)
       entry_folder_path = exporter.export_entry!(entry)
 
-      repo = open_repo(notebook_path(entry.notebook))
+      repo = open_repo(notebook_path(entry.parent_notebook))
       add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
   end
@@ -47,18 +47,22 @@ class LocalSyncer
   end
 
   def entry_log(entry)
-    repo = open_repo(notebook_path(entry.notebook))
-    full_filepath = entry.to_full_filepath(arquivo_path)
-
-    if File.exist?(full_filepath)
-      repo.log.path(full_filepath).map { |c| [c.sha, c.date] }
+    if !File.exist?(notebook_path(entry.parent_notebook))
+      return []
     else
-      []
+      repo = open_repo(notebook_path(entry.parent_notebook))
+      full_filepath = entry.to_full_filepath(arquivo_path)
+
+      if File.exist?(full_filepath)
+        repo.log.path(full_filepath).map { |c| [c.sha, c.date] }
+      else
+        []
+      end
     end
   end
 
   def get_revision(entry, sha)
-    repo = open_repo(notebook_path(entry.notebook))
+    repo = open_repo(notebook_path(entry.parent_notebook))
     full_filepath = entry.to_full_filepath(arquivo_path)
 
     if File.exist?(full_filepath)
