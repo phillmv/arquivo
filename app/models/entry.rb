@@ -104,7 +104,9 @@ class Entry < ApplicationRecord
   end
 
   def sync_to_git
-    unless self.skip_local_sync
+    # globally set NOP so we can skip this from within tests
+    # see `enable_local_sync` in tests
+    unless self.skip_local_sync || Rails.application.config.skip_local_sync
       LocalSyncer.sync_entry(self)
     end
   end

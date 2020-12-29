@@ -1,8 +1,10 @@
 class Setting < KeyValue
   # fyi, this gets overridden in test_helper
+  STORAGE_PATH = File.join(ENV["HOME"], "Documents")
   DEFAULTS = {
     :arquivo => {
-      storage_path: File.join(ENV["HOME"], "Documents")
+      storage_path: STORAGE_PATH,
+      arquivo_path: File.join(STORAGE_PATH, "arquivo")
     }
   }
 

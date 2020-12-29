@@ -15,7 +15,7 @@ class ActiveSupport::TestCase
 
   # tmpdir to ensure we don't accidentally clobber ~/Documents/arquivo
   # TODO: maybe the enable takes a block for setting this?
-  Setting::DEFAULTS[:arquivo][:storage_path] = Dir.mktmpdir
+  Setting::DEFAULTS[:arquivo][:arquivo_path] = File.join(Dir.mktmpdir, "arquivo")
 
   # tests that use local sync must enable it specifically
   Rails.application.config.skip_local_sync = true

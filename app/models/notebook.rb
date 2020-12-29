@@ -21,7 +21,8 @@ class Notebook < ApplicationRecord
     name
   end
 
-  def sync_path
-    "/tmp/arquivo-test"
+  def filesystem_path(path = nil)
+    path ||= Setting.get(:arquivo, :arquivo_path)
+    File.join(path, self.to_s)
   end
 end

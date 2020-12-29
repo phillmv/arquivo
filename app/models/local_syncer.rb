@@ -7,8 +7,8 @@
 class LocalSyncer
   attr_reader :arquivo_path, :lockfile
   def initialize(path = nil)
-    working_dir = path || Setting.get(:arquivo, :storage_path)
-    @arquivo_path = File.join(working_dir, "arquivo")
+    # TODO: maybe replace this with a mandatory notebook argument and the optional path ovverride?
+    @arquivo_path = path || Setting.get(:arquivo, :arquivo_path)
     @lockfile = File.join(@arquivo_path, "sync.lock")
   end
 
@@ -107,18 +107,12 @@ class LocalSyncer
   # -- end within_lock
 
   def notebook_path(notebook)
-    File.join(arquivo_path, notebook.to_s)
+    notebook.filesystem_path(arquivo_path)
   end
 
   # prevents other instances of this class
   # from writing to the git repo at the same time
   def with_lock(&block)
-    # globally set NOP so we can skip this from within tests
-    # see `enable_local_sync` in tests
-    if Rails.application.config.skip_local_sync
-      return
-    end
-
     FileUtils.mkdir_p(arquivo_path)
     counter = 0
     while File.exist?(lockfile)
