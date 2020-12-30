@@ -11,11 +11,9 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  # Add more helper methods to be used by all tests here...
-
-  # tmpdir to ensure we don't accidentally clobber ~/Documents/arquivo
-  # TODO: maybe the enable takes a block for setting this?
+  # /dev/null to ensure we don't accidentally clobber ~/Documents/arquivo
   DEV_NULL_ARQUIVO_PATH = "/dev/null/arquivo"
+  Setting::DEFAULTS[:arquivo][:storage_path] = "/dev/null"
   Setting::DEFAULTS[:arquivo][:arquivo_path] = DEV_NULL_ARQUIVO_PATH
 
   # tests that use local sync must enable it specifically
@@ -33,9 +31,4 @@ class ActiveSupport::TestCase
       Rails.application.config.skip_local_sync = true
     end
   end
-
-  def disable_local_sync
-    Rails.application.config.skip_local_sync = true
-  end
-
 end
