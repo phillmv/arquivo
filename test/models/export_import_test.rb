@@ -3,34 +3,37 @@ require 'test_helper'
 class ExportImportTest < ActiveSupport::TestCase
   test "exporting smokescreen test" do
     # set up entries in two diff notebooks
-    notebooks = ["test1", "test2"]
 
     # TODO: vary these entries over diff months & years
     # TODO: figure out how to add attachment
     # TODO: reminder about attachment filename class for sanitizing
     # identifiers
 
-    Notebook.create(name: "test1")
-    Notebook.create(name: "test2")
+    notebooks = [Notebook.create(name: "test1"), Notebook.create(name: "test2")]
     entry_sets = {
       "test1" => create_list(:entry, 10, notebook: "test1"),
       "test2" => create_list(:entry, 10, notebook: "test2"),
     }
 
     Dir.mktmpdir do |export_path|
-      Exporter.new(export_path).export!
+      notebooks.each do |notebook|
+        Exporter.new(export_path, notebook).export!
+      end
 
       # confirm one folder per notebook
       exported_notebooks = Dir[export_path + "/*"].
         map { |s| File.basename(s) }.to_set
 
-      assert_equal notebooks.to_set, exported_notebooks
+      assert_equal notebooks.map(&:name).to_set, exported_notebooks
 
-      notebooks.each do |name|
-        exported_yaml = Dir[export_path + "/#{name}*/**/*yaml"]
+      notebooks.each do |notebook|
+        exported_yaml = Dir[export_path + "/#{notebook}*/**/*yaml"].sort
+        notebook_yaml_file = exported_yaml.pop
+
+        assert notebook_yaml_file.index("#{notebook}/notebook.yaml")
 
         # basic sanity check, one file per entry
-        assert_equal entry_sets[name].size, exported_yaml.size
+        assert_equal entry_sets[notebook.to_s].size, exported_yaml.size
 
         hash = {}
         exported_yaml.each do |ey|
@@ -42,7 +45,7 @@ class ExportImportTest < ActiveSupport::TestCase
         end
 
         # every entry should be present
-        entry_sets[name].each do |entry|
+        entry_sets[notebook.to_s].each do |entry|
           assert hash[entry.identifier]
         end
       end
@@ -50,20 +53,19 @@ class ExportImportTest < ActiveSupport::TestCase
   end
 
   test "importing smokescreen test" do
-    notebooks = ["work", "journal", "dev"]
+    notebooks = ["work", "journal", "dev"].map { |name| Notebook.create(name: name) }
 
     entries = notebooks.map do |notebook|
-      Notebook.create(name: notebook)
       create_list(:entry, 3, notebook: notebook)
     end.flatten
 
-    assert_equal Entry.count, 9
-    # assert 0 to confirm notebooks are created on import
-    Notebook.delete_all
-    assert_equal Notebook.count, 0
-
     Dir.mktmpdir do |export_import_path|
-      Exporter.new(export_import_path).export!
+      assert_equal Entry.count, 9
+      Exporter.export_all!(export_import_path)
+
+      # assert 0 to confirm notebooks are created on import
+      Notebook.delete_all
+      assert_equal Notebook.count, 0
 
       Entry.destroy_all
       assert_equal Entry.count, 0

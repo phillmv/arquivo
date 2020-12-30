@@ -25,7 +25,7 @@ class LocalSyncer
 
   def write_entry(entry)
     with_lock do
-      exporter = Exporter.new(arquivo_path)
+      exporter = Exporter.new(arquivo_path, entry.notebook)
       entry_folder_path = exporter.export_entry!(entry)
 
       repo = open_repo(notebook_path(entry.parent_notebook))

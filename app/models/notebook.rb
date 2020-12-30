@@ -21,8 +21,21 @@ class Notebook < ApplicationRecord
     name
   end
 
+  def export_attributes
+    self.attributes.except("id")
+  end
+
+  def to_yaml
+    export_attributes.to_yaml
+  end
+
   def to_folder_path(path = nil)
     path ||= Setting.get(:arquivo, :arquivo_path)
     File.join(path, self.to_s)
+  end
+
+  def to_full_file_path(path = nil)
+    path ||= Setting.get(:arquivo, :arquivo_path)
+    File.join(to_folder_path(path), "notebook.yaml")
   end
 end

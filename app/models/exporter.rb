@@ -1,16 +1,23 @@
 class Exporter
   attr_accessor :export_path, :notebook
-  def initialize(export_path, notebook = nil)
+
+  def self.export_all!(export_path)
+    Notebook.find_each do |notebook|
+      new(export_path, notebook).export!
+    end
+  end
+
+  def initialize(export_path, notebook)
     @export_path = export_path
     @notebook = notebook
   end
 
   # TODO: don't overwrite if existing is newer
   def export!
-    FileUtils.mkdir_p(export_path)
+    FileUtils.mkdir_p(notebook.to_folder_path(export_path))
+    File.write(notebook.to_full_file_path(export_path), notebook.to_yaml)
 
-    entries = notebook&.entries || Entry
-    entries.with_attached_files.find_each do |entry|
+    notebook.entries.with_attached_files.find_each do |entry|
       puts "handling #{entry.notebook}/#{entry.identifier}"
 
       export_entry!(entry)
