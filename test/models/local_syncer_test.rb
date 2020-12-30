@@ -105,8 +105,75 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
         assert_equal 5, Entry.count
       end
+    end
+  end
+
+  test "basic ffwd syncing between two notebooks using a bare repo in between" do
+    notebook = Notebook.create(name: "test-notebook")
+
+    temp_dirs = 3.times.map { Dir.mktmpdir }
+
+    repo1_arquivo_path, repo2_arquivo_path, bare_arquivo_path = temp_dirs.map {|d| File.join(d, "arquivo") }
+    test_arquivo_paths = [repo1_arquivo_path, repo2_arquivo_path, bare_arquivo_path]
+
+    repo1_path, repo2_path, bare_repo_path = test_arquivo_paths.map { |d| File.join(d, "test-notebook") }
+
+    # you dope, remember that each notebook is its own git repo not the arquivo folder as a whole
+    begin
+      enable_local_sync do
+        bare_repo = Git.init(bare_repo_path, bare: true)
+
+        repo1 = Git.init(repo1_path)
+        repo1.add_remote("origin", bare_repo_path)
+
+        repo2 = Git.init(repo2_path)
+        repo2.add_remote("origin", bare_repo_path)
+
+        syncer1 = LocalSyncer.new(repo1_arquivo_path)
+        entry = notebook.entries.create(body: "test entry",
+                                        skip_local_sync: true)
+
+        entry_identifier = entry.identifier
+
+        syncer1.write_entry(entry)
+        syncer1.push(notebook)
+
+        # write_entry commit messages consist of the entry identifier
+        assert_equal entry_identifier, bare_repo.log.last.message
+
+
+        # the goal of this test is to pretend that we're syncing info back
+        # and forth between diff arquivo installs.
+        #
+        # so when we pull on repo2 using syncer2 we will want the data being
+        # imported to be reflected in the notebook. for that reason let's delete
+        # the entry here:
+
+        entry.destroy
+        assert_equal 0, Entry.count
+
+        # okay so now i want to pull the changes into repo2
+        # using the local syncer
+
+        syncer2 = LocalSyncer.new(repo2_arquivo_path)
+        # TODO: should the syncer be responsible for importing? or do we do that as a separate step?
+        syncer2.pull!(notebook)
+
+        # syncer just calls git pull under the hood
+        # so we can look at the repo2 log to confirm the pull happened
+        assert_equal entry_identifier, repo2.log.last.message
+
+        assert_equal 1, Entry.count
+        assert_equal entry_identifier, notebook.entries.last.identifier
+
+        # TODO: need to keep track of sha pre and post pull
+        # TODO: need to keep track of files being changed, so they can be imported
+        # for now let's do the dumbest thing possible and re-import the whole fucking thing
+        #
+        # the annoying thing is that the Importer expects the arquivo path but we deal in the notebook path
+      end
     ensure
-      disable_local_sync
+      temp_dirs.each { |dir| FileUtils.remove_entry(dir) }
     end
   end
 

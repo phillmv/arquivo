@@ -4,6 +4,9 @@
 # this will be renamed soon. Maybe just GitAdapter? I need a better name
 # for the concept of a local synced repo, especially since we may end up
 # using this class as a kind of exporter as well.
+#
+# It is the responsibility of the methods calling this class to check
+# and see if !Rails.application.config.skip_local_sync is true
 class LocalSyncer
   attr_reader :arquivo_path, :lockfile
   def initialize(path = nil)
@@ -72,6 +75,48 @@ class LocalSyncer
     end
   end
 
+  # -- experiment
+  def push(notebook)
+    with_lock do
+      rejected = false
+      begin
+        repo = open_repo(notebook_path(notebook))
+        repo.push
+      rescue Git::GitExecuteError => e
+        rejected = e.message.lines.select {|s| s =~ /\[rejected\]\.*\(fetch first\)/}.any?
+      end
+
+      if rejected
+        # yeah that's right, then what huh???
+        binding.pry
+      end
+    end
+  end
+
+  def pull!(notebook)
+    result = nil
+    begin
+      repo = open_repo(notebook_path(notebook))
+      result = repo.pull
+
+      case result
+      # when /Updating.*\nFast-forward/
+      #   puts "ffwd"
+      #   # trigger notebook update
+      #   # in order
+      when /Already up to date\./
+        puts "do nothing"
+        # hooray!
+      else
+        Importer.new(arquivo_path).import!
+      end
+
+    rescue Git::GitExecuteError => e
+      binding.pry
+    end
+    result
+  end
+
   # -- call these methods within with_lock
 
   def init_repo(working_dir)
@@ -80,15 +125,11 @@ class LocalSyncer
   end
 
   def open_repo(working_dir)
-    if defined?(@repo)
-      return @repo
-    end
-
     begin
-      @repo = Git.open(working_dir)
+      return repo = Git.open(working_dir)
     rescue ArgumentError => e
       if e.message == "path does not exist"
-        return @repo = init_repo(working_dir)
+        return repo = init_repo(working_dir)
       else
         raise e
       end
