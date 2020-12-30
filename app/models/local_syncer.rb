@@ -152,7 +152,7 @@ class LocalSyncer
   # -- end within_lock
 
   def notebook_path(notebook)
-    notebook.filesystem_path(arquivo_path)
+    notebook.to_folder_path(arquivo_path)
   end
 
   # prevents other instances of this class

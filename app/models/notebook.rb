@@ -21,7 +21,7 @@ class Notebook < ApplicationRecord
     name
   end
 
-  def filesystem_path(path = nil)
+  def to_folder_path(path = nil)
     path ||= Setting.get(:arquivo, :arquivo_path)
     File.join(path, self.to_s)
   end
