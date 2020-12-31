@@ -3,22 +3,38 @@ class Importer
 
   # pattern is notebook/year/month/day/identifier
   NOTEBOOK_GLOB = "/*" #notebook
-  DIR_GLOB = "/*/*/*/*" #year/month/day/identifier
-  def initialize(import_path)
-    @import_path = import_path
+  DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
+  def initialize(arquivo_path)
+    @import_path = arquivo_path
   end
 
+  def load_or_create_notebook(notebook_path)
+    notebook_yaml_file = File.join(notebook_path, "notebook.yaml")
+    notebook_yaml = YAML.load(File.read(notebook_yaml_file))
+
+    notebook = Notebook.find_by(name: notebook_yaml["name"])
+    if notebook.nil?
+      notebook = Notebook.create(notebook_yaml)
+    end
+
+    notebook
+  end
+
+
+  # TODO:
+  # validate folders!
+  # the importer should work on a per notebook basis!
+  # but with an option to work on an arquivo-folder basis!
   def import!
     raise "Path bad" unless File.exist?(import_path)
 
     notebook_paths = File.join(import_path, NOTEBOOK_GLOB)
 
     Dir[notebook_paths].each do |notebook_path|
-
       # entries are tied to notebooks, so let's create it first
-      notebook_name = notebook_path.split("/").last
-      notebook = Notebook.find_or_create_by(name: notebook_name)
+      notebook = load_or_create_notebook(notebook_path)
 
+      # fetch every entry yaml file
       expand_import_path = File.join(notebook_path, DIR_GLOB)
       entry_folders = Dir[expand_import_path]
 
@@ -43,7 +59,7 @@ class Importer
         end
 
         Entry.transaction do
-          entry, updated = upsert_entry!(entry_attributes)
+          entry, updated = upsert_entry!(notebook, entry_attributes)
 
           attach_files(entry, path)
 
@@ -59,11 +75,6 @@ class Importer
         # TODO: any way to just keep track of what got synced? yeesh this is time consuming
         LocalSyncer.sync_notebook(notebook, notebook_path)
       end
-    end
-
-    # sanity check, tbd probably can delete
-    Entry.select("notebook").distinct.pluck(:notebook).each do |name|
-      Notebook.find_or_create_by(name: name)
     end
   end
 
@@ -105,10 +116,11 @@ class Importer
 
   # if identifier already exists, only update if the timestamp is newer
   # than what is in our copy
-  def upsert_entry!(entry_attributes)
-    notebook, identifier = entry_attributes.fetch_values("notebook", "identifier")
+  def upsert_entry!(notebook, entry_attributes)
+    identifier = entry_attributes["identifier"]
+
     # find or update the entry
-    entry = Entry.find_by(notebook: notebook, identifier: identifier)
+    entry = notebook.entries.find_by(identifier: identifier)
     updated = false
 
     if entry
@@ -118,7 +130,7 @@ class Importer
       end
 
     else
-      entry = Entry.create(entry_attributes)
+      entry = notebook.entries.create(entry_attributes)
       updated = true
     end
 

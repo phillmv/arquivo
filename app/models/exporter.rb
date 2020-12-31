@@ -1,14 +1,15 @@
 class Exporter
   attr_accessor :export_path, :notebook
 
-  def self.export_all!(export_path)
+  # should probably find a way of just specifying the notebook path?
+  def self.export_all!(arquivo_path)
     Notebook.find_each do |notebook|
-      new(export_path, notebook).export!
+      new(arquivo_path, notebook).export!
     end
   end
 
-  def initialize(export_path, notebook)
-    @export_path = export_path
+  def initialize(arquivo_path, notebook)
+    @export_path = arquivo_path
     @notebook = notebook
   end
 
