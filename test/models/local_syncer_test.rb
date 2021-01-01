@@ -93,7 +93,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
         assert_equal Entry.count, 0
 
         # now that we're set up, turn on git sync
-        Importer.new(export_import_path).import!
+        Importer.import_all!(export_import_path)
 
         # because this was triggered as an import,
         # we have only 1 commit, from the notebook import
@@ -129,6 +129,9 @@ class LocalSyncerTest < ActiveSupport::TestCase
         repo2 = Git.init(repo2_path)
         repo2.add_remote("origin", bare_repo_path)
 
+        # commit the notebook.yaml file
+        # TODO: this whole interaction needs to be refactored
+        LocalSyncer.sync_notebook(notebook, "init", repo1_arquivo_path)
         syncer1 = LocalSyncer.new(repo1_arquivo_path)
         entry = notebook.entries.create(body: "test entry",
                                         skip_local_sync: true)
@@ -139,7 +142,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
         syncer1.push(notebook)
 
         # write_entry commit messages consist of the entry identifier
-        assert_equal entry_identifier, bare_repo.log.last.message
+        assert_equal entry_identifier, bare_repo.log.first.message
 
 
         # the goal of this test is to pretend that we're syncing info back
@@ -157,11 +160,12 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
         syncer2 = LocalSyncer.new(repo2_arquivo_path)
         # TODO: should the syncer be responsible for importing? or do we do that as a separate step?
+        # binding.pry
         syncer2.pull!(notebook)
 
         # syncer just calls git pull under the hood
         # so we can look at the repo2 log to confirm the pull happened
-        assert_equal entry_identifier, repo2.log.last.message
+        assert_equal entry_identifier, repo2.log.first.message
 
         assert_equal 1, Entry.count
         assert_equal entry_identifier, notebook.entries.last.identifier

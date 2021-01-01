@@ -9,6 +9,7 @@ class Exporter
   end
 
   def initialize(arquivo_path, notebook)
+    raise ArgumentError.new("gotta pass in a Notebook") unless notebook.is_a?(Notebook)
     @export_path = arquivo_path
     @notebook = notebook
   end
@@ -27,6 +28,10 @@ class Exporter
 
   def export_entry!(entry)
     # set up folders
+    # do we have to check this every time? prob not eh
+    FileUtils.mkdir_p(notebook.to_folder_path(export_path))
+    File.write(notebook.to_full_file_path(export_path), notebook.to_yaml)
+
     entry_folder_path = entry.to_folder_path(export_path)
     FileUtils.mkdir_p(entry_folder_path)
 

@@ -7,6 +7,10 @@
 #
 # It is the responsibility of the methods calling this class to check
 # and see if !Rails.application.config.skip_local_sync is true
+#
+# 2021/01/01 this class clearly has two responsibilities: it runs the Exporter 
+# and then it SyncsWithGit. Maybe the Running the Exporter bit can instead be the
+# job of the EntryMaker eh? This class could assume the Exporter has been run
 class LocalSyncer
   attr_reader :arquivo_path, :lockfile
   def initialize(path = nil)
@@ -25,7 +29,7 @@ class LocalSyncer
 
   def write_entry(entry)
     with_lock do
-      exporter = Exporter.new(arquivo_path, entry.notebook)
+      exporter = Exporter.new(arquivo_path, entry.parent_notebook)
       entry_folder_path = exporter.export_entry!(entry)
 
       repo = open_repo(notebook_path(entry.parent_notebook))
@@ -108,7 +112,7 @@ class LocalSyncer
         puts "do nothing"
         # hooray!
       else
-        Importer.new(arquivo_path).import!
+        Importer.new(notebook_path(notebook)).import!
       end
 
     rescue Git::GitExecuteError => e
@@ -116,6 +120,7 @@ class LocalSyncer
     end
     result
   end
+  # -- end experiment
 
   # -- call these methods within with_lock
 
