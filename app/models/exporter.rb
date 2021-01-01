@@ -1,23 +1,23 @@
 class Exporter
-  attr_accessor :export_path, :notebook
+  attr_accessor :arquivo_path, :notebook
 
   # should probably find a way of just specifying the notebook path?
-  def self.export_all!(arquivo_path)
+  def self.export_all!(arquivo_path = nil)
     Notebook.find_each do |notebook|
-      new(arquivo_path, notebook).export!
+      new(notebook, arquivo_path).export!
     end
   end
 
-  def initialize(arquivo_path, notebook)
+  def initialize(notebook, arquivo_path = nil)
     raise ArgumentError.new("gotta pass in a Notebook") unless notebook.is_a?(Notebook)
-    @export_path = arquivo_path
+    @arquivo_path = arquivo_path
     @notebook = notebook
   end
 
   # TODO: don't overwrite if existing is newer
   def export!
-    FileUtils.mkdir_p(notebook.to_folder_path(export_path))
-    File.write(notebook.to_full_file_path(export_path), notebook.to_yaml)
+    FileUtils.mkdir_p(notebook.to_folder_path(arquivo_path))
+    File.write(notebook.to_full_file_path(arquivo_path), notebook.to_yaml)
 
     notebook.entries.with_attached_files.find_each do |entry|
       puts "handling #{entry.notebook}/#{entry.identifier}"
@@ -29,10 +29,10 @@ class Exporter
   def export_entry!(entry)
     # set up folders
     # do we have to check this every time? prob not eh
-    FileUtils.mkdir_p(notebook.to_folder_path(export_path))
-    File.write(notebook.to_full_file_path(export_path), notebook.to_yaml)
+    FileUtils.mkdir_p(notebook.to_folder_path(arquivo_path))
+    File.write(notebook.to_full_file_path(arquivo_path), notebook.to_yaml)
 
-    entry_folder_path = entry.to_folder_path(export_path)
+    entry_folder_path = entry.to_folder_path(arquivo_path)
     FileUtils.mkdir_p(entry_folder_path)
 
     # TODO: replace with to_full_filepath

@@ -87,7 +87,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
     enable_local_sync do
 
       Dir.mktmpdir do |export_import_path|
-        Exporter.new(export_import_path, notebook).export!
+        Exporter.new(notebook, export_import_path).export!
 
         Entry.destroy_all
         assert_equal Entry.count, 0

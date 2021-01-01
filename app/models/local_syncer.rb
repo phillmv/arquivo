@@ -29,17 +29,17 @@ class LocalSyncer
 
   def write_entry(entry)
     with_lock do
-      exporter = Exporter.new(arquivo_path, entry.parent_notebook)
+      exporter = Exporter.new(entry.parent_notebook, arquivo_path)
       entry_folder_path = exporter.export_entry!(entry)
 
-      repo = open_repo(notebook_path(entry.parent_notebook))
+      repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
       add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
   end
 
   def write_notebook(notebook, import_path = nil)
     with_lock do
-      exporter = Exporter.new(arquivo_path, notebook)
+      exporter = Exporter.new(notebook, arquivo_path)
       exporter.export!
 
       if import_path
@@ -48,16 +48,16 @@ class LocalSyncer
         commit_msg = "#{notebook} notebook import"
       end
 
-      repo = open_repo(notebook_path(notebook))
-      add_and_commit!(repo, notebook_path(notebook), commit_msg)
+      repo = open_repo(notebook.to_folder_path(arquivo_path))
+      add_and_commit!(repo, notebook.to_folder_path(arquivo_path), commit_msg)
     end
   end
 
   def entry_log(entry)
-    if !File.exist?(notebook_path(entry.parent_notebook))
+    if !File.exist?(entry.parent_notebook.to_folder_path(arquivo_path))
       return []
     else
-      repo = open_repo(notebook_path(entry.parent_notebook))
+      repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
       full_filepath = entry.to_full_filepath(arquivo_path)
 
       if File.exist?(full_filepath)
@@ -69,7 +69,7 @@ class LocalSyncer
   end
 
   def get_revision(entry, sha)
-    repo = open_repo(notebook_path(entry.parent_notebook))
+    repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
     full_filepath = entry.to_full_filepath(arquivo_path)
 
     if File.exist?(full_filepath)
@@ -84,7 +84,7 @@ class LocalSyncer
     with_lock do
       rejected = false
       begin
-        repo = open_repo(notebook_path(notebook))
+        repo = open_repo(notebook.to_folder_path(arquivo_path))
         repo.push
       rescue Git::GitExecuteError => e
         rejected = e.message.lines.select {|s| s =~ /\[rejected\]\.*\(fetch first\)/}.any?
@@ -100,7 +100,7 @@ class LocalSyncer
   def pull!(notebook)
     result = nil
     begin
-      repo = open_repo(notebook_path(notebook))
+      repo = open_repo(notebook.to_folder_path(arquivo_path))
       result = repo.pull
 
       case result
@@ -112,7 +112,7 @@ class LocalSyncer
         puts "do nothing"
         # hooray!
       else
-        Importer.new(notebook_path(notebook)).import!
+        Importer.new(notebook.to_folder_path(arquivo_path)).import!
       end
 
     rescue Git::GitExecuteError => e
@@ -155,10 +155,6 @@ class LocalSyncer
   end
 
   # -- end within_lock
-
-  def notebook_path(notebook)
-    notebook.to_folder_path(arquivo_path)
-  end
 
   # prevents other instances of this class
   # from writing to the git repo at the same time

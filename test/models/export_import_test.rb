@@ -17,7 +17,7 @@ class ExportImportTest < ActiveSupport::TestCase
 
     Dir.mktmpdir do |export_path|
       notebooks.each do |notebook|
-        Exporter.new(export_path, notebook).export!
+        Exporter.new(notebook, export_path).export!
       end
 
       # confirm one folder per notebook
