@@ -12,24 +12,27 @@
 # and then it SyncsWithGit. Maybe the Running the Exporter bit can instead be the
 # job of the EntryMaker eh? This class could assume the Exporter has been run
 class LocalSyncer
-  attr_reader :arquivo_path, :lockfile
-  def initialize(path = nil)
-    # TODO: maybe replace this with a mandatory notebook argument and the optional path ovverride?
-    @arquivo_path = path || Setting.get(:arquivo, :arquivo_path)
+  attr_reader :arquivo_path, :notebook, :lockfile
+
+  def initialize(notebook, arquivo_path = nil)
+    @notebook = notebook
+    @notebook_path = @notebook.to_folder_path(arquivo_path)
+    @arquivo_path = arquivo_path || File.dirname(@notebook_path)
+
+    # hrm, maybe do this on a per notebook_path basis instead?
+    # (would have to add to .gitignore)
     @lockfile = File.join(@arquivo_path, "sync.lock")
   end
 
-  def self.sync_entry(entry, path = nil)
-    self.new(path).write_entry(entry)
-  end
-
   def self.sync_notebook(notebook, msg_suffix, path = nil)
-    self.new(path).write_notebook(notebook, msg_suffix)
+    self.new(notebook, path).write_notebook(notebook, msg_suffix)
   end
 
-  def write_entry(entry)
+  def sync_entry!(entry)
+    raise "wtf" if notebook != entry.parent_notebook
+
     with_lock do
-      exporter = Exporter.new(entry.parent_notebook, arquivo_path)
+      exporter = Exporter.new(notebook, arquivo_path)
       entry_folder_path = exporter.export_entry!(entry)
 
       repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))

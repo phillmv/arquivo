@@ -6,7 +6,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
     assert Rails.application.config.skip_local_sync
 
-    arquivo_path = LocalSyncer.new.arquivo_path
+    arquivo_path = LocalSyncer.new(notebook).arquivo_path
     refute File.exist?(arquivo_path)
     refute arquivo_path.index("Documents")
     refute arquivo_path.index(ENV["HOME"])
@@ -27,7 +27,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
       notebook = Notebook.create(name: "test")
 
       # still set to a temp dir tho
-      arquivo_path = LocalSyncer.new.arquivo_path
+      arquivo_path = LocalSyncer.new(notebook).arquivo_path
       refute File.exist?(arquivo_path)
       refute arquivo_path.index("Documents")
       refute arquivo_path.index(ENV["HOME"])
@@ -47,7 +47,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
     notebook = Notebook.create(name: "test-notebook")
     enable_local_sync do
       # in the beginning, there is no folder
-      arquivo_path = LocalSyncer.new.arquivo_path
+      arquivo_path = LocalSyncer.new(notebook).arquivo_path
       refute File.exist?(arquivo_path)
 
       entry = notebook.entries.create(body: "hello world")
@@ -132,13 +132,13 @@ class LocalSyncerTest < ActiveSupport::TestCase
         # commit the notebook.yaml file
         # TODO: this whole interaction needs to be refactored
         LocalSyncer.sync_notebook(notebook, "init", repo1_arquivo_path)
-        syncer1 = LocalSyncer.new(repo1_arquivo_path)
+        syncer1 = LocalSyncer.new(notebook, repo1_arquivo_path)
         entry = notebook.entries.create(body: "test entry",
                                         skip_local_sync: true)
 
         entry_identifier = entry.identifier
 
-        syncer1.write_entry(entry)
+        syncer1.sync_entry!(entry)
         syncer1.push(notebook)
 
         # write_entry commit messages consist of the entry identifier
@@ -158,7 +158,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
         # okay so now i want to pull the changes into repo2
         # using the local syncer
 
-        syncer2 = LocalSyncer.new(repo2_arquivo_path)
+        syncer2 = LocalSyncer.new(notebook, repo2_arquivo_path)
         # TODO: should the syncer be responsible for importing? or do we do that as a separate step?
         # binding.pry
         syncer2.pull!(notebook)
