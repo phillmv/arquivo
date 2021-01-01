@@ -58,10 +58,10 @@ class LocalSyncer
       return []
     else
       repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
-      full_filepath = entry.to_full_filepath(arquivo_path)
+      full_file_path = entry.to_full_file_path(arquivo_path)
 
-      if File.exist?(full_filepath)
-        repo.log.path(full_filepath).map { |c| [c.sha, c.date] }
+      if File.exist?(full_file_path)
+        repo.log.path(full_file_path).map { |c| [c.sha, c.date] }
       else
         []
       end
@@ -70,10 +70,10 @@ class LocalSyncer
 
   def get_revision(entry, sha)
     repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
-    full_filepath = entry.to_full_filepath(arquivo_path)
+    full_file_path = entry.to_full_file_path(arquivo_path)
 
-    if File.exist?(full_filepath)
-      repo.object("#{sha}:#{entry.to_relative_filepath}").contents
+    if File.exist?(full_file_path)
+      repo.object("#{sha}:#{entry.to_relative_file_path}").contents
     else
       nil
     end

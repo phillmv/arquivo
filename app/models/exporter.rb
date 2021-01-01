@@ -35,7 +35,7 @@ class Exporter
     entry_folder_path = entry.to_folder_path(arquivo_path)
     FileUtils.mkdir_p(entry_folder_path)
 
-    File.write(entry.to_full_filepath(arquivo_path), entry.to_yaml)
+    File.write(entry.to_full_file_path(arquivo_path), entry.to_yaml)
 
     if entry.files.any?
       entry_files_path = File.join(entry_folder_path,

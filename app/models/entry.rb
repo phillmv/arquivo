@@ -212,14 +212,14 @@ class Entry < ApplicationRecord
     export_attributes.to_yaml
   end
 
-  def to_folder_path(dirname)
-    File.join(dirname,
+  def to_folder_path(arquivo_path)
+    File.join(arquivo_path,
               notebook,
               occurred_at.strftime("%Y/%m/%d"),
               identifier)
   end
 
-  def to_relative_filepath
+  def to_relative_file_path
     File.join(occurred_at.strftime("%Y/%m/%d"),
               identifier,
               to_filename)
@@ -229,8 +229,8 @@ class Entry < ApplicationRecord
     "#{identifier}.yaml"
   end
 
-  def to_full_filepath(dirname)
-    File.join(to_folder_path(dirname), to_filename)
+  def to_full_file_path(arquivo_path)
+    File.join(to_folder_path(arquivo_path), to_filename)
   end
 
   def truncated_description(n = 30)
