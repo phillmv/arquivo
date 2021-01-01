@@ -103,8 +103,8 @@ I _highly_ recommend setting a local hostname of `arquivo.localhost` for your ap
 Meant to sync notebooks between machines. This works quite well with Dropbox.
 
 ```bash
-rails runner 'Exporter.new("/your/path/here").export!'
-rails runner 'SyncFromDisk.sync_all!("/your/path/here/arquivo")'
+rails runner 'SyncToDisk.export_all!("/your/path/here/arquivo")'
+rails runner 'SyncFromDisk.import_all!("/your/path/here/arquivo")'
 ```
 
 ## Developing

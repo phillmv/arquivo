@@ -1,4 +1,4 @@
-class Exporter
+class SyncToDisk
   attr_accessor :arquivo_path, :notebook, :notebook_path
 
   def self.export_all!(arquivo_path = nil)

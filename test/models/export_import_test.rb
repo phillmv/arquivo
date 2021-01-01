@@ -17,7 +17,7 @@ class ExportImportTest < ActiveSupport::TestCase
 
     Dir.mktmpdir do |export_path|
       notebooks.each do |notebook|
-        Exporter.new(notebook, export_path).export!
+        SyncToDisk.new(notebook, export_path).export!
       end
 
       # confirm one folder per notebook
@@ -61,7 +61,7 @@ class ExportImportTest < ActiveSupport::TestCase
 
     Dir.mktmpdir do |export_import_path|
       assert_equal Entry.count, 9
-      Exporter.export_all!(export_import_path)
+      SyncToDisk.export_all!(export_import_path)
 
       # assert 0 to confirm notebooks are created on import
       Notebook.delete_all
@@ -70,7 +70,7 @@ class ExportImportTest < ActiveSupport::TestCase
       Entry.destroy_all
       assert_equal Entry.count, 0
 
-      SyncFromDisk.sync_all!(export_import_path)
+      SyncFromDisk.import_all!(export_import_path)
 
       assert_equal Entry.count, 9
       assert_equal Notebook.count, 3

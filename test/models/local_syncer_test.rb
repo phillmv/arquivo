@@ -87,13 +87,13 @@ class LocalSyncerTest < ActiveSupport::TestCase
     assert_equal 1, Notebook.count
 
     enable_local_sync do |arquivo_path|
-      Exporter.new(notebook, arquivo_path).export!
+      SyncToDisk.new(notebook, arquivo_path).export!
 
       Entry.destroy_all
       assert_equal Entry.count, 0
 
       # now that we're set up, turn on git sync
-      SyncFromDisk.sync_all!(arquivo_path)
+      SyncFromDisk.import_all!(arquivo_path)
       LocalSyncer.new(notebook, arquivo_path).sync!(arquivo_path)
 
       # because this was triggered as an import,

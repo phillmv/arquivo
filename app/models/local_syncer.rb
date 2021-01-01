@@ -26,7 +26,7 @@ class LocalSyncer
     raise "wtf" if notebook != entry.parent_notebook
 
     git_adapter.with_lock do
-      exporter = Exporter.new(notebook, arquivo_path)
+      exporter = SyncToDisk.new(notebook, arquivo_path)
       entry_folder_path = exporter.export_entry!(entry)
 
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
@@ -36,7 +36,7 @@ class LocalSyncer
 
   def sync!(msg_suffix = nil)
     git_adapter.with_lock do
-      exporter = Exporter.new(notebook, arquivo_path)
+      exporter = SyncToDisk.new(notebook, arquivo_path)
       exporter.export!
 
       if msg_suffix
@@ -109,7 +109,7 @@ class LocalSyncer
         puts "do nothing"
         # hooray!
       else
-        SyncFromDisk.new(notebook_path).sync!
+        SyncFromDisk.new(notebook_path).import!
       end
 
     rescue Git::GitExecuteError => e

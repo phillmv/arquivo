@@ -8,17 +8,17 @@ class SyncFromDisk
     @notebook_path = notebook_path
   end
 
-  def self.sync_all!(arquivo_path)
+  def self.import_all!(arquivo_path)
     raise "Path bad" unless File.exist?(arquivo_path)
     notebook_paths = File.join(arquivo_path, NOTEBOOK_GLOB)
     Dir[notebook_paths].each do |notebook_path|
-      self.new(notebook_path).sync!
+      self.new(notebook_path).import!
     end
   end
 
   # TODO:
   # validate folders!
-  def sync!
+  def import!
     raise "Path bad" unless File.exist?(notebook_path)
 
     # entries are tied to notebooks, so let's create it first
