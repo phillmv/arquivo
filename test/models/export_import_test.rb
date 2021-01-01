@@ -70,7 +70,7 @@ class ExportImportTest < ActiveSupport::TestCase
       Entry.destroy_all
       assert_equal Entry.count, 0
 
-      Importer.import_all!(export_import_path)
+      SyncFromDisk.sync_all!(export_import_path)
 
       assert_equal Entry.count, 9
       assert_equal Notebook.count, 3

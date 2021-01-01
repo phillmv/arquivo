@@ -104,7 +104,7 @@ Meant to sync notebooks between machines. This works quite well with Dropbox.
 
 ```bash
 rails runner 'Exporter.new("/your/path/here").export!'
-rails runner 'Importer.new("/your/path/here").import!'
+rails runner 'SyncFromDisk.sync_all!("/your/path/here/arquivo")'
 ```
 
 ## Developing

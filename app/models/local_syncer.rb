@@ -109,7 +109,7 @@ class LocalSyncer
         puts "do nothing"
         # hooray!
       else
-        Importer.new(notebook_path).import!
+        SyncFromDisk.new(notebook_path).sync!
       end
 
     rescue Git::GitExecuteError => e

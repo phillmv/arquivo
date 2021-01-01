@@ -93,7 +93,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
       assert_equal Entry.count, 0
 
       # now that we're set up, turn on git sync
-      Importer.import_all!(arquivo_path)
+      SyncFromDisk.sync_all!(arquivo_path)
       LocalSyncer.new(notebook, arquivo_path).sync!(arquivo_path)
 
       # because this was triggered as an import,

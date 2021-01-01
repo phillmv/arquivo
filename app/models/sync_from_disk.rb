@@ -1,4 +1,4 @@
-class Importer
+class SyncFromDisk
   attr_accessor :notebook_path
 
   # pattern is notebook/year/month/day/identifier
@@ -8,19 +8,17 @@ class Importer
     @notebook_path = notebook_path
   end
 
-  def self.import_all!(arquivo_path)
+  def self.sync_all!(arquivo_path)
     raise "Path bad" unless File.exist?(arquivo_path)
     notebook_paths = File.join(arquivo_path, NOTEBOOK_GLOB)
     Dir[notebook_paths].each do |notebook_path|
-      self.new(notebook_path).import!
+      self.new(notebook_path).sync!
     end
   end
 
   # TODO:
   # validate folders!
-  # the importer should work on a per notebook basis!
-  # but with an option to work on an arquivo-folder basis!
-  def import!
+  def sync!
     raise "Path bad" unless File.exist?(notebook_path)
 
     # entries are tied to notebooks, so let's create it first
