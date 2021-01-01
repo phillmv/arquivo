@@ -2,7 +2,7 @@ class EntryHistory
   attr_reader :entry, :local_syncer
   def initialize(entry, path = nil)
     @entry = entry
-    @local_syncer = LocalSyncer.new(entry.parent_notebook, path)
+    @local_syncer = SyncWithGit.new(entry.parent_notebook, path)
   end
 
   def revisions

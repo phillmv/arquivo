@@ -11,7 +11,7 @@
 # 2021/01/01 this class clearly has two responsibilities: it runs the Exporter 
 # and then it SyncsWithGit. Maybe the Running the Exporter bit can instead be the
 # job of the EntryMaker eh? This class could assume the Exporter has been run
-class LocalSyncer
+class SyncWithGit
   attr_reader :arquivo_path, :notebook, :notebook_path, :git_adapter
 
   def initialize(notebook, arquivo_path = nil)

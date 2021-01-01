@@ -6,7 +6,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
     assert Rails.application.config.skip_local_sync
 
-    arquivo_path = LocalSyncer.new(notebook).arquivo_path
+    arquivo_path = SyncWithGit.new(notebook).arquivo_path
     refute File.exist?(arquivo_path)
     refute arquivo_path.index("Documents")
     refute arquivo_path.index(ENV["HOME"])
@@ -27,7 +27,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
       notebook = Notebook.create(name: "test")
 
       # still set to a temp dir tho
-      arquivo_path = LocalSyncer.new(notebook).arquivo_path
+      arquivo_path = SyncWithGit.new(notebook).arquivo_path
       refute File.exist?(arquivo_path)
       refute arquivo_path.index("Documents")
       refute arquivo_path.index(ENV["HOME"])
@@ -47,7 +47,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
     notebook = Notebook.create(name: "test-notebook")
     enable_local_sync do
       # in the beginning, there is no folder
-      arquivo_path = LocalSyncer.new(notebook).arquivo_path
+      arquivo_path = SyncWithGit.new(notebook).arquivo_path
       refute File.exist?(arquivo_path)
 
       entry = notebook.entries.create(body: "hello world")
@@ -94,7 +94,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
       # now that we're set up, turn on git sync
       SyncFromDisk.import_all!(arquivo_path)
-      LocalSyncer.new(notebook, arquivo_path).sync!(arquivo_path)
+      SyncWithGit.new(notebook, arquivo_path).sync!(arquivo_path)
 
       # because this was triggered as an import,
       # we have only 1 commit, from the notebook import
@@ -131,8 +131,8 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
         # commit the notebook.yaml file
         # TODO: this whole interaction needs to be refactored
-        LocalSyncer.new(notebook, repo1_arquivo_path).sync!("init")
-        syncer1 = LocalSyncer.new(notebook, repo1_arquivo_path)
+        SyncWithGit.new(notebook, repo1_arquivo_path).sync!("init")
+        syncer1 = SyncWithGit.new(notebook, repo1_arquivo_path)
         entry = notebook.entries.create(body: "test entry",
                                         skip_local_sync: true)
 
@@ -158,7 +158,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
         # okay so now i want to pull the changes into repo2
         # using the local syncer
 
-        syncer2 = LocalSyncer.new(notebook, repo2_arquivo_path)
+        syncer2 = SyncWithGit.new(notebook, repo2_arquivo_path)
         # TODO: should the syncer be responsible for importing? or do we do that as a separate step?
         syncer2.pull!
 

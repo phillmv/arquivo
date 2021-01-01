@@ -25,7 +25,7 @@ module Arquivo
     # simple_calendar config
     config.beginning_of_week = :sunday
 
-    # skip LocalSyncer in tests
+    # skip SyncToDisk, SyncWithGit in tests
     config.skip_local_sync = false
   end
 end
