@@ -12,7 +12,7 @@
 # and then it SyncsWithGit. Maybe the Running the Exporter bit can instead be the
 # job of the EntryMaker eh? This class could assume the Exporter has been run
 class LocalSyncer
-  attr_reader :arquivo_path, :notebook, :lockfile
+  attr_reader :arquivo_path, :notebook, :lockfile, :notebook_path
 
   def initialize(notebook, arquivo_path = nil)
     @notebook = notebook
@@ -24,10 +24,6 @@ class LocalSyncer
     @lockfile = File.join(@arquivo_path, "sync.lock")
   end
 
-  def self.sync_notebook(notebook, msg_suffix, path = nil)
-    self.new(notebook, path).write_notebook(notebook, msg_suffix)
-  end
-
   def sync_entry!(entry)
     raise "wtf" if notebook != entry.parent_notebook
 
@@ -35,18 +31,18 @@ class LocalSyncer
       exporter = Exporter.new(notebook, arquivo_path)
       entry_folder_path = exporter.export_entry!(entry)
 
-      repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
+      repo = open_repo(notebook.to_folder_path(arquivo_path))
       add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
   end
 
-  def write_notebook(notebook, import_path = nil)
+  def sync!(msg_suffix = nil)
     with_lock do
       exporter = Exporter.new(notebook, arquivo_path)
       exporter.export!
 
-      if import_path
-        commit_msg = "import from #{import_path}"
+      if msg_suffix
+        commit_msg = "import from #{msg_suffix}"
       else
         commit_msg = "#{notebook} notebook import"
       end
@@ -57,10 +53,10 @@ class LocalSyncer
   end
 
   def entry_log(entry)
-    if !File.exist?(entry.parent_notebook.to_folder_path(arquivo_path))
+    if !File.exist?(notebook.to_folder_path(arquivo_path))
       return []
     else
-      repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
+      repo = open_repo(notebook.to_folder_path(arquivo_path))
       full_file_path = entry.to_full_file_path(arquivo_path)
 
       if File.exist?(full_file_path)
@@ -72,7 +68,7 @@ class LocalSyncer
   end
 
   def get_revision(entry, sha)
-    repo = open_repo(entry.parent_notebook.to_folder_path(arquivo_path))
+    repo = open_repo(notebook.to_folder_path(arquivo_path))
     full_file_path = entry.to_full_file_path(arquivo_path)
 
     if File.exist?(full_file_path)
@@ -100,10 +96,10 @@ class LocalSyncer
     end
   end
 
-  def pull!(notebook)
+  def pull!
     result = nil
     begin
-      repo = open_repo(notebook.to_folder_path(arquivo_path))
+      repo = open_repo(notebook_path)
       result = repo.pull
 
       case result
@@ -115,7 +111,7 @@ class LocalSyncer
         puts "do nothing"
         # hooray!
       else
-        Importer.new(notebook.to_folder_path(arquivo_path)).import!
+        Importer.new(notebook_path).import!
       end
 
     rescue Git::GitExecuteError => e

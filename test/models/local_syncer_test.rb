@@ -76,6 +76,8 @@ class LocalSyncerTest < ActiveSupport::TestCase
     end
   end
 
+  # TODO: we no longer invoke syncer from importer, this
+  # whole test may be deprecated
   test "when we import a whole notebook, we create just one commit from the bulk import" do
     notebook = Notebook.create(name: "mynotebook")
 
@@ -84,27 +86,25 @@ class LocalSyncerTest < ActiveSupport::TestCase
     assert_equal 5, Entry.count
     assert_equal 1, Notebook.count
 
-    enable_local_sync do
+    enable_local_sync do |arquivo_path|
+      Exporter.new(notebook, arquivo_path).export!
 
-      Dir.mktmpdir do |export_import_path|
-        Exporter.new(notebook, export_import_path).export!
+      Entry.destroy_all
+      assert_equal Entry.count, 0
 
-        Entry.destroy_all
-        assert_equal Entry.count, 0
+      # now that we're set up, turn on git sync
+      Importer.import_all!(arquivo_path)
+      LocalSyncer.new(notebook, arquivo_path).sync!(arquivo_path)
 
-        # now that we're set up, turn on git sync
-        Importer.import_all!(export_import_path)
+      # because this was triggered as an import,
+      # we have only 1 commit, from the notebook import
+      # (i.e. this isn't being fired on every Entry#save)
+      repo_path = notebook.to_folder_path(arquivo_path)
+      repo = Git.open(repo_path)
+      assert_equal 1, repo.log.count
+      assert repo.log.last.message.index("import from")
 
-        # because this was triggered as an import,
-        # we have only 1 commit, from the notebook import
-        # (i.e. this isn't being fired on every Entry#save)
-        repo_path = File.join(Setting.get(:arquivo, :arquivo_path), "mynotebook")
-        repo = Git.open(repo_path)
-        assert_equal 1, repo.log.count
-        assert repo.log.last.message.index("import from")
-
-        assert_equal 5, Entry.count
-      end
+      assert_equal 5, Entry.count
     end
   end
 
@@ -131,7 +131,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
         # commit the notebook.yaml file
         # TODO: this whole interaction needs to be refactored
-        LocalSyncer.sync_notebook(notebook, "init", repo1_arquivo_path)
+        LocalSyncer.new(notebook, repo1_arquivo_path).sync!("init")
         syncer1 = LocalSyncer.new(notebook, repo1_arquivo_path)
         entry = notebook.entries.create(body: "test entry",
                                         skip_local_sync: true)
@@ -160,8 +160,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
         syncer2 = LocalSyncer.new(notebook, repo2_arquivo_path)
         # TODO: should the syncer be responsible for importing? or do we do that as a separate step?
-        # binding.pry
-        syncer2.pull!(notebook)
+        syncer2.pull!
 
         # syncer just calls git pull under the hood
         # so we can look at the repo2 log to confirm the pull happened

@@ -65,7 +65,10 @@ class Importer
     # let's sync it to our git repo
     if updated_entry_ids.any? && !Rails.application.config.skip_local_sync
       # TODO: any way to just keep track of what got synced? yeesh this is time consuming
-      LocalSyncer.sync_notebook(notebook, notebook_path)
+      # TODO: we ran this syncer because the workflow used ot be
+      # write to Dropbox -> DB syncs -> Import from new folder -> make local commit
+      # but we're moving away from this. Commented out because this is a WIP, might still have to support DB method
+      # LocalSyncer.new(notebook, File.dirname(notebook_path)).sync!(notebook_path)
     end
   end
 
