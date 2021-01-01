@@ -12,32 +12,30 @@
 # and then it SyncsWithGit. Maybe the Running the Exporter bit can instead be the
 # job of the EntryMaker eh? This class could assume the Exporter has been run
 class LocalSyncer
-  attr_reader :arquivo_path, :notebook, :lockfile, :notebook_path
+  attr_reader :arquivo_path, :notebook, :notebook_path, :git_adapter
 
   def initialize(notebook, arquivo_path = nil)
     @notebook = notebook
     @notebook_path = @notebook.to_folder_path(arquivo_path)
     @arquivo_path = arquivo_path || File.dirname(@notebook_path)
 
-    # hrm, maybe do this on a per notebook_path basis instead?
-    # (would have to add to .gitignore)
-    @lockfile = File.join(@arquivo_path, "sync.lock")
+    @git_adapter = GitAdapter.new(@arquivo_path)
   end
 
   def sync_entry!(entry)
     raise "wtf" if notebook != entry.parent_notebook
 
-    with_lock do
+    git_adapter.with_lock do
       exporter = Exporter.new(notebook, arquivo_path)
       entry_folder_path = exporter.export_entry!(entry)
 
-      repo = open_repo(notebook.to_folder_path(arquivo_path))
-      add_and_commit!(repo, entry_folder_path, entry.identifier)
+      repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
+      git_adapter.add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
   end
 
   def sync!(msg_suffix = nil)
-    with_lock do
+    git_adapter.with_lock do
       exporter = Exporter.new(notebook, arquivo_path)
       exporter.export!
 
@@ -47,8 +45,8 @@ class LocalSyncer
         commit_msg = "#{notebook} notebook import"
       end
 
-      repo = open_repo(notebook.to_folder_path(arquivo_path))
-      add_and_commit!(repo, notebook.to_folder_path(arquivo_path), commit_msg)
+      repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
+      git_adapter.add_and_commit!(repo, notebook.to_folder_path(arquivo_path), commit_msg)
     end
   end
 
@@ -56,7 +54,7 @@ class LocalSyncer
     if !File.exist?(notebook.to_folder_path(arquivo_path))
       return []
     else
-      repo = open_repo(notebook.to_folder_path(arquivo_path))
+      repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
       full_file_path = entry.to_full_file_path(arquivo_path)
 
       if File.exist?(full_file_path)
@@ -68,7 +66,7 @@ class LocalSyncer
   end
 
   def get_revision(entry, sha)
-    repo = open_repo(notebook.to_folder_path(arquivo_path))
+    repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
     full_file_path = entry.to_full_file_path(arquivo_path)
 
     if File.exist?(full_file_path)
@@ -80,10 +78,10 @@ class LocalSyncer
 
   # -- experiment
   def push(notebook)
-    with_lock do
+    git_adapter.with_lock do
       rejected = false
       begin
-        repo = open_repo(notebook.to_folder_path(arquivo_path))
+        repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
         repo.push
       rescue Git::GitExecuteError => e
         rejected = e.message.lines.select {|s| s =~ /\[rejected\]\.*\(fetch first\)/}.any?
@@ -99,7 +97,7 @@ class LocalSyncer
   def pull!
     result = nil
     begin
-      repo = open_repo(notebook_path)
+      repo = git_adapter.open_repo(notebook_path)
       result = repo.pull
 
       case result
@@ -121,59 +119,4 @@ class LocalSyncer
   end
   # -- end experiment
 
-  # -- call these methods within with_lock
-
-  def init_repo(working_dir)
-    FileUtils.mkdir_p(working_dir)
-    Git.init(working_dir)
-  end
-
-  def open_repo(working_dir)
-    begin
-      return repo = Git.open(working_dir)
-    rescue ArgumentError => e
-      if e.message == "path does not exist"
-        return repo = init_repo(working_dir)
-      else
-        raise e
-      end
-    end
-  end
-
-  FINE_GIT_ERRORS = [ "nothing to commit", "nothing added to commit but untracked files" ]
-
-  def add_and_commit!(repo, path, msg)
-    repo.add(path)
-    begin
-      repo.commit(msg)
-    rescue Git::GitExecuteError => e
-      unless FINE_GIT_ERRORS.any? { |s| e.message.index(s) }
-        raise e
-      end
-    end
-  end
-
-  # -- end within_lock
-
-  # prevents other instances of this class
-  # from writing to the git repo at the same time
-  def with_lock(&block)
-    FileUtils.mkdir_p(arquivo_path)
-    counter = 0
-    while File.exist?(lockfile)
-      counter += 1
-      sleep(0.5)
-      if counter >= 60
-        # TODO: replace with error logger
-        raise IOError.new("Failed to grab sync lock for 60 tries")
-      end
-    end
-
-    begin
-      File.write(lockfile, $$)
-      yield
-    ensure
-      File.delete(lockfile)
-    end
-  end
 end
