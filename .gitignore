@@ -38,6 +38,7 @@ yarn-debug.log*
 /.nix-gems
 /.nix-node
 # /vendor/cache
+*.DS_Store
 
 # use this to customize your .env entries
 .env.development
