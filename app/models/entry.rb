@@ -208,8 +208,20 @@ class Entry < ApplicationRecord
     attributes.except("id")
   end
 
+  def cast_twz_to_time(hash)
+    hash.reduce({}) do |h, (k,v)|
+      if v.is_a?(ActiveSupport::TimeWithZone)
+        h[k] = v.to_time
+      else
+        h[k] = v
+      end
+
+      h
+    end
+  end
+
   def to_yaml
-    export_attributes.to_yaml
+    cast_twz_to_time(export_attributes).to_yaml
   end
 
   def to_folder_path(arquivo_path)

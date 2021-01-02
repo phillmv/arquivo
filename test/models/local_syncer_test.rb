@@ -135,10 +135,11 @@ class LocalSyncerTest < ActiveSupport::TestCase
       entry = notebook.entries.create(body: "test entry")
 
       entry_identifier = entry.identifier
+      entry_attr = entry.export_attributes
 
       syncer1 = SyncWithGit.new(notebook, repo1_arquivo_path)
       syncer1.sync_entry!(entry)
-      syncer1.push(notebook)
+      syncer1.push
 
       # write_entry commit messages consist of the entry identifier
       assert_equal entry_identifier, bare_repo.log.first.message
@@ -165,11 +166,32 @@ class LocalSyncerTest < ActiveSupport::TestCase
       assert_equal entry_identifier, repo2.log.first.message
 
       assert_equal 1, Entry.count
-      assert_equal entry_identifier, notebook.entries.last.identifier
+      assert_equal entry_attr, notebook.entries.last.export_attributes
 
       #-----------
       #
-      # 
+      # okay so we've established that we can push an entry from repo1 into repo2
+      # and get an Entry out of it
+      # but this was the easy case. what if there's a conflict?
+      #
+      # Let's create some diverging history between the two repos via series of
+      # incompatible updates to the entry.
+
+      entry = notebook.entries.last
+      entry.update(body: "tesr emtry")
+      syncer2.sync_entry!(entry)
+      entry.update(body: "tess emtsy")
+      syncer2.sync_entry!(entry)
+
+      # meanwhile in repo1,
+      entry.update(body: "TEST ENTRY")
+      syncer1.sync_entry!(entry)
+      entry.update(body: "MY TEST ENTRY!!!")
+      syncer1.sync_entry!(entry)
+
+      syncer1.push
+
+      binding.pry
 
       # TODO: need to keep track of sha pre and post pull
       # TODO: need to keep track of files being changed, so they can be imported

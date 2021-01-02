@@ -77,7 +77,7 @@ class SyncWithGit
   end
 
   # -- experiment
-  def push(notebook)
+  def push
     git_adapter.with_lock do
       rejected = false
       begin
