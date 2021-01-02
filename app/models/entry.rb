@@ -49,7 +49,7 @@ class Entry < ApplicationRecord
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
-  after_save :sync_to_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
+  after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
 
   def set_identifier
     self.occurred_at ||= Time.current
@@ -106,7 +106,7 @@ class Entry < ApplicationRecord
     EntryTagger.new(self).process!
   end
 
-  def sync_to_git
+  def sync_to_disk_and_git
     # globally set NOP so we can skip this from within tests
     # see `enable_local_sync` in tests
     unless self.skip_local_sync || Rails.application.config.skip_local_sync
