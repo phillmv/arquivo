@@ -26,4 +26,28 @@ class EntryTest < ActiveSupport::TestCase
     new_entry.copy_parent(parent_cal_entry)
     assert_equal "#meeting @foo @bar", new_entry.body
   end
+
+  test "yaml round trip works as you'd expect" do
+    e = @notebook.entries.create(body: "whatever")
+    assert_equal 1, Entry.count
+
+    entry_attr = e.export_attributes
+    assert entry_attr["identifier"]
+    assert entry_attr["occurred_at"]
+    assert entry_attr["created_at"]
+    assert entry_attr["updated_at"]
+    assert entry_attr["body"]
+
+    Dir.mktmpdir do |dir|
+      SyncToDisk.new(@notebook, dir).export!
+
+      e.destroy
+      assert_equal 0, Entry.count
+
+      SyncFromDisk.new(@notebook.to_folder_path(dir)).import!
+
+      assert_equal 1, Entry.count
+      assert_equal entry_attr, Entry.last.export_attributes
+    end
+  end
 end
