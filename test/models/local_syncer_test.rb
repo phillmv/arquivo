@@ -130,14 +130,15 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
       # commit the notebook.yaml file
       # TODO: this whole interaction needs to be refactored
-      SyncWithGit.new(notebook, repo1_arquivo_path).sync!("init")
+      syncer1 = SyncWithGit.new(notebook, repo1_arquivo_path)
+      syncer1.init!
+      syncer1.sync!
 
       entry = notebook.entries.create(body: "test entry")
 
       entry_identifier = entry.identifier
       entry_attr = entry.export_attributes
 
-      syncer1 = SyncWithGit.new(notebook, repo1_arquivo_path)
       syncer1.sync_entry!(entry)
       syncer1.push
 
@@ -183,15 +184,30 @@ class LocalSyncerTest < ActiveSupport::TestCase
       entry.update(body: "tess emtsy")
       syncer2.sync_entry!(entry)
 
+      repo2_entry_attr = entry.attributes
+
       # meanwhile in repo1,
       entry.update(body: "TEST ENTRY")
       syncer1.sync_entry!(entry)
       entry.update(body: "MY TEST ENTRY!!!")
       syncer1.sync_entry!(entry)
-
       syncer1.push
 
-      binding.pry
+      repo1_entry_attr = entry.attributes
+
+      # reset the entry (databse) content
+      # to be in the syncer2 state we last left it in
+      entry.update(repo2_entry_attr)
+      assert_equal entry.reload.attributes, repo2_entry_attr
+
+      # the goal here is to have SyncWithGit:
+      # 1. pull into repo2 the contents from repo1 that were pushed to the bare repo
+      # 2. since these entries conflict, choose the most recent version, i.e. "MY TEST ENTRY!!!" (this should happen invisibly from this test's perspective)
+      # 3. load the current version from disk into the database, thereby updating the entry
+
+      syncer2.pull!
+
+      assert_equal entry.reload.attributes, repo1_entry_attr
 
       # TODO: need to keep track of sha pre and post pull
       # TODO: need to keep track of files being changed, so they can be imported

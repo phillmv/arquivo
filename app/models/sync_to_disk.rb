@@ -7,6 +7,7 @@ class SyncToDisk
     end
   end
 
+  # make work with notebook path instead?
   def initialize(notebook, arquivo_path = nil)
     raise ArgumentError.new("gotta pass in a Notebook") unless notebook.is_a?(Notebook)
     @notebook = notebook
@@ -14,11 +15,15 @@ class SyncToDisk
     @arquivo_path = arquivo_path || File.dirname(@notebook_path)
   end
 
-  # TODO: don't overwrite if existing is newer
-  def export!
+  def write_notebook_file
     FileUtils.mkdir_p(notebook_path)
     File.write(notebook.to_full_file_path(arquivo_path), notebook.to_yaml)
+  end
 
+
+  # TODO: don't overwrite if existing is newer
+  def export!
+    write_notebook_file
     notebook.entries.with_attached_files.find_each do |entry|
       puts "handling #{entry.notebook}/#{entry.identifier}"
 
@@ -29,9 +34,7 @@ class SyncToDisk
   def export_entry!(entry)
     # set up folders
     # do we have to check this every time? prob not eh
-    FileUtils.mkdir_p(notebook_path)
-    File.write(notebook.to_full_file_path(arquivo_path), notebook.to_yaml)
-
+    write_notebook_file
     entry_folder_path = entry.to_folder_path(arquivo_path)
     FileUtils.mkdir_p(entry_folder_path)
 

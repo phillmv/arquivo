@@ -22,6 +22,19 @@ class SyncWithGit
     @git_adapter = GitAdapter.new(@arquivo_path)
   end
 
+  def init!
+    git_adapter.with_lock do
+      repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
+
+      # copy assets
+      FileUtils.cp(File.join(Rails.root, "lib", "assets", "git_defaults", ".gitattributes"), notebook_path)
+      FileUtils.cp_r(File.join(Rails.root, "lib", "assets", "git_defaults", "script"), notebook_path)
+
+      setup_git_config(repo)
+      git_adapter.add_and_commit!(repo, notebook_path, "initialized repo with default settings")
+    end
+  end
+
   def sync_entry!(entry)
     raise "wtf" if notebook != entry.parent_notebook
 
@@ -32,6 +45,12 @@ class SyncWithGit
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
       git_adapter.add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
+  end
+
+  def setup_git_config(repo)
+    repo.config("merge.newest-wins.name", "newest-wins")
+    repo.config("merge.newest-wins.driver", "script/newest-wins.rb %O %A %B %L %P")
+    repo.config("merge.newest-wins.recursive", "text")
   end
 
   def sync!(msg_suffix = nil)
@@ -98,6 +117,7 @@ class SyncWithGit
     result = nil
     begin
       repo = git_adapter.open_repo(notebook_path)
+      setup_git_config(repo)
       result = repo.pull
 
       case result
