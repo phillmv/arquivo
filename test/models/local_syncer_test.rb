@@ -108,17 +108,20 @@ class LocalSyncerTest < ActiveSupport::TestCase
     end
   end
 
+  # this test asserts that:
+  # a) we can push and pull from remote repos, and our Entry objects will auto update
+  # b) in case of conflict, it will still work seamlessly
   test "basic ffwd syncing between two notebooks using a bare repo in between" do
     notebook = Notebook.create(name: "test-notebook")
 
+    # we keep these vars around so we can ensure they're deleted.
     temp_dirs = 3.times.map { Dir.mktmpdir }
 
-    repo1_arquivo_path, repo2_arquivo_path, bare_arquivo_path = temp_dirs.map {|d| File.join(d, "arquivo") }
-    test_arquivo_paths = [repo1_arquivo_path, repo2_arquivo_path, bare_arquivo_path]
+    test_arquivo_paths = temp_dirs.map {|d| File.join(d, "arquivo") }
+    repo1_arquivo_path, repo2_arquivo_path, bare_arquivo_path = test_arquivo_paths
 
     repo1_path, repo2_path, bare_repo_path = test_arquivo_paths.map { |d| File.join(d, "test-notebook") }
 
-    # you dope, remember that each notebook is its own git repo not the arquivo folder as a whole
     begin
       bare_repo = Git.init(bare_repo_path, bare: true)
 
@@ -128,21 +131,22 @@ class LocalSyncerTest < ActiveSupport::TestCase
       repo2 = Git.init(repo2_path)
       repo2.add_remote("origin", bare_repo_path)
 
-      # commit the notebook.yaml file
-      # TODO: this whole interaction needs to be refactored
+      # (TODO: this interaction needs to be refactored; init! should prob commit the notebook.yaml file)
       syncer1 = SyncWithGit.new(notebook, repo1_arquivo_path)
       syncer1.init!
+      # commit the notebook.yaml file, which should happen automatically somehow, see above re: refactoring
       syncer1.sync!
 
+      # first we create our sample entry and push it out
       entry = notebook.entries.create(body: "test entry")
-
       entry_identifier = entry.identifier
       entry_attr = entry.export_attributes
 
       syncer1.sync_entry!(entry)
       syncer1.push
 
-      # write_entry commit messages consist of the entry identifier
+      # individual entry commit messages consist of the entry identifier,
+      # which we verify here:
       assert_equal entry_identifier, bare_repo.log.first.message
 
 
@@ -150,14 +154,14 @@ class LocalSyncerTest < ActiveSupport::TestCase
       # and forth between diff arquivo installs.
       #
       # so when we pull on repo2 using syncer2 we will want the data being
-      # imported to be reflected in the notebook. for that reason let's delete
+      # imported to be reflected in the notebook. for that reason, let's delete
       # the entry here:
 
       entry.destroy
       assert_equal 0, Entry.count
 
-      # okay so now i want to pull the changes into repo2
-      # using the local syncer
+      # okay so now we have a "pristine" database, and i want to pull the
+      # content in repo1 into repo2, and have that be reflected in my db
 
       syncer2 = SyncWithGit.new(notebook, repo2_arquivo_path)
       syncer2.pull!
@@ -169,15 +173,16 @@ class LocalSyncerTest < ActiveSupport::TestCase
       assert_equal 1, Entry.count
       assert_equal entry_attr, notebook.entries.last.export_attributes
 
-      #-----------
+      # Great, we've established that we can push an entry from repo1 to repo2
+      # and get a new Entry out of it.
       #
-      # okay so we've established that we can push an entry from repo1 into repo2
-      # and get an Entry out of it
-      # but this was the easy case. what if there's a conflict?
+      # However, this was the easy case. What if there's a conflict?
       #
       # Let's create some diverging history between the two repos via series of
       # incompatible updates to the entry.
 
+      # Since we're "in" the repo2 context, let's create some entries and
+      # commits here:
       entry = notebook.entries.last
       entry.update(body: "tesr emtry")
       syncer2.sync_entry!(entry)
@@ -186,7 +191,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
       repo2_entry_attr = entry.attributes
 
-      # meanwhile in repo1,
+      # Meanwhile in repo1, we've been making incompatible changes:
       entry.update(body: "TEST ENTRY")
       syncer1.sync_entry!(entry)
       entry.update(body: "MY TEST ENTRY!!!")
@@ -195,23 +200,33 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
       repo1_entry_attr = entry.attributes
 
-      # reset the entry (databse) content
-      # to be in the syncer2 state we last left it in
+      # Cool. Let's pull the changes in repo1 into repo2. In order to simulate
+      # the process across two different installs, let's once again reset the
+      # entry (databse) content to be in the syncer2 state we last left it in:
       entry.update(repo2_entry_attr)
       assert_equal entry.reload.attributes, repo2_entry_attr
 
-      # the goal here is to have SyncWithGit:
-      # 1. pull into repo2 the contents from repo1 that were pushed to the bare repo
-      # 2. since these entries conflict, choose the most recent version, i.e. "MY TEST ENTRY!!!" (this should happen invisibly from this test's perspective)
+      # We're now in repo2's context, and we're about to pull the changes
+      # pushed in from repo1.
+
+      # The goal here is to have SyncWithGit:
+      # 1. fetch into repo2 the changes from repo1 that were pushed to the bare repo
+      # 2. since these entries conflict, choose the most recent version
+      #   i.e. "MY TEST ENTRY!!!" (this should happen invisibly from this test's
+      #   perspective)
       # 3. load the current version from disk into the database, thereby updating the entry
 
       syncer2.pull!
 
+      refute_equal entry.reload.attributes, repo2_entry_attr
       assert_equal entry.reload.attributes, repo1_entry_attr
 
-      # TODO: need to keep track of sha pre and post pull
-      # TODO: need to keep track of files being changed, so they can be imported
-      # for now let's do the dumbest thing possible and re-import the whole fucking thing
+      # TODO: what about files that get deleted?
+      # TODO: verify the config gets setup, somehow
+      # TODO: is there some way to ensure the script gets run?
+      # TODO: Shit there was something else that was important to assert but what was it???
+      # TODO: Oh, assert that the previous version still exists in its history!!!
+      # TODO: need to keep track of sha pre and post pull? Need to know which files get changed
     ensure
       temp_dirs.each { |dir| FileUtils.remove_entry(dir) }
     end

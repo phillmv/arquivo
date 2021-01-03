@@ -1,16 +1,11 @@
 # Every notebook gets stored locally in our git repo, which is handled by this
-# class. #write_entry
-# The name "LocalSyncer" feels awkward, which is likely a sign that
-# this will be renamed soon. Maybe just GitAdapter? I need a better name
-# for the concept of a local synced repo, especially since we may end up
-# using this class as a kind of exporter as well.
+# class. SyncWithGit, given a notebook and optionally an entry, will write its
+# contents into the local git repo and push them or pull them as appropriate.
+#
+# At present, it also acts as a thin presenter to the GitAdapter.
 #
 # It is the responsibility of the methods calling this class to check
 # and see if !Rails.application.config.skip_local_sync is true
-#
-# 2021/01/01 this class clearly has two responsibilities: it runs the Exporter 
-# and then it SyncsWithGit. Maybe the Running the Exporter bit can instead be the
-# job of the EntryMaker eh? This class could assume the Exporter has been run
 class SyncWithGit
   attr_reader :arquivo_path, :notebook, :notebook_path, :git_adapter
 
@@ -22,17 +17,25 @@ class SyncWithGit
     @git_adapter = GitAdapter.new(@arquivo_path)
   end
 
+  # We need to "init" a repo and set up the appropriate git attributes
+  # and custom merge driver in order to resolve conflicts appropriately.
+  # TODO: Document this elsewhere? And more appropriately.
   def init!
     git_adapter.with_lock do
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
 
-      # copy assets
       FileUtils.cp(File.join(Rails.root, "lib", "assets", "git_defaults", ".gitattributes"), notebook_path)
       FileUtils.cp_r(File.join(Rails.root, "lib", "assets", "git_defaults", "script"), notebook_path)
-
       setup_git_config(repo)
+
       git_adapter.add_and_commit!(repo, notebook_path, "initialized repo with default settings")
     end
+  end
+
+  def setup_git_config(repo)
+    repo.config("merge.newest-wins.name", "newest-wins")
+    repo.config("merge.newest-wins.driver", "script/newest-wins.rb %O %A %B")
+    repo.config("merge.newest-wins.recursive", "text")
   end
 
   def sync_entry!(entry)
@@ -45,12 +48,6 @@ class SyncWithGit
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
       git_adapter.add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
-  end
-
-  def setup_git_config(repo)
-    repo.config("merge.newest-wins.name", "newest-wins")
-    repo.config("merge.newest-wins.driver", "script/newest-wins.rb %O %A %B %L %P")
-    repo.config("merge.newest-wins.recursive", "text")
   end
 
   def sync!(msg_suffix = nil)
@@ -95,7 +92,7 @@ class SyncWithGit
     end
   end
 
-  # -- experiment
+  # -- experimental
   def push
     git_adapter.with_lock do
       rejected = false
@@ -123,11 +120,8 @@ class SyncWithGit
       case result
       # when /Updating.*\nFast-forward/
       #   puts "ffwd"
-      #   # trigger notebook update
-      #   # in order
       when /Already up to date\./
-        puts "do nothing"
-        # hooray!
+        puts "do nothing, hooray!"
       else
         SyncFromDisk.new(notebook_path).import!
       end
@@ -137,6 +131,5 @@ class SyncWithGit
     end
     result
   end
-  # -- end experiment
-
+  # -- end experimental
 end

@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+# This script is used as a custom git merge driver for handling merge conflicts.
+# Expected input are: %O %A %B, aka ancestor, our version, their version.
 require 'yaml'
 require 'fileutils'
 
