@@ -1,0 +1,38 @@
+{
+  "name": "@primer/octicons",
+  "version": "9.3.1",
+  "description": "A scalable set of icons handcrafted with <3 by GitHub.",
+  "homepage": "https://octicons.github.com",
+  "author": "GitHub Inc.",
+  "license": "MIT",
+  "style": "index.scss",
+  "main": "index.js",
+  "files": [
+    "index.js",
+    "index.scss",
+    "build"
+  ],
+  "repository": "https://github.com/primer/octicons.git",
+  "bugs": {
+    "url": "https://github.com/primer/octicons/issues"
+  },
+  "scripts": {
+    "build": "script/build.js",
+    "lint": "eslint index.js tests/*.js",
+    "test": "ava --verbose 'tests/*.js'"
+  },
+  "keywords": [
+    "GitHub",
+    "icons",
+    "svg",
+    "octicons"
+  ],
+  "dependencies": {
+    "object-assign": "^4.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.22.0",
+    "eslint": "^6.5.1",
+    "eslint-plugin-github": "^3.1.3"
+  }
+}
