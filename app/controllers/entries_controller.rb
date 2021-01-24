@@ -1,5 +1,5 @@
 class EntriesController < ApplicationController
-  before_action :set_entry, only: [:show, :edit, :update, :destroy, :files. :copy]
+  before_action :set_entry, only: [:show, :edit, :update, :destroy, :files, :copy]
 
   # GET /entries
   # GET /entries.json
