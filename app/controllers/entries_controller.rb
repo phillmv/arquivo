@@ -140,7 +140,7 @@ class EntriesController < ApplicationController
   def copy
     target_notebook = Notebook.find_by!(name: params[:target_notebook])
 
-    copy = @entry.copy_to(target_notebook)
+    copy = @entry.copy_to!(target_notebook)
 
     redirect_to entry_path(copy, notebook: target_notebook)
   end

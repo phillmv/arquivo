@@ -61,7 +61,7 @@ class EntryTest < ActiveSupport::TestCase
     target_notebook = Notebook.create(name: "test-target")
     assert 0, target_notebook.entries.count
 
-    copy = entry.copy_to(target_notebook)
+    copy = entry.copy_to!(target_notebook)
     assert 1, target_notebook.entries.count
 
     assert_equal entry.attributes.except("id", "notebook", "created_at" ,"updated_at"), copy.attributes.except("id", "notebook", "created_at", "updated_at")
@@ -93,7 +93,7 @@ class EntryTest < ActiveSupport::TestCase
     refute_equal entry.files.blobs.pluck(:filename, :checksum).to_set, copy.files.blobs.pluck(:filename, :checksum).to_set
 
     # now we copy again and assert that it's identical
-    copy = entry.copy_to(target_notebook)
+    copy = entry.copy_to!(target_notebook)
 
     assert_equal entry.attributes.except("id", "notebook", "created_at" ,"updated_at"), copy.attributes.except("id", "notebook", "created_at", "updated_at")
     assert_equal 1, copy.files.blobs.count

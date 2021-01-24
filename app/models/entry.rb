@@ -180,7 +180,7 @@ class Entry < ApplicationRecord
     @occurred_time_cache ||= occurred_at.strftime("%H:%M:%S %z")
   end
 
-  def copy_to(notebook)
+  def copy_to!(notebook)
     copy = notebook.entries.find_by(identifier: self.identifier)
     if copy.present?
       copy.update!(self.export_attributes.except("notebook"))
