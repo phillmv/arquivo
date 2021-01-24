@@ -84,8 +84,7 @@
 
       <ul class="dropdown-menu dropdown-menu-se">
         <% Notebook.where.not(id: @current_notebook.id).find_each do |notebook| %>
-          <li><%= link_to "#{octicon "book", height: 16} #{notebook.name}".html_safe, copy_entry_path(@entry, notebook, notebook: @current_notebook), class: "dropdown-item", method: :post %></li>
-          <!-- <li><a class="dropdown&#45;item" href="<%= copy_entry_path(@entry, notebook, notebook: @current_notebook) %>"><%= octicon "book", height: 16 %> <%= notebook.name %></a></li> -->
+          <li><%= link_to "#{octicon "book", height: 16} #{notebook.name}".html_safe, copy_entry_path(@entry, notebook, notebook: @current_notebook), class: "dropdown-item", method: :post, data: {confirm: "Are you sure? If the #{notebook} notebook has an entry with the same identifier, its contents will be overwritten."} %></li>
         <% end %>
       </ul>
     </details>
