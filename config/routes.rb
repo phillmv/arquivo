@@ -29,6 +29,7 @@ Rails.application.routes.draw do
 
     resources :entries, path: "/" do
       member do
+        post "copy/:target_notebook", to: "entries#copy", as: :copy
         get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
         post "direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload
       end

@@ -1,5 +1,5 @@
 class EntriesController < ApplicationController
-  before_action :set_entry, only: [:show, :edit, :update, :destroy, :files]
+  before_action :set_entry, only: [:show, :edit, :update, :destroy, :files. :copy]
 
   # GET /entries
   # GET /entries.json
@@ -135,6 +135,14 @@ class EntriesController < ApplicationController
     blob = @entry.files.blobs.find_by!(filename: params[:filename])
     expires_in ActiveStorage.service_urls_expire_in
     redirect_to rails_blob_url(blob, disposition: params[:disposition])
+  end
+
+  def copy
+    target_notebook = Notebook.find_by!(name: params[:target_notebook])
+
+    copy = @entry.copy_to(target_notebook)
+
+    redirect_to entry_path(copy, notebook: target_notebook)
   end
 
   private

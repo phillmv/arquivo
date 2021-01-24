@@ -75,6 +75,20 @@
     <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook)%>" class="btn"> <%= octicon("pencil") %> Edit </a>
     <a href="<%= new_entry_path(notebook: @entry.notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Reply</a>
     <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(notebook: @current_notebook), class: "btn float-left" %>
+    <details class="dropdown details-reset details-overlay float-left" style="margin-right: 5px">
+      <summary class="btn" aria-haspopup="true">
+        <%= octicon('versions') %>
+        Copy
+        <div class="dropdown-caret"></div>
+      </summary>
+
+      <ul class="dropdown-menu dropdown-menu-se">
+        <% Notebook.where.not(id: @current_notebook.id).find_each do |notebook| %>
+          <li><%= link_to "#{octicon "book", height: 16} #{notebook.name}".html_safe, copy_entry_path(@entry, notebook, notebook: @current_notebook), class: "dropdown-item", method: :post %></li>
+          <!-- <li><a class="dropdown&#45;item" href="<%= copy_entry_path(@entry, notebook, notebook: @current_notebook) %>"><%= octicon "book", height: 16 %> <%= notebook.name %></a></li> -->
+        <% end %>
+      </ul>
+    </details>
   </div>
 
   <% if @show_thread && @entry.replies.any? %>

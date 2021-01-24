@@ -180,6 +180,36 @@ class Entry < ApplicationRecord
     @occurred_time_cache ||= occurred_at.strftime("%H:%M:%S %z")
   end
 
+  def copy_to(notebook)
+    copy = notebook.entries.find_by(identifier: self.identifier)
+    if copy.present?
+      copy.update!(self.export_attributes.except("notebook"))
+
+      copy.files.destroy_all
+    else
+      copy = self.dup
+      copy.notebook = notebook
+      copy.save!
+    end
+
+    # when an object is dup'ed it keeps its existing file associations
+    # which are cached and survive .reload calls. have to re-instantiate
+    # the object from scratch in order to reset `copy.files`
+
+    copy = notebook.entries.find_by(identifier: copy.identifier)
+
+    self.files.each do |file|
+      file.blob.open do |tempfile|
+        copy.files.attach({
+          io: tempfile,
+          filename: file.blob.filename,
+          content_type: file.blob.content_type
+        })
+      end
+    end
+
+    copy
+  end
 
   # this is actually pretty complicated to do properly?
   # https://github.com/middleman/middleman/blob/master/middleman-core/lib/middleman-core/util/data.rb
