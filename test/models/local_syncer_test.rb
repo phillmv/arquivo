@@ -143,7 +143,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
       entry_attr = entry.export_attributes
 
       syncer1.sync_entry!(entry)
-      syncer1.push
+      syncer1.push!
 
       # individual entry commit messages consist of the entry identifier,
       # which we verify here:

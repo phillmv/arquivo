@@ -13,6 +13,10 @@ class Notebook < ApplicationRecord
     "journal"
   end
 
+  def push_to_git!
+    SyncWithGit.new(self).push!
+  end
+
   def to_s
     name
   end

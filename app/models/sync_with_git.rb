@@ -93,7 +93,7 @@ class SyncWithGit
   end
 
   # -- experimental
-  def push
+  def push!
     git_adapter.with_lock do
       rejected = false
       begin

@@ -111,6 +111,7 @@ class Entry < ApplicationRecord
     # see `enable_local_sync` in tests
     unless self.skip_local_sync || Rails.application.config.skip_local_sync
       SyncWithGit.new(parent_notebook).sync_entry!(self)
+      PushToGitJob.perform_later(parent_notebook.id)
     end
   end
 
