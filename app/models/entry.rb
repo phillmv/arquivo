@@ -209,7 +209,8 @@ class Entry < ApplicationRecord
       end
     end
 
-    copy
+    copy.save!
+    notebook.entries.find_by(identifier: copy.identifier)
   end
 
   # this is actually pretty complicated to do properly?
