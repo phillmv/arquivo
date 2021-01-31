@@ -28,7 +28,7 @@
           <div class="TimelineItem-badge bg-blue text-white">
             <%= octicon("calendar") %>
           </div>
-          <h3><a href="<%= calendar_daily_path(day, notebook: @current_notebook)%>"><%= day.strftime("%Y-%m-%d (%A)") %></a></h3>
+          <h3><a href="<%= calendar_daily_path(day, notebook: @current_notebook)%>"><%= day.strftime("%A, %Y-%m-%d") %></a></h3>
         </div>
         <% entries.each do |entry| %>
           <%= render partial: "entries/list_entry", locals: { entry: entry } %>

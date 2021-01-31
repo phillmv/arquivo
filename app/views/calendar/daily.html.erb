@@ -11,6 +11,11 @@
     </nav>
   </div>
 
+  <div class="mb-4 mt-4">
+    <a href="<%= calendar_daily_path(@date - 1.day, notebook: @current_notebook) %>" class="btn btn-sm">Previous Day</a>
+    <a href="<%= calendar_daily_path(@date + 1.day, notebook: @current_notebook) %>" class="btn btn-sm float-right">Next Day</a>
+  </div>
+
   <% @entries&.each do |entry| %>
     <%= render partial: "entries/list_entry", locals: { entry: entry } %>
   <% end %>
