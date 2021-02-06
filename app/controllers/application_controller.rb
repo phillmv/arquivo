@@ -16,6 +16,14 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # def push_up
+  #   last_pushed_at = session[:last_pushed_up_at]
+  #
+  #   if last_pushed_at.nil? || last_pushed_at < 1.hour.ago
+  #     PushToGitJob.perform_later
+  #   end
+  # end
+
   def set_recent_entries
     @recent_entries = Entry.for_notebook(current_notebook).hitherto.visible.except_calendars.order(occurred_at: :desc).limit(10)
   end

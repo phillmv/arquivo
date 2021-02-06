@@ -98,7 +98,9 @@ class SyncWithGit
       rejected = false
       begin
         repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
-        repo.push
+        # if a branch is not provided it defaults to 'master' which breaks now
+        # that we're in a 'main' branch world
+        repo.push('origin', repo.branch)
       rescue Git::GitExecuteError => e
         rejected = e.message.lines.select {|s| s =~ /\[rejected\]\.*\(fetch first\)/}.any?
       end

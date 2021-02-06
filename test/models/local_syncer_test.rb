@@ -196,7 +196,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
       syncer1.sync_entry!(entry)
       entry.update(body: "MY TEST ENTRY!!!")
       syncer1.sync_entry!(entry)
-      syncer1.push
+      syncer1.push!
 
       repo1_entry_attr = entry.attributes
 
