@@ -29,3 +29,10 @@ module Arquivo
     config.skip_local_sync = false
   end
 end
+
+module Rails::ConsoleMethods
+  def dat(str)
+    notebook, identifier = str.split("/")
+    Entry.find_by(notebook: notebook, identifier: identifier)
+  end
+end
