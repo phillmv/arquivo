@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     delete '/timeline/save_search/:id', to: "timeline#delete_saved_search", as: :delete_saved_search
     get '/calendar', to: "calendar#monthly", as: :calendar
     get '/calendar/weekly', to: "calendar#weekly", as: :calendar_weekly
-    get '/calendar/:date', to: "calendar#daily", as: :calendar_daily
+    get '/calendar/daily/(:date)', to: "calendar#daily", as: :calendar_daily
 
     get "/settings", to: "settings#index", as: :settings
     post "/settings/add_calendar", to: "settings#add_calendar", as: :add_calendar

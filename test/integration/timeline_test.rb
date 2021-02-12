@@ -28,8 +28,8 @@ class TimelineTest < ActionDispatch::IntegrationTest
 
     # entries split across three days
     assert_select ".entry-date h3 a", @yesterday.strftime("%A, %Y-%m-%d")
-    assert_select ".entry-date h3 a", (@yesterday - 1.day).strftime("%Y-%m-%d (%A)")
-    assert_select ".entry-date h3 a", (@yesterday - 2.days).strftime("%Y-%m-%d (%A)")
+    assert_select ".entry-date h3 a", (@yesterday - 1.day).strftime("%A, %Y-%m-%d")
+    assert_select ".entry-date h3 a", (@yesterday - 2.days).strftime("%A, %Y-%m-%d")
 
     # we display a calendar entry
     assert_select ".calendar-entry h3 a", @calendar_entry.subject

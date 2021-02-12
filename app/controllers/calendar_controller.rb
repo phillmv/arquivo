@@ -10,7 +10,12 @@ class CalendarController < ApplicationController
   end
 
   def daily
-    @date = params[:date].to_date
+    if params[:date]
+      @date = params[:date].to_date
+    else
+      @date = Date.today
+    end
+
     start_date = @date.beginning_of_day
     end_date = @date.end_of_day
 

@@ -6,7 +6,7 @@ module ApplicationHelper
     "entries/show" =>     :timeline,
     "entries/new" =>      :timeline,
     "entries/edit" =>     :timeline,
-    "timeline/agenda" =>  :this_day,
+    "calendar/daily" =>  :this_day,
     "calendar/weekly" =>  :this_week,
     "calendar/monthly" => :this_month,
     "settings/index" =>   :settings,

@@ -37,13 +37,13 @@ document.onkeyup = function(e) {
 
     if(e.ctrlKey && e.code == "BracketLeft") {
       switch(window.current_action.name) {
-        case "timeline/agenda":
+        case "calendar/daily":
           if(safe_to_navigate_away_from_entry()) {
             window.location.pathname = `/${current_notebook.name}`
           }
           break;
         case "calendar/weekly":
-          window.location.pathname = `/${current_notebook.name}/agenda`
+          window.location.pathname = `/${current_notebook.name}/calendar/daily`
           break;
         case "calendar/monthly":
           window.location.pathname = `/${current_notebook.name}/calendar/weekly`
@@ -58,9 +58,9 @@ document.onkeyup = function(e) {
     if(e.ctrlKey && e.code == "BracketRight") {
       switch(window.current_action.name) {
         case "timeline/index":
-          window.location.pathname = `/${current_notebook.name}/agenda`
+          window.location.pathname = `/${current_notebook.name}/calendar/daily`
           break;
-        case "timeline/agenda":
+        case "calendar/daily":
           if(safe_to_navigate_away_from_entry()) {
             window.location.pathname = `/${current_notebook.name}/calendar/weekly`
           }
