@@ -152,4 +152,31 @@ class EntryRendererTest < ActiveSupport::TestCase
     # for so little testing; need to follow up with more
     # of the cases where nodes get deleted.
   end
+
+  # extremely half ass and tested indirectly, but this is a feature I support:
+  test "we generate tocs" do
+    unclosed_toc = <<~FOO
+    <table-of-contents>
+
+    # entry one
+    # entry two
+    FOO
+
+    unclosed_toc_html = @renderer.render_html(unclosed_toc)
+
+    closed_toc = <<~FOO
+    <table-of-contents></table-of-contents>
+
+    # entry one
+    # entry two
+    FOO
+
+    closed_toc_html = @renderer.render_html(closed_toc)
+
+    stripped_closed_toc_html = closed_toc_html.gsub("<p data-sourcepos=\"1:1-1:39\"></p>","")
+
+    assert_equal unclosed_toc_html, stripped_closed_toc_html
+    assert_equal "<table-of-contents><h2>Contents</h2>\n<ul class=\"section-nav\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", unclosed_toc_html
+
+  end
 end

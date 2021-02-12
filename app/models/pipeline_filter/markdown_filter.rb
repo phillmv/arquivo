@@ -1,7 +1,7 @@
 # extended from the original solely in order to add the ability to pass in
 # render options via the `commonmarker_render` context flag
 class PipelineFilter::MarkdownFilter < HTML::Pipeline::MarkdownFilter
-  # tbh kinda dump i had to do this.
+  # tbh kinda dumb i had to do this.
   # for readability, removed the if statement we won't use
   def call
     extensions = context.fetch(

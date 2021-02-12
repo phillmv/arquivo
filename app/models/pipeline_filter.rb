@@ -4,6 +4,9 @@ module PipelineFilter
   # without this change the data-sourcepos gets stripped
   ENTRY_SANITIZATION_WHITELIST = HTML::Pipeline::SanitizationFilter::WHITELIST.dup
   ESW = ENTRY_SANITIZATION_WHITELIST
+  ESW[:elements] = ESW[:elements].dup
+  ESW[:elements] << "table-of-contents"
+
   ESW[:attributes] = ESW[:attributes].dup
   ESW[:attributes][:all] = ESW[:attributes][:all].dup
   ESW[:attributes][:all].push("data-sourcepos")
@@ -21,6 +24,7 @@ module PipelineFilter
     PipelineFilter::HashtagFilter, # link hashtags
     PipelineFilter::MentionFilter, # link mentions
     HTML::Pipeline::TableOfContentsFilter, # add ids to headers
+    PipelineFilter::AddToc,
     HTML::Pipeline::ImageMaxWidthFilter, # max 100% for imgs
   ], { unsafe: true,
        commonmarker_render_options: [:SOURCEPOS],
