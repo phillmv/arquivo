@@ -1,5 +1,5 @@
 <div class="simple-calendar">
-  <div class="calendar-heading mb-4 mt-4">
+  <div class="calendar-heading mb-4 mt-2">
     <%= link_to t('simple_calendar.previous', default: 'Previous'), calendar.url_for_previous_view, class: "btn btn-sm" %>
     <% if calendar.number_of_weeks == 1 %>
       <span class="calendar-title ml-2 mr-2"><strong><%= [date_range[0], date_range[-1]].map { |d| d.strftime("%b %d, %Y") }.join(" - ") %></strong></span>
