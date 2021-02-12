@@ -19,4 +19,24 @@ class NotebooksController < ApplicationController
     render json: query
   end
 
+  def update
+    if params[:colours]
+      colour = nil;
+      case params[:colours]
+      when { "blue" => "on" }
+        colour = "#0366d6"
+      when { "red" => "on" }
+        colour = "#d80303"
+      when { "purple" => "on" }
+        colour = "purple"
+      end
+
+      if colour
+        current_notebook.colour = colour
+        current_notebook.save!
+      end
+    end
+
+    redirect_to settings_path(notebook: current_notebook)
+  end
 end

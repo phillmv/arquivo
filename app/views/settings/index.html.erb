@@ -3,9 +3,48 @@
 <div class="content-container">
 
   <div class="pagehead">
-    <h1>Settings</h1>
+    <h1>Settings for <%= octicon "book", height: 32 %> <%= @current_notebook %></h1>
   </div>
 
+  <div class="pb-4">
+    <div class="pagehead">
+      <h2>Colour</h2>
+    </div>
+    <div>
+      <%= form_with(model: @current_notebook, url: update_notebook_path(notebook: @current_notebook), method: :put) do |form| %>
+
+        <div class="radio-group">
+          <input class="radio-input" id="option-a" type="radio" name="colours[blue]">
+          <label class="radio-label" for="option-a">Blue</label>
+          <input class="radio-input" id="option-b" type="radio" name="colours[red]">
+          <label class="radio-label" for="option-b">Red</label>
+          <input class="radio-input" id="option-c" type="radio" name="colours[purple]">
+          <label class="radio-label" for="option-c">Purple</label>
+        </div>
+
+        <% if false %>
+
+   <dl class="form-group">
+          <dt><%= form.label :colour %></dt>
+          <dd><%= form.color_field :colour, name: 'colour' %></dd>
+        </dl>
+        <div class="form-actions">
+          <%= form.submit "Save", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+
+        <div class="form-actions">
+          <%= form.submit "Save", class: "btn btn-primary" %>
+        </div>
+
+      <% end %>
+    </div>
+
+  </div>
+
+
+
+  <% if false %>
   <div class="markdown-body">
     <ol class="settings-toc pb-4">
       <li><a href="#general">Arquivo</a></li>
@@ -83,16 +122,17 @@
 
    </div>
 
+ <% end %>
 
 
    <a name="bookmarklet"></a>
    <div class="pb-4">
      <div class="pagehead">
-       <h2>Bookmarklet for <%= octicon "book", height: 20 %> <%= @current_notebook %></h2>
+       <h2>Bookmarklet</h2>
      </div>
      <div>
        <p>
-       Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.localhost/<%= @current_notebook %>/save_bookmark?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));"><kbd>Bookmark in <%= @current_notebook %></kbd></a>
+       Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.localhost/<%= @current_notebook %>/save_bookmark?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));"><kbd>Bookmark (<%= @current_notebook %>)</kbd></a>
       </p>
     </div>
   </div>

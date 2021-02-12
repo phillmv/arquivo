@@ -2,11 +2,11 @@
   <div class="mb-3">
     <h1 class="arquivo"><a href="<%= timeline_path(notebook: @current_notebook) %>">Arquivo</a></u></h1>
     <details>
-      <summary><h2 class="text-blue" style="display: inline"><%= octicon "book", height: 24 %> <%= @current_notebook.name %> </h2></summary>
+      <summary><h2 class="" style="display: inline; color:<%= @current_notebook.colour %>"><%= octicon "book", height: 24 %> <%= @current_notebook.name %> </h2></summary>
       <ul style="list-style: none">
         <% Notebook.all.each do |notebook| %>
           <% next if notebook == @current_notebook %>
-          <li><h3 class="ml-1"><a href="<%= timeline_path(notebook: notebook) %>" type="button" role="menuitem" data-menu-button-text><%= octicon "book", height: 16 %> <%= notebook.name %></a></h3></li>
+          <li><h3 class="ml-1"><a href="<%= timeline_path(notebook: notebook) %>" type="button" role="menuitem" data-menu-button-text style="color: <%=notebook.colour%> !important"><%= octicon "book", height: 16 %> <%= notebook.name %></a></h3></li>
         <% end %>
       </ul>
     </details>

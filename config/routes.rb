@@ -27,6 +27,8 @@ Rails.application.routes.draw do
     get "contacts/:query", to: "notebooks#contacts"
     get "contacts/", to: "notebooks#contacts"
 
+    put "/update", to: "notebooks#update", as: :update_notebook
+
     resources :entries, path: "/" do
       member do
         post "copy/:target_notebook", to: "entries#copy", as: :copy
