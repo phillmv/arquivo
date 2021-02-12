@@ -26,7 +26,7 @@ class GitAdapter
     end
   end
 
-  FINE_GIT_ERRORS = [ "nothing to commit", "nothing added to commit but untracked files" ]
+  FINE_GIT_ERRORS = [ "nothing to commit", "nothing added to commit but untracked files", "no changes added to commit" ]
 
   def add_and_commit!(repo, path, msg)
     repo.add(path)
