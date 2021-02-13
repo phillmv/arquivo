@@ -33,21 +33,20 @@ class PipelineFilter::TableOfContentsFilter < HTML::Pipeline::Filter
     if result[:toc].present?
       result[:toc] = %(<ol class="table-of-contents">\n#{result[:toc]}</ol>)
 
-      toc_node = doc.css("table-of-contents").first
+      if toc_node = doc.css("table-of-contents").first
 
-      if toc_node&.parent&.name == "p"
-         parent_p = toc_node.parent
-         toc_node.remove
-         parent_p.add_next_sibling(toc_node)
+        if toc_node&.parent&.name == "p"
+          parent_p = toc_node.parent
+          toc_node.remove
+          parent_p.add_next_sibling(toc_node)
+        end
+
+        if toc_node.children.any?
+          toc_node.children.last.add_next_sibling(result[:toc])
+        else
+          toc_node.inner_html = "<h2>Contents</h2>\n#{result[:toc]}"
+        end
       end
-
-
-      if toc_node.children.any?
-        toc_node.children.last.add_next_sibling(result[:toc])
-      else
-        toc_node.inner_html = "<h2>Contents</h2>\n#{result[:toc]}"
-      end
-
     end
 
     doc
