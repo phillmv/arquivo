@@ -155,28 +155,42 @@ class EntryRendererTest < ActiveSupport::TestCase
 
   # extremely half ass and tested indirectly, but this is a feature I support:
   test "we generate tocs" do
-    unclosed_toc = <<~FOO
-    <table-of-contents>
+    empty_toc = <<-FOO
+<table-of-contents />
 
-    # entry one
-    # entry two
+# entry one
+# entry two
     FOO
 
-    unclosed_toc_html = @renderer.render_html(unclosed_toc)
+    empty_toc_html = @renderer.render_html(empty_toc)
 
-    closed_toc = <<~FOO
-    <table-of-contents></table-of-contents>
+    assert_equal "<table-of-contents><h2>Contents</h2>\n<ul class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", empty_toc_html
 
-    # entry one
-    # entry two
+
+    almost_empty_toc = <<-FOO
+<table-of-contents></table-of-contents>
+
+# entry one
+# entry two
     FOO
 
-    closed_toc_html = @renderer.render_html(closed_toc)
+    almost_empty_toc_html = @renderer.render_html(almost_empty_toc)
 
-    stripped_closed_toc_html = closed_toc_html.gsub("<p data-sourcepos=\"1:1-1:39\"></p>","")
+    assert_equal "<p data-sourcepos=\"1:1-1:39\"></p><table-of-contents><h2>Contents</h2>\n<ul class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", almost_empty_toc_html
 
-    assert_equal unclosed_toc_html, stripped_closed_toc_html
-    assert_equal "<table-of-contents><h2>Contents</h2>\n<ul class=\"section-nav\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", unclosed_toc_html
+    custom_header_toc = <<-FOO
+<table-of-contents>
 
+# tabela de conteúdos
+
+</table-of-contents>
+
+# entry one
+# entry two
+    FOO
+
+    custom_header_toc_html = @renderer.render_html(custom_header_toc)
+
+    assert_equal "<table-of-contents>\n<h1 data-sourcepos=\"3:1-3:22\">tabela de conteúdos</h1>\n<ul class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"7:1-7:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"8:1-8:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", custom_header_toc_html
   end
 end

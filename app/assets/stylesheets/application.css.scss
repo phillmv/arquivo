@@ -237,9 +237,3 @@ h1.arquivo {
     text-decoration: underline $blue-500;
   }
 }
-
-// The TableOfContentsFilter by default inserts uls
-// so instead of modifying that output we do this very cheeky thing:
-table-of-contents ul {
-  list-style-type: decimal;
-}

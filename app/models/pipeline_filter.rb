@@ -23,8 +23,7 @@ module PipelineFilter
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags
     PipelineFilter::MentionFilter, # link mentions
-    HTML::Pipeline::TableOfContentsFilter, # add ids to headers
-    PipelineFilter::AddToc,
+    PipelineFilter::TableOfContentsFilter, # ids to headers, toc tag
     HTML::Pipeline::ImageMaxWidthFilter, # max 100% for imgs
   ], { unsafe: true,
        commonmarker_render_options: [:SOURCEPOS],
