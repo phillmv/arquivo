@@ -94,14 +94,18 @@ class SyncWithGit
 
   # -- experimental
   def push!
+    Arquivo.logger.debug "Locking git repo on #{notebook_path}"
     git_adapter.with_lock do
       rejected = false
       begin
+        Arquivo.logger.debug "Opening git repo on #{notebook_path}"
         repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
         # if a branch is not provided it defaults to 'master' which breaks now
         # that we're in a 'main' branch world
+        Arquivo.logger.debug "Pushing #{repo.branch}"
         repo.push('origin', repo.branch)
       rescue Git::GitExecuteError => e
+        Arquivo.logger.debug "Push Failure:\n#{e.message}"
         rejected = e.message.lines.select {|s| s =~ /\[rejected\]\.*\(fetch first\)/}.any?
       end
 

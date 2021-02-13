@@ -12,6 +12,8 @@ class PushToGitJob < ApplicationJob
     # but i have so little free time i cannot be arsed to care about figuring
     # this out right now. weird! but for now eh okay fine, computers are bad.
     sleep(10)
+
+    Arquivo.logger.debug "Running for notebook: #{notebook_id}"
     notebook = Notebook.find(notebook_id)
     # TODO: log if errors exist, figure out when to pull
     notebook.push_to_git!

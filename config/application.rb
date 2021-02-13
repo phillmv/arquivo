@@ -28,6 +28,10 @@ module Arquivo
     # skip SyncToDisk, SyncWithGit in tests
     config.skip_local_sync = false
   end
+
+  def self.logger
+    @logger ||= Logger.new(File.join(Rails.root, "log", "arquivo.log"))
+  end
 end
 
 module Rails::ConsoleMethods
