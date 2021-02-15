@@ -53,6 +53,8 @@ class Entry < ApplicationRecord
   attr_accessor :skip_local_sync # skip sync to git
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
 
+  after_destroy :sync_to_disk_and_git
+
   def set_identifier
     self.occurred_at ||= Time.current
     if self.bookmark?

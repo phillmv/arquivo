@@ -76,6 +76,28 @@ class LocalSyncerTest < ActiveSupport::TestCase
     end
   end
 
+  test "when an entry is destroyed, we delete it from the local repo" do
+    notebook = Notebook.create(name: "test-notebook")
+    enable_local_sync do
+      # in the beginning, there is no folder
+      arquivo_path = SyncWithGit.new(notebook).arquivo_path
+      notebook_path = SyncWithGit.new(notebook).notebook_path
+
+      entry = notebook.entries.create(body: "hello world")
+
+      # creating an entry writes the notebook, and the repo
+      repo = Git.open(notebook_path)
+      assert_equal 1, repo.log.count
+      assert File.exist?(entry.to_full_file_path(arquivo_path))
+
+      # destroying the entry by turn deletes the file
+      entry.destroy
+
+      refute File.exist?(entry.to_full_file_path(arquivo_path))
+      assert_equal 2, repo.log.count
+    end
+  end
+
   # TODO: we no longer invoke syncer from importer, this
   # whole test may be deprecated
   test "when we import a whole notebook, we create just one commit from the bulk import" do

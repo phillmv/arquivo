@@ -43,7 +43,11 @@ class SyncWithGit
 
     git_adapter.with_lock do
       exporter = SyncToDisk.new(notebook, arquivo_path)
-      entry_folder_path = exporter.export_entry!(entry)
+      if entry.destroyed?
+        exporter.delete_entry!(entry)
+      else
+        entry_folder_path = exporter.export_entry!(entry)
+      end
 
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
       git_adapter.add_and_commit!(repo, entry_folder_path, entry.identifier)

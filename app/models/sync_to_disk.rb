@@ -54,6 +54,11 @@ class SyncToDisk
     entry_folder_path
   end
 
+  def delete_entry!(entry)
+    entry_folder_path = entry.to_folder_path(arquivo_path)
+    FileUtils.remove_entry_secure(entry_folder_path)
+  end
+
   def export_blob!(entry, blob, entry_files_path, count)
     entry_file_filename = "file-#{count}.yaml"
 
