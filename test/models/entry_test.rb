@@ -101,4 +101,14 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal entry.files.blobs.pluck(:filename, :checksum).to_set, copy.files.blobs.pluck(:filename, :checksum).to_set
   end
 
+  test "an entry can be deleted" do
+    entry = @notebook.entries.create(body: "a different entry http://example.com #foobar @namehere\n\n- [ ] a task")
+
+    entry.files.attach(io: File.open(@file_path), filename: 'image.jpg')
+
+    assert_equal 1, Entry.count
+
+    assert entry.destroy
+    assert_equal 0, Entry.count
+  end
 end

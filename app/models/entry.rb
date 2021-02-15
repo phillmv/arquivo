@@ -34,16 +34,18 @@ class Entry < ApplicationRecord
   has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
   belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
 
-  has_many :tag_entries
+  # TODO: assert dependent destroys clean up through models if relevant
+
+  has_many :tag_entries, dependent: :destroy
   has_many :tags, through: :tag_entries
 
-  has_many :contact_entries
+  has_many :contact_entries, dependent: :destroy
   has_many :contacts, through: :contact_entries
 
-  has_one :todo_list
+  has_one :todo_list, dependent: :destroy
   has_many :todo_list_items, through: :todo_list
 
-  has_many :link_entries
+  has_many :link_entries, dependent: :destroy
   has_many :links, through: :link_entries
 
   validates :identifier, uniqueness: { scope: :notebook }
