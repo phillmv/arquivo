@@ -111,7 +111,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
     enable_local_sync do |arquivo_path|
       SyncToDisk.new(notebook, arquivo_path).export!
 
-      Entry.destroy_all
+      Entry.delete_all
       assert_equal Entry.count, 0
 
       # now that we're set up, turn on git sync
@@ -238,7 +238,11 @@ class LocalSyncerTest < ActiveSupport::TestCase
       #   perspective)
       # 3. load the current version from disk into the database, thereby updating the entry
 
+      assert_equal 0, SyncState.count
+
       syncer2.pull!
+
+      assert_equal 1, notebook.sync_states.count
 
       refute_equal entry.reload.attributes, repo2_entry_attr
       assert_equal entry.reload.attributes, repo1_entry_attr

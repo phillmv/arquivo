@@ -39,6 +39,20 @@ class GitAdapter
     end
   end
 
+  FINE_PULL_ERRORS = [ "unknown revision or path not in the working tree." ]
+
+  def latest_commit(repo)
+    begin
+      repo.revparse("HEAD")
+    rescue Git::GitExecuteError => e
+      unless FINE_PULL_ERRORS.any? { |s| e.message.index(s) }
+        raise e
+      end
+
+      return nil
+    end
+  end
+
   # -- end within_lock
 
   # prevents other instances of this class

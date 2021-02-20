@@ -5,6 +5,8 @@ class Notebook < ApplicationRecord
   has_many :tags, foreign_key: :notebook, primary_key: :name
   has_many :saved_searches, foreign_key: :notebook, primary_key: :name
 
+  has_many :sync_states, dependent: :delete_all
+
   def self.for(name)
     self.find_by(name: name)
   end

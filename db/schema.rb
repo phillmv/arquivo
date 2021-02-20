@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_12_191946) do
+ActiveRecord::Schema.define(version: 2021_02_14_213433) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -180,6 +180,15 @@ ActiveRecord::Schema.define(version: 2021_02_12_191946) do
     t.index ["notebook"], name: "index_saved_searches_on_notebook"
   end
 
+  create_table "sync_states", force: :cascade do |t|
+    t.integer "notebook_id", null: false
+    t.string "sha"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["created_at"], name: "index_sync_states_on_created_at"
+    t.index ["notebook_id"], name: "index_sync_states_on_notebook_id"
+  end
+
   create_table "tag_entries", force: :cascade do |t|
     t.integer "tag_id"
     t.integer "entry_id"
@@ -240,6 +249,7 @@ ActiveRecord::Schema.define(version: 2021_02_12_191946) do
   add_foreign_key "contact_entries", "entries"
   add_foreign_key "i_calendar_entries", "calendar_imports"
   add_foreign_key "link_entries", "entries"
+  add_foreign_key "sync_states", "notebooks"
   add_foreign_key "todo_list_items", "entries"
   add_foreign_key "todo_list_items", "todo_lists"
   add_foreign_key "todo_lists", "entries"

@@ -49,6 +49,11 @@ class SyncWithGit
         entry_folder_path = exporter.export_entry!(entry)
       end
 
+      # TODO: if destroyed? should prob remove the file path and not add it.
+      # by sheer coincidence adding the directory works, i suspect because
+      # it tries adding the root folder as a whole. this behaviour is Mostly
+      # Fine but will have weird side effects, like adding other files in the
+      # directory in this commit
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
       git_adapter.add_and_commit!(repo, entry_folder_path, entry.identifier)
     end
@@ -122,23 +127,33 @@ class SyncWithGit
 
   def pull!
     result = nil
-    begin
-      repo = git_adapter.open_repo(notebook_path)
-      setup_git_config(repo)
-      result = repo.pull
+    git_adapter.with_lock do
+      begin
+        repo = git_adapter.open_repo(notebook_path)
+        setup_git_config(repo)
 
-      case result
-      # when /Updating.*\nFast-forward/
-      #   puts "ffwd"
-      when /Already up to date\./
-        puts "do nothing, hooray!"
-      else
-        SyncFromDisk.new(notebook_path).import!
+        commit = git_adapter.latest_commit(repo)
+        # if the repo is brand new, there may not be a commit to pull, so check if nil
+        if commit
+          notebook.sync_states.create(sha: commit)
+        end
+
+        result = repo.pull
+
+        case result
+          # when /Updating.*\nFast-forward/
+          #   puts "ffwd"
+        when /Already up to date\./
+          puts "do nothing, hooray!"
+        else
+          SyncFromDisk.new(notebook_path, notebook).import!
+        end
+
+      rescue Git::GitExecuteError => e
+        binding.pry
       end
-
-    rescue Git::GitExecuteError => e
-      binding.pry
     end
+
     result
   end
   # -- end experimental
