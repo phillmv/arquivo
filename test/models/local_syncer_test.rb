@@ -130,6 +130,64 @@ class LocalSyncerTest < ActiveSupport::TestCase
     end
   end
 
+  # dumb question
+  # why don't i use git to sync between two notebooks? i guess cos they'd have different history? let's try it tho
+
+  test "basic sync b/w two notebooks frankly" do
+    notebook1 = Notebook.create(name: "test-notebook1")
+    notebook2 = Notebook.create(name: "test-notebook2")
+
+    tmp_dir = Dir.mktmpdir
+    test_arquivo_path = File.join(tmp_dir, "arquivo")
+    bare_repo_path = File.join(tmp_dir, "bare_repo")
+
+    repo1_path = File.join(test_arquivo_path, "test-notebook1")
+    repo2_path = File.join(test_arquivo_path, "test-notebook2")
+
+    bare_repo = Git.init(bare_repo_path, bare: true)
+    
+    syncer1 = SyncWithGit.new(notebook1, test_arquivo_path)
+    syncer1.init!
+    repo1 = Git.init(repo1_path)
+    repo1.add_remote("origin", bare_repo_path)
+
+    syncer1.push!
+  
+    Git.clone(bare_repo_path, "", path: repo2_path)
+
+    syncer2 = SyncWithGit.new(notebook2, test_arquivo_path)
+
+    # so now i can create an entry in one notebook and see it synced in the other
+
+    n1_entry1 = notebook1.entries.create(body: "foo fah feh")
+    syncer1.sync!
+    syncer1.push!
+
+    assert_equal 0, notebook2.entries.count
+    syncer2.pull!
+
+    assert_equal 1, notebook2.entries.count
+    n2_entry1 = notebook2.entries.last
+
+    assert_equal n1_entry1.identifier, n2_entry1.identifier
+    assert_equal n1_entry1.body, n2_entry1.body
+ 
+    n2_entry1.update(body: "conflicting old text here")
+    n1_entry1.update(body: "conflicting new text here should win")
+
+    refute_equal n1_entry1.body, n2_entry1.body
+    syncer1.sync!
+    syncer1.push!
+
+    syncer2.sync!
+    syncer2.pull!
+
+    n1_entry1.reload
+    n2_entry1.reload
+
+    assert_equal n1_entry1.body, n2_entry1.body
+  end
+
   # this test asserts that:
   # a) we can push and pull from remote repos, and our Entry objects will auto update
   # b) in case of conflict, it will still work seamlessly
