@@ -132,10 +132,12 @@ class SyncWithGit
         repo = git_adapter.open_repo(notebook_path)
         setup_git_config(repo)
 
-        commit = git_adapter.latest_commit(repo)
+        last_commit = git_adapter.latest_commit(repo)
         # if the repo is brand new, there may not be a commit to pull, so check if nil
-        if commit
-          notebook.sync_states.create(sha: commit)
+        if last_commit
+          # TODO: should only create the state
+          # if the git pull actually advances the HEAD commit
+          notebook.sync_states.create(sha: last_commit)
         end
 
         result = repo.pull
@@ -147,6 +149,22 @@ class SyncWithGit
           puts "do nothing, hooray!"
         else
           SyncFromDisk.new(notebook_path, notebook, override_notebook: override_notebook).import!
+
+          # okay so we've gotten this far, we've synced the disk, etc
+          # if a file was added or modified, the sync from disc should've done the right thing
+          # (TODO: gotta handle attachments! what if an attachment was deleted?)
+          # but it won't handle _file deletions_. so:
+          deleted_files = repo.diff(last_commit, 'HEAD').select { |f| f.type == "deleted" }
+
+          deleted_files.each do |diff|
+            if diff.path =~ /.yaml/
+              entry_yaml = repo.show(last_commit, diff.path)
+              entry_attributes = YAML.load(entry_yaml)
+              entry = notebook.entries.find_by(identifier: entry_attributes["identifier"])
+              entry.destroy
+            end
+          end
+
         end
 
       rescue Git::GitExecuteError => e

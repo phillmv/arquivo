@@ -225,6 +225,17 @@ class LocalSyncerTest < ActiveSupport::TestCase
     assert_equal n2_entry1.body, n1_entry1.body
     assert_equal n1_entry1.body, "this text not only conflicts but should win"
 
+    # now we can try to delete a file
+    n1_entry1.destroy
+    syncer1.sync_entry!(n1_entry1)
+
+    syncer1.push!
+
+    assert_equal 0, notebook1.entries.count
+    assert_equal 1, notebook2.entries.count
+
+    syncer2.pull!(override_notebook: true)
+    assert_equal 0, notebook2.entries.count
   end
 
   # this test asserts that:
