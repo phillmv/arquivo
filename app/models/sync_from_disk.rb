@@ -1,12 +1,13 @@
 class SyncFromDisk
-  attr_accessor :notebook_path
+  attr_accessor :notebook_path, :override_notebook
 
   # pattern is notebook/year/month/day/identifier
   NOTEBOOK_GLOB = "/*" #notebook
   DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
-  def initialize(notebook_path, notebook = nil)
+  def initialize(notebook_path, notebook = nil, override_notebook: false)
     @notebook_path = notebook_path
-    @notebook = notebook if notebook
+    @notebook = notebook
+    @override_notebook = override_notebook
   end
 
   def self.import_all!(arquivo_path)
@@ -22,19 +23,7 @@ class SyncFromDisk
   def import!
     raise "Path bad" unless File.exist?(notebook_path)
 
-    # in order to test git syncing, i want to sync between two notebook
-    # objects without tearing my hair out.
-    #
-    # so if the notebook is directly supplied, here i ignore the provided
-    # notebook.yaml file. that said, i kinda do want to validate that a given
-    # folder i'm pointing at belongs to a particular notebook?
-    # so TODO: figuring out a good way to validate notebooks
-    if @notebook.nil?
-      # entries are tied to notebooks, so let's create it first
-      notebook = load_or_create_notebook(notebook_path)
-    else
-      notebook = @notebook
-    end
+    notebook = load_or_create_notebook(notebook_path)
 
     # fetch every entry yaml file
     entry_folders_path = File.join(notebook_path, DIR_GLOB)
@@ -83,6 +72,13 @@ class SyncFromDisk
   end
 
   def load_or_create_notebook(notebook_path)
+    # if we've supplied the notebook, don't bother loading the notebook.yaml
+    # TODO: this would be a good place to a) validate the supplied notebook
+    # matches the notebook.yaml, as a sanity check, and b) to then also respect
+    # the override_notebook flag for testing.
+    if @notebook
+      return @notebook
+    end
     notebook_yaml_file = File.join(notebook_path, "notebook.yaml")
     notebook_yaml = YAML.load(File.read(notebook_yaml_file))
 
@@ -144,16 +140,20 @@ class SyncFromDisk
     entry = notebook.entries.find_by(identifier: identifier)
     updated = false
 
+    # override_notebook flag is used for testing; while testing
+    # sync, because we're simulating sharing a notebook across different
+    # Arquivo installs, sometimes we want to write entries in one notebook
+    # and then import it in a *differently named* notebook.
+    # For that reason, if override_notebook is true, we throw out the notebook
+    # attribute from the entry we're loading.
+    if override_notebook
+      entry_attributes = entry_attributes.except("notebook")
+    end
+
     if entry
       if entry.updated_at < entry_attributes["updated_at"]
-        if @notebook
-          # again this is used for testing; it feels VERY
-          # weird to throw away the yaml notebook attribute
-          # TODO: FIGURE OUT HOW TO UNWIND THIS
-          entry.update!(entry_attributes.except("notebook"))
-        else
-          entry.update!(entry_attributes)
-        end
+        entry.update!(entry_attributes)
+
         updated = true
       end
 

@@ -141,51 +141,90 @@ class LocalSyncerTest < ActiveSupport::TestCase
     test_arquivo_path = File.join(tmp_dir, "arquivo")
     bare_repo_path = File.join(tmp_dir, "bare_repo")
 
-    repo1_path = File.join(test_arquivo_path, "test-notebook1")
-    repo2_path = File.join(test_arquivo_path, "test-notebook2")
+    repo1_path = notebook1.to_folder_path(test_arquivo_path)
+    repo2_path = notebook2.to_folder_path(test_arquivo_path)
 
-    bare_repo = Git.init(bare_repo_path, bare: true)
-    
     syncer1 = SyncWithGit.new(notebook1, test_arquivo_path)
     syncer1.init!
+
+    # bare repos have to be used to sync between notebooks
+    bare_repo = Git.init(bare_repo_path, bare: true)
+
+    # now that we've inited the repo1, we push it to the bare repo
     repo1 = Git.init(repo1_path)
     repo1.add_remote("origin", bare_repo_path)
 
     syncer1.push!
-  
+
+    # and use the bare repo to set up a clone of repo1
     Git.clone(bare_repo_path, "", path: repo2_path)
 
     syncer2 = SyncWithGit.new(notebook2, test_arquivo_path)
 
-    # so now i can create an entry in one notebook and see it synced in the other
+    # so now i can create an entry in notebook1 and sync it to notebook2
 
     n1_entry1 = notebook1.entries.create(body: "foo fah feh")
     syncer1.sync!
     syncer1.push!
 
     assert_equal 0, notebook2.entries.count
-    syncer2.pull!
-
+    syncer2.pull!(override_notebook: true)
     assert_equal 1, notebook2.entries.count
+
+    # and the entries are the same
     n2_entry1 = notebook2.entries.last
 
     assert_equal n1_entry1.identifier, n2_entry1.identifier
     assert_equal n1_entry1.body, n2_entry1.body
- 
-    n2_entry1.update(body: "conflicting old text here")
-    n1_entry1.update(body: "conflicting new text here should win")
 
-    refute_equal n1_entry1.body, n2_entry1.body
+    # if an entry can be created, can an entry be updated?
+    # first we change the text in notebook2's entry
+    n2_entry1.update(body: "conflicting old text here")
+    syncer2.sync!
+
+    n1_entry1.update(body: "conflicting new text here should win")
     syncer1.sync!
     syncer1.push!
 
-    syncer2.sync!
-    syncer2.pull!
+    refute_equal n1_entry1.body, n2_entry1.body
+
+    # now we push from notebook1 to notebook2
+    syncer2.pull!(override_notebook: true)
 
     n1_entry1.reload
     n2_entry1.reload
 
+    # because n2's entry was older, n1's change won.
     assert_equal n1_entry1.body, n2_entry1.body
+    assert_equal n2_entry1.body, "conflicting new text here should win"
+
+    # this works both ways:
+    # first we update n1's entry and push it right away
+    n1_entry1.update(body: "this text conflicts")
+    syncer1.sync!
+    syncer1.push!
+
+    n2_entry1.update(body: "this text not only conflicts but should win")
+    syncer2.sync!
+    syncer2.pull!(override_notebook: true)
+
+    # when the entry is pulled, the merge happens, and n2's entry wins
+    n1_entry1.reload
+    n2_entry1.reload
+
+    refute_equal n1_entry1.body, n2_entry1.body
+
+    # so when we push notebook2 and pull it to notebook1
+    syncer2.push!
+    syncer1.pull!(override_notebook: true)
+
+    n1_entry1.reload
+    n2_entry1.reload
+
+    # now the entries are in sync
+    assert_equal n2_entry1.body, n1_entry1.body
+    assert_equal n1_entry1.body, "this text not only conflicts but should win"
+
   end
 
   # this test asserts that:

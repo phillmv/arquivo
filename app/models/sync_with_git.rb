@@ -125,7 +125,7 @@ class SyncWithGit
     end
   end
 
-  def pull!
+  def pull!(override_notebook: false)
     result = nil
     git_adapter.with_lock do
       begin
@@ -146,7 +146,7 @@ class SyncWithGit
         when /Already up to date\./
           puts "do nothing, hooray!"
         else
-          SyncFromDisk.new(notebook_path, notebook).import!
+          SyncFromDisk.new(notebook_path, notebook, override_notebook: override_notebook).import!
         end
 
       rescue Git::GitExecuteError => e
