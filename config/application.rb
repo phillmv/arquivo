@@ -37,6 +37,11 @@ end
 module Rails::ConsoleMethods
   def dat(str)
     notebook, identifier = str.split("/")
-    Entry.find_by(notebook: notebook, identifier: identifier)
+
+    if identifier.nil?
+      Notebook.find_by(name: notebook)
+    else
+      Entry.find_by(notebook: notebook, identifier: identifier)
+    end
   end
 end
