@@ -18,6 +18,22 @@ class SyncFromDisk
     end
   end
 
+  def import_and_sync!(deleted: [])
+    notebook = import!
+
+    # okay so we've gotten this far, we've synced the disk, etc
+    # if a file was added or modified, the sync from disc should've done the right thing
+    # (TODO: gotta handle attachments! what if an attachment was deleted?)
+    # but it won't handle _file deletions_. so:
+
+    deleted.each do |entry_yaml|
+      entry_attributes = YAML.load(entry_yaml)
+      entry = notebook.entries.find_by(identifier: entry_attributes["identifier"])
+      entry.destroy
+    end
+  end
+
+
   # TODO:
   # validate folders!
   def import!
@@ -69,6 +85,8 @@ class SyncFromDisk
       # but we're moving away from this. Commented out because this is a WIP, might still have to support DB method
       # LocalSyncer.new(notebook, File.dirname(notebook_path)).sync!(notebook_path)
     end
+
+    notebook
   end
 
   def load_or_create_notebook(notebook_path)

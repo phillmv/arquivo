@@ -135,9 +135,10 @@ class SyncWithGit
         last_commit = git_adapter.latest_commit(repo)
         # if the repo is brand new, there may not be a commit to pull, so check if nil
         if last_commit
-          # TODO: should only create the state
-          # if the git pull actually advances the HEAD commit
-          notebook.sync_states.create(sha: last_commit)
+          sync = notebook.sync_states.find_by(sha: last_commit)
+          if sync.nil?
+            notebook.sync_states.create(sha: last_commit)
+          end
         end
 
         result = repo.pull
@@ -148,23 +149,16 @@ class SyncWithGit
         when /Already up to date\./
           puts "do nothing, hooray!"
         else
-          SyncFromDisk.new(notebook_path, notebook, override_notebook: override_notebook).import!
+          syncer = SyncFromDisk.new(notebook_path, notebook,
+                                    override_notebook: override_notebook)
 
-          # okay so we've gotten this far, we've synced the disk, etc
-          # if a file was added or modified, the sync from disc should've done the right thing
-          # (TODO: gotta handle attachments! what if an attachment was deleted?)
-          # but it won't handle _file deletions_. so:
-          deleted_files = repo.diff(last_commit, 'HEAD').select { |f| f.type == "deleted" }
-
-          deleted_files.each do |diff|
-            if diff.path =~ /.yaml/
-              entry_yaml = repo.show(last_commit, diff.path)
-              entry_attributes = YAML.load(entry_yaml)
-              entry = notebook.entries.find_by(identifier: entry_attributes["identifier"])
-              entry.destroy
-            end
+          deleted_files = repo.diff(last_commit, 'HEAD').select do |f|
+            f.type == "deleted" && f.path =~ /\.yaml/
+          end.map do |d|
+            repo.show(last_commit, d.path)
           end
 
+          syncer.import_and_sync!(deleted: deleted_files)
         end
 
       rescue Git::GitExecuteError => e
