@@ -36,6 +36,7 @@ class SyncWithGit
     repo.config("merge.newest-wins.name", "newest-wins")
     repo.config("merge.newest-wins.driver", "script/newest-wins.rb %O %A %B")
     repo.config("merge.newest-wins.recursive", "text")
+    repo.config("pull.rebase", "false")
   end
 
   def sync_entry!(entry)
@@ -111,8 +112,8 @@ class SyncWithGit
         repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
         # if a branch is not provided it defaults to 'master' which breaks now
         # that we're in a 'main' branch world
-        Arquivo.logger.debug "Pushing #{repo.branch}"
-        repo.push('origin', repo.branch)
+        Arquivo.logger.debug "Pushing #{repo.current_branch}"
+        repo.push('origin', repo.current_branch)
       rescue Git::GitExecuteError => e
         Arquivo.logger.debug "Push Failure:\n#{e.message}"
         rejected = e.message.lines.select {|s| s =~ /\[rejected\]\.*\(fetch first\)/}.any?
@@ -141,8 +142,10 @@ class SyncWithGit
           end
         end
 
-        result = repo.pull
+        result = repo.pull("origin", repo.current_branch)
 
+        # TODO:
+        # something fucky happens when there's a merge onflict and the merge strategy isn't configured; it fetches from the repo but doesn't actually do the merging. maybe some flag the library passes down? maybe just do fetch, merge steps separately.
         case result
           # when /Updating.*\nFast-forward/
           #   puts "ffwd"
