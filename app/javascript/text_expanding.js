@@ -28,7 +28,7 @@ function text_expand_pls(){
 }
 
 function fetch_textexpand_menu(type, text, callback) {
-  var notebook = window.location.pathname.split("/")[1]
+  var notebook = window.current_notebook.name
   var query = encodeURIComponent(text)
 
   // TODO: dear LORD clean this up, catch errors, etc
