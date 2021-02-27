@@ -164,7 +164,7 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     empty_toc_html = @renderer.render_html(empty_toc)
 
-    assert_equal "<table-of-contents><h2>Contents</h2>\n<ul class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", empty_toc_html
+    assert_equal "<table-of-contents><h2>Contents</h2>\n<ol class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ol></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", empty_toc_html
 
 
     almost_empty_toc = <<-FOO
@@ -176,7 +176,7 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     almost_empty_toc_html = @renderer.render_html(almost_empty_toc)
 
-    assert_equal "<p data-sourcepos=\"1:1-1:39\"></p><table-of-contents><h2>Contents</h2>\n<ul class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", almost_empty_toc_html
+    assert_equal "<p data-sourcepos=\"1:1-1:39\"></p><table-of-contents><h2>Contents</h2>\n<ol class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ol></table-of-contents>\n<h1 data-sourcepos=\"3:1-3:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"4:1-4:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", almost_empty_toc_html
 
     custom_header_toc = <<-FOO
 <table-of-contents>
@@ -191,6 +191,6 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     custom_header_toc_html = @renderer.render_html(custom_header_toc)
 
-    assert_equal "<table-of-contents>\n<h1 data-sourcepos=\"3:1-3:22\">tabela de conteúdos</h1>\n<ul class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ul></table-of-contents>\n<h1 data-sourcepos=\"7:1-7:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"8:1-8:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", custom_header_toc_html
+    assert_equal "<table-of-contents>\n<h1 data-sourcepos=\"3:1-3:22\">tabela de conteúdos</h1>\n<ol class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ol></table-of-contents>\n<h1 data-sourcepos=\"7:1-7:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"8:1-8:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", custom_header_toc_html
   end
 end
