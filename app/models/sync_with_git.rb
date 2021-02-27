@@ -147,21 +147,15 @@ class SyncWithGit
         # TODO:
         # something fucky happens when there's a merge onflict and the merge strategy isn't configured; it fetches from the repo but doesn't actually do the merging. maybe some flag the library passes down? maybe just do fetch, merge steps separately.
         case result
-          # when /Updating.*\nFast-forward/
-          #   puts "ffwd"
         when /Already up to date\./
-          puts "do nothing, hooray!"
+          Arquivo.logger.debug "pull do nothing, hooray!"
         else
           syncer = SyncFromDisk.new(notebook_path, notebook,
                                     override_notebook: override_notebook)
 
-          deleted_files = repo.diff(last_commit, 'HEAD').select do |f|
-            f.type == "deleted" && f.path =~ /\.yaml/
-          end.map do |d|
-            repo.show(last_commit, d.path)
-          end
+          deleted, changed = git_adapter.changed_yaml_since(repo, last_commit)
 
-          syncer.import_and_sync!(deleted: deleted_files)
+          syncer.import_and_sync!(deleted: deleted, changed: changed)
         end
 
       rescue Git::GitExecuteError => e

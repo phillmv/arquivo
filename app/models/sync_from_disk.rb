@@ -18,7 +18,11 @@ class SyncFromDisk
     end
   end
 
-  def import_and_sync!(deleted: [])
+  # TODO: rewrite the import to handle just the changed files.
+  # might have to add some way to identify which yaml files represent entries
+  # vs which files represent attachments.
+  # note: needs to handle cases where the last sync commit is nil, and therfore has to import everything.
+  def import_and_sync!(deleted: [], changed: [])
     notebook = import!
 
     # okay so we've gotten this far, we've synced the disk, etc

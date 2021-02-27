@@ -53,6 +53,28 @@ class GitAdapter
     end
   end
 
+  # returns an array with two elements:
+  # - full content of deleted yaml files
+  # - yaml file paths of changed or new files
+  # either of which may be empty if no changes.
+  def changed_yaml_since(repo, commit)
+    if commit.nil?
+      return [[], []]
+    end
+
+    repo.diff(commit, "HEAD").reduce([[], []]) do |(deleted, changed), file|
+      if file.path =~ /\.yaml$/
+        if file.type == "deleted"
+          deleted << repo.show(commit, file.path)
+        else
+          changed << file.path
+        end
+      end
+
+      [deleted, changed]
+    end
+  end
+
   # -- end within_lock
 
   # prevents other instances of this class
