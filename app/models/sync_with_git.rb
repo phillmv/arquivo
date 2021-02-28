@@ -17,6 +17,12 @@ class SyncWithGit
     @git_adapter = GitAdapter.new(@arquivo_path)
   end
 
+  def clone!(remote)
+    FileUtils.mkdir_p(notebook_path)
+    repo = Git.clone(remote, path: notebook_path)
+    setup_git_config(repo)
+  end
+
   # We need to "init" a repo and set up the appropriate git attributes
   # and custom merge driver in order to resolve conflicts appropriately.
   # TODO: Document this elsewhere? And more appropriately.
@@ -121,7 +127,7 @@ class SyncWithGit
 
       if rejected
         # yeah that's right, then what huh???
-        binding.pry
+        # binding.pry
       end
     end
   end
@@ -131,17 +137,26 @@ class SyncWithGit
     git_adapter.with_lock do
       begin
         repo = git_adapter.open_repo(notebook_path)
+
+        # merging will fail without these settings, which have to be reset on
+        # every clone of the repo. in the future, maybe find a way to save this
+        # step via some kind of detection?
         setup_git_config(repo)
 
         last_commit = git_adapter.latest_commit(repo)
         # if the repo is brand new, there may not be a commit to pull, so check if nil
         if last_commit
+
+          # i set this association up before i finished writing the code
+          # so it may not actually be necessary to save it but in the meantime
+          # it can't hurt to keep track:
           sync = notebook.sync_states.find_by(sha: last_commit)
           if sync.nil?
             notebook.sync_states.create(sha: last_commit)
           end
         end
 
+        Arquivo.logger.debug "Pulling #{notebook.name}…"
         result = repo.pull("origin", repo.current_branch)
 
         # TODO:
@@ -150,6 +165,7 @@ class SyncWithGit
         when /Already up to date\./
           Arquivo.logger.debug "pull do nothing, hooray!"
         else
+          Arquivo.logger.debug "time to sync. message received:\n#{result}"
           syncer = SyncFromDisk.new(notebook_path, notebook,
                                     override_notebook: override_notebook)
 
@@ -159,7 +175,8 @@ class SyncWithGit
         end
 
       rescue Git::GitExecuteError => e
-        binding.pry
+        Arquivo.logger.debug "Pull Failure:\n#{e.message}"
+        # binding.pry
       end
     end
 

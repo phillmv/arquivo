@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-  before_action :current_notebook, :set_recent_entries, :check_imports
+  before_action :current_notebook, :set_recent_entries, :check_imports, :resync_with_remotes
   around_action :set_time_zone
 
   private
@@ -13,6 +13,13 @@ class ApplicationController < ActionController::Base
         UpdateCalendarsJob.perform_later
       end
       session[:checked_imports_at] = Time.current
+    end
+  end
+
+  def resync_with_remotes
+    last_checked_at = session[:synced_remotes_at]
+    if last_checked_at.nil? || last_checked_at < 15.minutes.ago
+      PullAllFromGit.perform_later
     end
   end
 

@@ -7,6 +7,9 @@ class Notebook < ApplicationRecord
 
   has_many :sync_states, dependent: :delete_all
 
+  after_create :initialize_git
+  attr_accessor :skip_local_sync
+
   def self.for(name)
     self.find_by(name: name)
   end
@@ -15,8 +18,18 @@ class Notebook < ApplicationRecord
     "journal"
   end
 
+  # not actually tested or used often
+  def self.create_from_remote(name, remote)
+    notebook = self.create(name: name, skip_local_sync: true)
+    SyncWithGit.new(notebook).clone(remote)
+  end
+
   def push_to_git!
     SyncWithGit.new(self).push!
+  end
+
+  def pull_from_git!
+    SyncWithGit.new(self).pull!
   end
 
   def to_s
@@ -43,5 +56,12 @@ class Notebook < ApplicationRecord
   def to_full_file_path(path = nil)
     path ||= Setting.get(:arquivo, :arquivo_path)
     File.join(to_folder_path(path), "notebook.yaml")
+  end
+
+  def initialize_git
+    unless Rails.application.config.skip_local_sync
+      syncer = SyncWithGit.new(self)
+      syncer.init!
+    end
   end
 end
