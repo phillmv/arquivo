@@ -45,11 +45,11 @@
       <% [
           ["Tasks", "checklist", "has:todo"],
           ["Bookmarks", "bookmark", "is:bookmark"],
-          ["Calendar", "calendar", "is:calendar"],
-          ["Everything", "archive", "is:everything"],
-          ["Last week", "ellipsis", "is:everything sort:asc after:#{1.weeks.ago.to_date}"]
-        ].each_with_index do |(name, icon, search_string), i| %>
-      <span class="tabnav-tab" <%= current_search_tabnav(search_string, @search_query) %>>
+          #["Calendar", "calendar", "is:calendar"],
+          #["Everything", "zap", "is:everything", "hide-sm"],
+          #["Last week", "ellipsis", "is:everything sort:asc after:#{1.weeks.ago.to_date}"]
+        ].each_with_index do |(name, icon, search_string, klass), i| %>
+        <span class="tabnav-tab <%= klass %>" <%= current_search_tabnav(search_string, @search_query) %>>
           <a class="<%= current_search_tabnav_colour(search_string, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: search_string) %>" accesskey="<%= i + 2 %>"> <%= octicon icon %> <%= name %></a> 
         </span>
       <% end %>
@@ -82,7 +82,7 @@
           <%= form.text_field :search_query, class: "form-control pl-5 col-12", value: @search_query, name: "query", placeholder: "Type and hit enter to search. Ctrl+L to focus.", autocomplete: "off" %>
         </text-expander>
         <%= octicon "search", class: "subnav-search-icon", style: "z-index: 3" %>
-        <span class="input-group-button">
+        <span class="input-group-button hide-sm">
           <%= form.submit "Search", class: "btn" %>
         </span>
       </div>

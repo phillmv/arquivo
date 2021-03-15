@@ -34,6 +34,8 @@
     margin-right: $spacer-0;
     margin-left: $spacer-0;
   }
+
+  max-width: 100%;
 }
 
 .sidebar-container {
@@ -81,7 +83,6 @@
     margin-right: $spacer-0;
     margin-left: $spacer-0;
   }
-
 }
 
 // settings
@@ -178,18 +179,20 @@ summary::-webkit-details-marker {
   display: none;
 }
 
-
-.truncate:after{
-  content:"";
-  height: 75px;
-  display: block;
-  width: 100%;
-  position:absolute;
-  background: linear-gradient(transparent, white);
-  // background-color:white;
-  // opacity: 0.8;
-  bottom: -0.3em
-}
+//
+// .truncate:after{
+//   content:"";
+//   height: 75px;
+//   display: block;
+//   width: 100%;
+//   position:absolute;
+//   
+//   // background: linear-gradient(transparent, white);
+//   
+//   // background-color:white;
+//   // opacity: 0.8;
+//   bottom: -0.3em
+// }
 
 // for displaying the hide button only on hover
 .hide-calendar {
