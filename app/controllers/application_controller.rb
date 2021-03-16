@@ -21,6 +21,7 @@ class ApplicationController < ActionController::Base
     if last_checked_at.nil? || last_checked_at < 15.minutes.ago
       PullAllFromGit.perform_later
     end
+    session[:synced_remotes_at] = Time.current
   end
 
   # def push_up
