@@ -6,12 +6,12 @@
   <% else %>
     <div class="pagehead pt-2">
       <h1 class="d-inline">Monthly</h1>
-      <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
+      <a href="<%= new_entry_path(@current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
     </div>
   <% end %>
   <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
-      <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block">
+      <a href="<%= calendar_daily_path(date, @current_notebook) %>" style="width: 100%; display: block">
         <%= date.day %>
         <div class="py-2">
           <%= entries.count %> entries
@@ -23,7 +23,7 @@
 
       </a>
     <% else %>
-      <a href="<%= calendar_daily_path(date, notebook: @current_notebook) %>" style="width: 100%; display: block" class="link-gray">
+      <a href="<%= calendar_daily_path(date, @current_notebook) %>" style="width: 100%; display: block" class="link-gray">
         <%= date.day %>
       </a>
     <% end %>

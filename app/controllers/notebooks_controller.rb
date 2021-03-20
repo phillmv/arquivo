@@ -37,6 +37,6 @@ class NotebooksController < ApplicationController
       end
     end
 
-    redirect_to settings_path(notebook: current_notebook)
+    redirect_to settings_path(current_notebook)
   end
 end

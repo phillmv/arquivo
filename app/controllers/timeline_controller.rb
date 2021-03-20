@@ -26,7 +26,7 @@ class TimelineController < ApplicationController
 
       render :index
     else
-      redirect_to timeline_path(notebook: current_notebook)
+      redirect_to timeline_path(current_notebook)
     end
   end
 
@@ -40,7 +40,7 @@ class TimelineController < ApplicationController
       end
     end
 
-    redirect_to search_path(notebook: current_notebook, query: params[:saved_search][:query])
+    redirect_to search_path(current_notebook, query: params[:saved_search][:query])
   end
 
   def delete_saved_search
@@ -50,7 +50,7 @@ class TimelineController < ApplicationController
       saved_search.destroy
     end
 
-    redirect_to timeline_path(notebook: current_notebook)
+    redirect_to timeline_path(current_notebook)
   end
 
   def saved_search_params

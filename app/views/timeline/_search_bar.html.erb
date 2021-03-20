@@ -38,7 +38,7 @@
 
   <nav class="tabnav-tabs" aria-label="Foo bar">
     <div class="UnderlineNav-body">
-      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= current_search_tabnav(nil, @search_query) %> accesskey="1">
+      <a class="tabnav-tab" href="<%= timeline_path(@current_notebook) %>" <%= current_search_tabnav(nil, @search_query) %> accesskey="1">
         <%= octicon "note" %> Notes
       </a>
 
@@ -50,7 +50,7 @@
           #["Last week", "ellipsis", "is:everything sort:asc after:#{1.weeks.ago.to_date}"]
         ].each_with_index do |(name, icon, search_string, klass), i| %>
         <span class="tabnav-tab <%= klass %>" <%= current_search_tabnav(search_string, @search_query) %>>
-          <a class="<%= current_search_tabnav_colour(search_string, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: search_string) %>" accesskey="<%= i + 2 %>"> <%= octicon icon %> <%= name %></a> 
+          <a class="<%= current_search_tabnav_colour(search_string, @search_query) %>" href="<%= search_path(@current_notebook, query: search_string) %>" accesskey="<%= i + 2 %>"> <%= octicon icon %> <%= name %></a> 
         </span>
       <% end %>
 
@@ -58,7 +58,7 @@
       <%# <% saved_searches = @current_notebook.saved_searches.limit(6) %>
       <% if false #saved_searches.limit(6).each_with_index do |saved_search, i| %>
         <span class="tabnav-tab" <%= search_tabnav(saved_search, @search_query) %>>
-          <a class="<%= search_tabnav_colour(saved_search, @search_query) %>" href="<%= search_path(notebook: @current_notebook, query: saved_search.query) %>" accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a><% if search_tabnav(saved_search, @search_query) %>
+          <a class="<%= search_tabnav_colour(saved_search, @search_query) %>" href="<%= search_path(@current_notebook, query: saved_search.query) %>" accesskey="<%= i + 2 %>"><% unless saved_search.octicon.blank? %><%= octicon saved_search.octicon %><% end %> <%= saved_search.name %></a><% if search_tabnav(saved_search, @search_query) %>
 
         <%= form_for saved_search, url: delete_saved_search_path(notebook: @current_notebook, id: saved_search), html: { class: "d-inline" }, method: :delete do |form| %>
           <button type="submit" class="btn-link text-gray-dark"><%= octicon("x")%></button>
@@ -73,7 +73,7 @@
 
 <div class="form-actions">
   <div class="d-inline-flex col-12 pb-1">
-    <%= form_with url: search_path(notebook: @current_notebook), local: true, method: :get, html: { name: "searchform", class: "col-12" } do |form| %>
+    <%= form_with url: search_path(@current_notebook), local: true, method: :get, html: { name: "searchform", class: "col-12" } do |form| %>
 
       <div class="position-relative d-inline-flex col-12">
 
@@ -89,7 +89,7 @@
 
     <% end %>
 
-    <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn ml-2"><%= octicon "pencil" %> New Entry</a>
+    <a href="<%= new_entry_path(@current_notebook) %>" class="btn ml-2"><%= octicon "pencil" %> New Entry</a>
 
   </div>
 </div>

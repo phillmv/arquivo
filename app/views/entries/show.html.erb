@@ -5,7 +5,7 @@
     <nav aria-label="Breadcrumb" class="mb-1">
       <ol>
         <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></h3></li>
-        <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= calendar_daily_path(@current_date, notebook: @entry.notebook) %>"><%= @current_date %></a></h3></li>
+        <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= calendar_daily_path(@current_date, @entry.parent_notebook) %>"><%= @current_date %></a></h3></li>
         <li class="breadcrumb-item" aria-current="page"><h3 class="d-inline"><%= @entry.identifier %></h3></li>
       </ol>
     </nav>
@@ -73,8 +73,8 @@
 
   <div class="form-actions pt-3">
     <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook)%>" class="btn"> <%= octicon("pencil") %> Edit </a>
-    <a href="<%= new_entry_path(notebook: @entry.notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Reply</a>
-    <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(notebook: @current_notebook), class: "btn float-left" %>
+    <a href="<%= new_entry_path(@entry.parent_notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Reply</a>
+    <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(@current_notebook), class: "btn float-left" %>
     <details class="dropdown details-reset details-overlay float-left" style="margin-right: 5px">
       <summary class="btn" aria-haspopup="true">
         <%= octicon('versions') %>
@@ -84,7 +84,7 @@
 
       <ul class="dropdown-menu dropdown-menu-se">
         <% Notebook.where.not(id: @current_notebook.id).find_each do |notebook| %>
-          <li><%= link_to "#{octicon "book", height: 16} #{notebook.name}".html_safe, copy_entry_path(@entry, notebook, notebook: @current_notebook), class: "dropdown-item", method: :post, data: {confirm: "Are you sure? If the #{notebook} notebook has an entry with the same identifier, its contents will be overwritten."} %></li>
+          <li><%= link_to "#{octicon "book", height: 16} #{notebook.name}".html_safe, copy_entry_path(@entry, notebook), class: "dropdown-item", method: :post, data: {confirm: "Are you sure? If the #{notebook} notebook has an entry with the same identifier, its contents will be overwritten."} %></li>
         <% end %>
       </ul>
     </details>

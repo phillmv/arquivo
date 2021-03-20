@@ -9,11 +9,11 @@
 <% outside_of_bookmarklet = defined?(outside_of_bookmarklet) ? outside_of_bookmarklet : false %>
 
 <% if bookmark %>
-  <% url = create_or_update_entry_path(notebook: @current_notebook) %>
+  <% url = create_or_update_entry_path(owner: @current_notebook.owner, notebook: @current_notebook) %>
 <% elsif entry.new_record? %>
-  <% url = create_entry_path(notebook: @current_notebook) %>
+  <% url = create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook) %>
 <% else %>
-  <% url = entry_path(entry, notebook: @current_notebook) %>
+  <% url = entry_path(entry) %>
 <% end %>
 
 

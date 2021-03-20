@@ -64,4 +64,8 @@ class Notebook < ApplicationRecord
       syncer.init!
     end
   end
+
+  def owner
+    User.name
+  end
 end

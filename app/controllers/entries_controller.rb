@@ -62,7 +62,7 @@ class EntriesController < ApplicationController
           # TODO: test/refactor this dumb behaviour
           if params[:outside_of_bookmarklet]
             # redirect_to timeline_path(notebook: current_notebook)
-            redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully updated.'
+            redirect_to entry_path(@entry), notice: 'Entry was successfully updated.'
           else
             render "entries/success_close_window"
           end
@@ -90,9 +90,10 @@ class EntriesController < ApplicationController
       if (@entry.new_record? && @entry.save) || @entry.update(entry_params)
         format.html do
           if request.referer =~ /agenda/
-            redirect_back(fallback_location: timeline_path(notebook: current_notebook))
+            redirect_back(fallback_location: timeline_path(current_notebook))
           else
-            redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully created.'
+            binding.pry
+            redirect_to entry_path(@entry), notice: 'Entry was successfully created.'
           end
         end
         format.json { render :show, status: :created, location: @entry }
@@ -109,9 +110,9 @@ class EntriesController < ApplicationController
     respond_to do |format|
       if @entry.update(entry_params)
         if params["redirect_to_timeline"]
-          format.html { redirect_to timeline_path(notebook: current_notebook) }
+          format.html { redirect_to timeline_path(current_notebook) }
         else
-          format.html { redirect_to entry_path(@entry, notebook: current_notebook), notice: 'Entry was successfully updated.' }
+          format.html { redirect_to entry_path(@entry), notice: 'Entry was successfully updated.' }
           format.json { render json: @entry.export_attributes, status: :ok, location: @entry }
         end
       else
@@ -142,7 +143,7 @@ class EntriesController < ApplicationController
 
     copy = @entry.copy_to!(target_notebook)
 
-    redirect_to entry_path(copy, notebook: target_notebook)
+    redirect_to entry_path(copy)
   end
 
   private

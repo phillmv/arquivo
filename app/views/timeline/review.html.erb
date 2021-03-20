@@ -1,0 +1,26 @@
+<%= render partial: "shared/sidebar" %>
+
+<div class="content-container">
+  <div class="pagehead pt-2 mb-2">
+    <h1>New entry</h1>
+  </div>
+
+  <% if @parent_entry %>
+    <%= render partial: "entries/list_entry", locals: { entry: @parent_entry } %>
+    <br/>
+  <% end %>
+
+  <%= render 'entries/form', entry: @entry %>
+  <div class="mb-10"></div>
+</div>
+
+<div class="context-container mt-2">
+  <div class="TimelineItem-start">
+    <% @entries.each do |day, entries| %>
+      <% entries.each do |entry| %>
+        <%= entry.body.lines[0..2].join %>
+        <hr>
+      <% end %>
+    <% end %>
+  </div>
+</div>

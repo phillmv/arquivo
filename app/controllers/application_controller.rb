@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
-  before_action :current_notebook, :set_recent_entries, :check_imports, :resync_with_remotes
+  include UrlHelper
+  before_action :current_notebook, :current_nwo, :set_recent_entries, :check_imports, :resync_with_remotes
   around_action :set_time_zone
 
   private
@@ -38,6 +39,14 @@ class ApplicationController < ActionController::Base
 
   def set_time_zone(&block)
     Time.use_zone(User.tz, &block)
+  end
+
+  def current_owner
+    @current_owner ||= params[:owner]
+  end
+
+  def current_nwo
+    @current_nwo ||= "#{current_owner}/#{current_notebook}"
   end
 
   # TODO: optimize

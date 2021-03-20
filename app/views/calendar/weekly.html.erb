@@ -7,14 +7,14 @@
   <% else %>
     <div class="pagehead pt-2">
       <h1 class="d-inline">Weekly</h1>
-      <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
+      <a href="<%= new_entry_path(@current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
     </div>
   <% end %>
   <%= week_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
       <div class="pt-2">
         <% entries.each do |entry| %>
-          <a href="<%= entry_path(entry, notebook: @current_notebook)%>" class="link-gray-dark f5"  style="width: 100%; display: block">
+          <a href="<%= entry_path(entry)%>" class="link-gray-dark f5"  style="width: 100%; display: block">
            <% if entry.calendar? %>
              <%= octicon("person", class: "text-gray-dark") %>
              <%= entry.truncated_description(18) %>

@@ -40,6 +40,6 @@ class ActiveStorage::DirectUploadsController < ActiveStorage::BaseController
     blob.as_json(root: false, methods: :signed_id).merge(direct_upload: {
       url: blob.service_url_for_direct_upload,
       headers: blob.service_headers_for_direct_upload
-    }).merge(file_path: Rails.application.routes.url_helpers.files_entry_path(entry, blob.filename, notebook: entry.notebook, only_path: true))
+    }).merge(file_path: Rails.application.routes.url_helpers.files_entry_path(entry, blob.filename, notebook: entry.notebook, owner: entry.parent_notebook.owner, only_path: true))
   end
 end

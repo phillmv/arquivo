@@ -28,10 +28,11 @@ document.onkeyup = function(e) {
 
   var current_notebook = window.current_notebook;
   if (current_notebook) {
+    var nwo = window.current_nwo.name
 
     if(e.ctrlKey && e.which == 78) {
       if (safe_to_navigate_away_from_entry()) {
-        window.location.pathname = `/${current_notebook.name}/new`
+        window.location.pathname = `/${nwo}/new`
       }
     }
 
@@ -39,18 +40,18 @@ document.onkeyup = function(e) {
       switch(window.current_action.name) {
         case "calendar/daily":
           if(safe_to_navigate_away_from_entry()) {
-            window.location.pathname = `/${current_notebook.name}`
+            window.location.pathname = `/${nwo}`
           }
           break;
         case "calendar/weekly":
-          window.location.pathname = `/${current_notebook.name}/calendar/daily`
+          window.location.pathname = `/${nwo}/calendar/daily`
           break;
         case "calendar/monthly":
-          window.location.pathname = `/${current_notebook.name}/calendar/weekly`
+          window.location.pathname = `/${nwo}/calendar/weekly`
           break;
         default:
           if(safe_to_navigate_away_from_entry()) {
-            window.location.pathname = `/${current_notebook.name}`
+            window.location.pathname = `/${nwo}`
           }
       }
     }
@@ -58,15 +59,15 @@ document.onkeyup = function(e) {
     if(e.ctrlKey && e.code == "BracketRight") {
       switch(window.current_action.name) {
         case "timeline/index":
-          window.location.pathname = `/${current_notebook.name}/calendar/daily`
+          window.location.pathname = `/${nwo}/calendar/daily`
           break;
         case "calendar/daily":
           if(safe_to_navigate_away_from_entry()) {
-            window.location.pathname = `/${current_notebook.name}/calendar/weekly`
+            window.location.pathname = `/${nwo}/calendar/weekly`
           }
           break;
         case "calendar/weekly":
-          window.location.pathname = `/${current_notebook.name}/calendar`
+          window.location.pathname = `/${nwo}/calendar`
           break;
       }
     }
