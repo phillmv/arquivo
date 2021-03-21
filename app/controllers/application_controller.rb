@@ -49,16 +49,22 @@ class ApplicationController < ActionController::Base
     @current_nwo ||= "#{current_user}/#{current_notebook}"
   end
 
-  # TODO: optimize
+  # TODO: i feel like this method could be simplified / some of its concerns
+  # could be shifted to the `redirect_to_notebook` controller method
   def current_notebook
     if defined?(@current_notebook)
       return @current_notebook
     end
 
-    notebook = params[:notebook] || session[:notebook] || Notebook.default
-
-    @current_notebook = current_user.notebooks.find_by!(name: notebook).tap do
-      session[:notebook] = notebook
+    # remember the last notebook we were on, so we can redirect to it
+    # if we're visiting the root route
+    notebook_name = params[:notebook] || session[:notebook_name]
+    if notebook_name
+      @current_notebook = current_user.notebooks.find_by!(name: notebook_name).tap do
+        session[:notebook_name] = notebook_name
+      end
+    else
+      @current_notebook = nil
     end
   end
 end

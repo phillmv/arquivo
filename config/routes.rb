@@ -40,7 +40,7 @@ Rails.application.routes.draw do
     end
   end
 
-  root to: "timeline#index"
+  root to: "timeline#redirect_to_notebook"
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

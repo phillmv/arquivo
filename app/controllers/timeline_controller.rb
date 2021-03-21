@@ -1,4 +1,14 @@
 class TimelineController < ApplicationController
+  def redirect_to_notebook
+    notebook = current_notebook || current_user.notebooks.first
+
+    if notebook
+      redirect_to timeline_path(notebook)
+    else
+      render text: "i need to set this up! create a notebook pls"
+    end
+  end
+
   def index
     @all_entries = Entry.for_notebook(current_notebook).notes.visible.hitherto.
       order(occurred_at: :desc).paginate(page: params[:page])
