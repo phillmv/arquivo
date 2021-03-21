@@ -28,12 +28,12 @@ function text_expand_pls(){
 }
 
 function fetch_textexpand_menu(type, text, callback) {
-  var notebook = window.current_notebook.name
+  var nwo = window.current_nwo.name
   var query = encodeURIComponent(text)
 
   // TODO: dear LORD clean this up, catch errors, etc
   callback(
-    fetch(`/${notebook}/${type}/${query}`).
+    fetch(`/${nwo}/${type}/${query}`).
     then( response => response.json() ).
     then( data => {
 
