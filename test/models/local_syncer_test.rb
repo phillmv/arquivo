@@ -24,19 +24,23 @@ class LocalSyncerTest < ActiveSupport::TestCase
 
   test "with enable_local_sync we do write to a git repo and get history" do
     enable_local_sync do
+      arquivo_path = Setting.get(:arquivo, :arquivo_path)
+      refute File.exist?(arquivo_path)
       notebook = Notebook.create(name: "test")
 
+      assert File.exist?(arquivo_path)
       # still set to a temp dir tho
-      arquivo_path = SyncWithGit.new(notebook).arquivo_path
-      refute File.exist?(arquivo_path)
+      notebook_path = notebook.to_folder_path
+      assert File.exist?(notebook_path)
+
+      assert notebook_path.index(arquivo_path)
+
       refute arquivo_path.index("Documents")
       refute arquivo_path.index(ENV["HOME"])
 
       entry = notebook.entries.create(body: "foo")
       assert_equal 1, Entry.count
 
-      # because local_sync is turned on,
-      # we now get history from the repo
       assert File.exist?(arquivo_path)
 
       refute entry.revisions.empty?

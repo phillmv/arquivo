@@ -21,7 +21,7 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
 
     assert_response 200
     blob = JSON.load(response.body)
-    assert_equal files_entry_path(@entry, notebook: @current_notebook, filename: "test_image.jpg"), blob["file_path"]
+    assert_equal files_entry_path(@entry, notebook: @current_notebook, owner: @current_notebook.owner, filename: "test_image.jpg"), blob["file_path"]
 
     assert_equal 1, CachedBlobFilename.where(entry: @entry, notebook: @entry.notebook).count
 
@@ -35,7 +35,7 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
     assert_response 200
     blob = JSON.load(response.body)
 
-    assert_equal files_entry_path(@entry, notebook: @current_notebook, filename: "test_image2.jpg"), blob["file_path"]
+    assert_equal files_entry_path(@entry, notebook: @current_notebook, owner: @current_notebook.owner, filename: "test_image2.jpg"), blob["file_path"]
 
     assert_equal 2, CachedBlobFilename.where(entry: @entry, notebook: @entry.notebook).count
 

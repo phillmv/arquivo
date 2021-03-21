@@ -23,7 +23,7 @@ class TimelineTest < ActionDispatch::IntegrationTest
   end
 
   test "timeline smoke test" do
-    get search_path(notebook: "test", query: "is:everything")
+    get search_path(@current_notebook, query: "is:everything")
     assert_response :success
 
     # entries split across three days
@@ -46,8 +46,8 @@ class TimelineTest < ActionDispatch::IntegrationTest
     assert_equal 15, first_page_entries.size
 
     first_page_entries.each do |entry|
-      assert entry_links.include?(entry_path(entry, notebook: entry.notebook))
-      assert entry_links.include?(edit_entry_path(entry, notebook: entry.notebook))
+      assert entry_links.include?(entry_path(entry))
+      assert entry_links.include?(edit_entry_path(entry))
     end
 
     # but obv stuff not in the first page won't show up
@@ -55,7 +55,7 @@ class TimelineTest < ActionDispatch::IntegrationTest
     refute entry_links.include?(entry_path(page2_entry, notebook: page2_entry.notebook))
 
     # last but not least let's get page 2 eh
-    get timeline_path(notebook: "test", page: 2)
+    get timeline_path(@current_notebook, page: 2)
     assert_response :success
   end
 end
