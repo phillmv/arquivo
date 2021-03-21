@@ -45,14 +45,6 @@
   <% end %>
 
     <% unless skip_metadata %>
-      <!-- <div class="pb&#45;5"> -->
-      <!--   <details class="details&#45;reset float&#45;left"> -->
-      <!--     <summary class="btn mr&#45;2">Metadata</summary> -->
-      <!--     <div class="py&#45;3"> -->
-      <!--     </div> -->
-      <!--   </details> -->
-      <!--  -->
-      <!-- </div> -->
       <%= form.label :occured_date, value: "Occurred:", class: "mr-2 Label Label--gray-darker" %>
       <%= form.text_field :occurred_date, class: "form-control input-sm", style: "width: 7.3em;" %> @ <%= form.text_field :occurred_time, class: "form-control input-sm", style: "width: 9.3em;" %>
     <% end %>
@@ -63,7 +55,8 @@
       <text-expander keys="# @">
         <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
       </text-expander>
-    <% unless bookmark %>
+      <% unless bookmark %>
+        <%# TODO: this needs to be changed i bet %>
       <%= form.file_field :files, multiple: true, "data-direct-upload-url" => direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook) %>
 
       <% if @entry.files.attached? %>

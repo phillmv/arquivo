@@ -36,7 +36,6 @@ function fetch_textexpand_menu(type, text, callback) {
     fetch(`/${nwo}/${type}/${query}`).
     then( response => response.json() ).
     then( data => {
-
       const menu = suggestion_menu(data)
       return {matched: data.length > 0, fragment: menu};
     })

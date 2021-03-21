@@ -26,9 +26,9 @@ document.onkeyup = function(e) {
     document.searchform.query.setSelectionRange(len, len);
   }
 
-  var current_notebook = window.current_notebook;
-  if (current_notebook) {
-    var nwo = window.current_nwo.name
+  var current_nwo = window.current_nwo;
+  if (current_nwo) {
+    var nwo = current_nwo.name
 
     if(e.ctrlKey && e.which == 78) {
       if (safe_to_navigate_away_from_entry()) {
