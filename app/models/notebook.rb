@@ -66,6 +66,6 @@ class Notebook < ApplicationRecord
   end
 
   def owner
-    User.name
+    @owner ||= User.current
   end
 end

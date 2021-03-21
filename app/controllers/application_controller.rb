@@ -41,12 +41,12 @@ class ApplicationController < ActionController::Base
     Time.use_zone(User.tz, &block)
   end
 
-  def current_owner
-    @current_owner ||= params[:owner]
+  def current_user
+    @current_owner ||= User.current
   end
 
   def current_nwo
-    @current_nwo ||= "#{current_owner}/#{current_notebook}"
+    @current_nwo ||= "#{current_user}/#{current_notebook}"
   end
 
   # TODO: optimize
@@ -57,7 +57,7 @@ class ApplicationController < ActionController::Base
 
     notebook = params[:notebook] || session[:notebook] || Notebook.default
 
-    @current_notebook = Notebook.find_by!(name: notebook).tap do
+    @current_notebook = current_user.notebooks.find_by!(name: notebook).tap do
       session[:notebook] = notebook
     end
   end
