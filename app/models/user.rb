@@ -24,4 +24,8 @@ class User
   def to_param
     name
   end
+
+  def to_s
+    name
+  end
 end
