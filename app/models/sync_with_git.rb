@@ -176,6 +176,7 @@ class SyncWithGit
 
       rescue Git::GitExecuteError => e
         Arquivo.logger.debug "Pull Failure:\n#{e.message}"
+        Arquivo.logger.debug "goodbye cruel world"
         # binding.pry
       end
     end
