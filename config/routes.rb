@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   end
 
   root to: "timeline#redirect_to_notebook"
+  get ":owner", to: "timeline#redirect_to_notebook"
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
