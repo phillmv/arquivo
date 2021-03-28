@@ -56,8 +56,7 @@
         <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
       </text-expander>
       <% unless bookmark %>
-        <%# TODO: this needs to be changed i bet %>
-      <%= form.file_field :files, multiple: true, "data-direct-upload-url" => direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook) %>
+      <%= form.file_field :files, multiple: true, "data-direct-upload-url" => direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook, owner: @current_notebook.owner) %>
 
       <% if @entry.files.attached? %>
         <div class="pt-2">
