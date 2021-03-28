@@ -2,7 +2,10 @@ Rails.application.routes.draw do
   resources :notebooks
 
   scope ':owner', defaults: { owner: "owner" } do
-    scope ':notebook', defaults: { notebook: "journal" } do
+    # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
+    # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
+    # /user/_/
+    scope ':notebook', defaults: { notebook: "journal" }, constraints: lambda { |req| req.path.split("/")[2] != "_" } do
       get '/', to: "timeline#index", as: :timeline
       get '/agenda', to: "timeline#agenda", as: :agenda
       get '/timeline/search', to: "timeline#search", as: :search

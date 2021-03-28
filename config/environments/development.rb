@@ -1,5 +1,9 @@
 Rails.application.configure do
   config.hosts << "arquivo.io"
+
+  # until we figure out how to multitenant this,
+  config.active_storage.routes_prefix = "/#{User.current}/_"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
