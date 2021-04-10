@@ -709,10 +709,9 @@
   resolved "https://registry.yarnpkg.com/@github/file-attachment-element/-/file-attachment-element-1.0.2.tgz#7cfeefb62eb2053df9734d4b964eac653968ae0a"
   integrity sha512-5YBPGQEkZ6t4uosF3KCnFfQT/XZcBLiAw6sFvXINjyytzyacj7B2alzeQmTDO3Au/n4MubQLQMtNrQgIOj/SbQ==
 
-"@github/text-expander-element@1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@github/text-expander-element/-/text-expander-element-1.1.1.tgz#e44a8d5cf77095455e97ac3bd9c830db573caadc"
-  integrity sha512-d6HquzDBE7KZ6d1rcwcu2kRhoSjSeQ7wIVwPWQ9OGl1gyr5KXI7uxFUzFFyforg/zCfMiyFuSx2pNc+GCzEzQw==
+"@github/text-expander-element@github:phillmv/text-expander-element#use_key_length_in_query":
+  version "2.2.0"
+  resolved "https://codeload.github.com/phillmv/text-expander-element/tar.gz/129c7f7b211e126649b16d870b87ae59eff9c505"
   dependencies:
     "@github/combobox-nav" "^2.0.2"
 

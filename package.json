@@ -4,7 +4,7 @@
   "dependencies": {
     "@github/auto-complete-element": "3.0.2",
     "@github/file-attachment-element": "^1.0.2",
-    "@github/text-expander-element": "1.1.1",
+    "@github/text-expander-element": "github:phillmv/text-expander-element#use_key_length_in_query",
     "@github/textarea-autosize": "^0.2.0",
     "@primer/css": "14.4.0",
     "@rails/actioncable": "^6.0.0",
