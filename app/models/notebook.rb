@@ -40,12 +40,28 @@ class Notebook < ApplicationRecord
     name
   end
 
+  def name_with_owner
+    "#{owner}/#{self}"
+  end
+
+  def cast_twz_to_time(hash)
+    hash.reduce({}) do |h, (k,v)|
+      if v.is_a?(ActiveSupport::TimeWithZone)
+        h[k] = v.to_time
+      else
+        h[k] = v
+      end
+
+      h
+    end
+  end
+
   def export_attributes
     self.attributes.except("id")
   end
 
   def to_yaml
-    export_attributes.to_yaml
+    cast_twz_to_time(export_attributes).to_yaml
   end
 
   def to_folder_path(path = nil)
