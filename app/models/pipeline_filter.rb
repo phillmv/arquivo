@@ -19,6 +19,7 @@ module PipelineFilter
 
   ENTRY_PIPELINE = HTML::Pipeline.new [
     PipelineFilter::MarkdownFilter, # convert to HTML
+    PipelineFilter::WikiLinkFilter,
     HTML::Pipeline::SanitizationFilter, # strip scary tags
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags

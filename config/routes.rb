@@ -25,11 +25,13 @@ Rails.application.routes.draw do
       post "/create_or_update", to: "entries#create_or_update", as: :create_or_update_entry
       patch "/create_or_update", to: "entries#create_or_update"
 
-      get "tags/:query", to: "notebooks#tags"
-      get "tags/", to: "notebooks#tags"
+      get "_tags/:query", to: "notebooks#tags"
+      get "_tags/", to: "notebooks#tags"
+      get "_subjects/", to: "notebooks#subjects"
+      get "_subjects/:query", to: "notebooks#subjects"
 
-      get "contacts/:query", to: "notebooks#contacts"
-      get "contacts/", to: "notebooks#contacts"
+      get "_contacts/:query", to: "notebooks#contacts"
+      get "_contacts/", to: "notebooks#contacts"
 
       put "/update", to: "notebooks#update", as: :update_notebook
 

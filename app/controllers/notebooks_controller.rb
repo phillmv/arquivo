@@ -19,6 +19,18 @@ class NotebooksController < ApplicationController
     render json: query
   end
 
+  def subjects
+    query = current_notebook.entries.order(updated_at: :desc).limit(8)
+
+    if params[:query]
+      query = query.where("subject like ?", "%#{params[:query]}%")
+    else
+      query = query.where("subject is not null")
+    end
+
+    render json: query.select(:identifier, :subject)
+  end
+
   def update
     if params[:colours]
       colour = nil;
