@@ -52,6 +52,7 @@ class Entry < ApplicationRecord
   before_create :set_identifier
   attr_accessor :skip_local_sync # skip sync to git
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
+  before_save :set_subject
 
   after_destroy :sync_to_disk_and_git
 
@@ -108,6 +109,12 @@ class Entry < ApplicationRecord
 
   def process_tags
     EntryTagger.new(self).process!
+  end
+
+  def set_subject
+    if self.note?
+      self.subject = EntryRenderer.new(self).subject
+    end
   end
 
   def sync_to_disk_and_git

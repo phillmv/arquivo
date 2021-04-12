@@ -1,6 +1,7 @@
 # should be run after the EntryTagger, since we rely on Entry tags
 class EntryLinker
   URL_REGEX = Regexp.new("(#{URI.regexp})", true)
+  WIKILINK_REGEX = /\[\[([^\]|]*)(\|([^\]]*))?\]\]/
   attr_reader :entry
 
   def initialize(entry)
@@ -8,7 +9,10 @@ class EntryLinker
   end
 
   def extract_urls(body)
-    body&.scan(URL_REGEX)&.map(&:first)&.flatten || []
+    urls = body&.scan(URL_REGEX)&.map(&:first)&.flatten || []
+    wiki_urls = body&.scan(WIKILINK_REGEX)&.map(&:first) || []
+
+    urls + wiki_urls
   end
 
   def link!

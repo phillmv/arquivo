@@ -38,6 +38,10 @@ class EntryRenderer
     PIPELINE.call(entry.body, entry: entry)[:task_list_items]
   end
 
+  def subject
+    PIPELINE.call(entry.body, entry: entry)[:entry_subject]
+  end
+
   def gimme_html(str)
     PIPELINE.to_html(str, entry: entry).html_safe
   end

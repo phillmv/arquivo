@@ -49,6 +49,12 @@ class PipelineFilter::TableOfContentsFilter < HTML::Pipeline::Filter
       end
     end
 
+    subject = doc.children[0..3].css("h1, h2").first
+
+    if subject
+      result[:entry_subject] = subject.text
+    end
+
     doc
   end
 
