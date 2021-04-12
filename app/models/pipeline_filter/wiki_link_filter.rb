@@ -32,9 +32,17 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
   def call
     html.gsub(/\[\[([^\]|]*)(\|([^\]]*))?\]\]/) do
       link = $1
-      desc = $3 ? $3 : $1
+      desc = $3
 
-      "<a href=\"#{to_link link}\">#{to_description desc}</a>"
+      notebook = context[:entry].parent_notebook
+
+      if linked_entry = notebook.entries.find_by(identifier: link)
+        entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry, owner: notebook.owner, notebook: notebook)
+
+        "<a href=\"#{entry_path}\">#{to_description(desc || linked_entry.subject)}</a>"
+      else
+        "<a href=\"#{to_link link}\">#{to_description(desc || link)}</a>"
+      end
     end
   end
 
@@ -44,8 +52,10 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
   # 
   # @param text Proposed description text.
   # @return Updated text for use as a link description.
+  # some kinda weird bug with </a><script>alert(1)</script> is rendering as
+  # </a>&lt;script>alert(1)&lt;/script>
   def to_description(text)
-    text.strip.gsub(/\s+/, ' ')
+    ERB::Util.html_escape(text).strip.gsub(/\s+/, ' ')
   end
 
   # Converts the given text into an appropriate link.
