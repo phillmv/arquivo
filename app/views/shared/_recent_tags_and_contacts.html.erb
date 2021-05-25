@@ -1,0 +1,23 @@
+<table>
+  <% rows = @tags.size > @contacts.size ? @tags.size : @contacts.size %>
+  <% rows.times do |i| %>
+    <tr>
+      <td>
+        <% if (tag, tag_count = @tags[i]) %>
+          <p>
+          <a href="<%= search_path(@current_notebook, query: "#{tag} after:#{@start_date.to_date} before:#{@end_date.to_date}") %>"><%= tag %></a> <%= tag_count %>
+          </p>
+        <% end %>
+      </td>
+      <td>
+        <% if (contact, contact_count = @contacts[i]) %>
+          <p>
+          <a href="<%= search_path(@current_notebook, query: "@#{contact} after:#{@start_date.to_date} before:#{@end_date.to_date}") %>"><%= contact %></a> <%= contact_count %>
+          </p>
+        <% end %>
+
+      </td>
+    </tr>
+  <% end %>
+</table>
+
