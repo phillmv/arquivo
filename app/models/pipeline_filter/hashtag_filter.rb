@@ -23,6 +23,10 @@ class PipelineFilter::HashtagFilter < HTML::Pipeline::Filter
   end
 
   def search_url(str)
+    if ENV["RENDER"]
+    Rails.application.routes.url_helpers.search_path(query: str)
+    else
     Rails.application.routes.url_helpers.search_path(owner: context[:entry].parent_notebook.owner, notebook: context[:entry].notebook, query: str)
+  end
   end
 end

@@ -23,3 +23,7 @@ test:
 production:
   <<: *default
   database: db/arquivo.sqlite3
+
+static:
+  <<: *default
+  database: db/arquivo.sqlite3

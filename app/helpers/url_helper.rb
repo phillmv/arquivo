@@ -15,14 +15,22 @@ module UrlHelper
   ["entry", "edit_entry"].each do |name|
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |entry, opts = {}|
-      RailsUrlHelpers.send(name_with_path, entry, opts.merge(UrlHelper.entry_params(entry)))
+      if ENV["RENDER"]
+        RailsUrlHelpers.send(name_with_path, entry)
+      else
+        RailsUrlHelpers.send(name_with_path, entry, opts.merge(UrlHelper.entry_params(entry)))
+      end
     end
   end
 
   ["new_entry", "timeline", "settings", "search", "calendar", "calendar_weekly"].each do |name|
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |notebook, opts = {}|
+    if ENV["RENDER"]
+      RailsUrlHelpers.send(name_with_path)
+    else
       RailsUrlHelpers.send(name_with_path, opts.merge(UrlHelper.notebook_params(notebook)))
+    end
     end
   end
 
@@ -31,6 +39,10 @@ module UrlHelper
   end
 
   def calendar_daily_path(date, notebook, opts = {})
+    if ENV["RENDER"]
+    RailsUrlHelpers.calendar_daily_path(date)
+    else
     RailsUrlHelpers.calendar_daily_path(date, opts.merge(UrlHelper.notebook_params(notebook)))
+    end
   end
 end

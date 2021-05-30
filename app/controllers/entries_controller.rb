@@ -134,7 +134,7 @@ class EntriesController < ApplicationController
   def files
     blob = @entry.files.blobs.find_by!(filename: params[:filename])
     expires_in ActiveStorage.service_urls_expire_in
-    redirect_to rails_blob_url(blob, disposition: params[:disposition])
+    redirect_to rails_blob_path(blob, disposition: params[:disposition])
   end
 
   def copy
