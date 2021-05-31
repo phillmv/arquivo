@@ -12,11 +12,11 @@ module UrlHelper
     notebook_params(entry.parent_notebook)
   end
 
-  ["entry", "edit_entry"].each do |name|
+  ["threaded_entry", "entry", "edit_entry"].each do |name|
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |entry, opts = {}|
-      if ENV["RENDER"]
-        RailsUrlHelpers.send(name_with_path, entry)
+      if Arquivo.static?
+        RailsUrlHelpers.send(name_with_path, entry, opts.except(:notebook))
       else
         RailsUrlHelpers.send(name_with_path, entry, opts.merge(UrlHelper.entry_params(entry)))
       end
@@ -26,11 +26,11 @@ module UrlHelper
   ["new_entry", "timeline", "settings", "search", "calendar", "calendar_weekly"].each do |name|
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |notebook, opts = {}|
-    if ENV["RENDER"]
-      RailsUrlHelpers.send(name_with_path)
-    else
-      RailsUrlHelpers.send(name_with_path, opts.merge(UrlHelper.notebook_params(notebook)))
-    end
+      if Arquivo.static?
+        RailsUrlHelpers.send(name_with_path, opts.except(:notebook))
+      else
+        RailsUrlHelpers.send(name_with_path, opts.merge(UrlHelper.notebook_params(notebook)))
+      end
     end
   end
 
@@ -39,10 +39,10 @@ module UrlHelper
   end
 
   def calendar_daily_path(date, notebook, opts = {})
-    if ENV["RENDER"]
-    RailsUrlHelpers.calendar_daily_path(date)
+    if Arquivo.static?
+      RailsUrlHelpers.calendar_daily_path(date, opts)
     else
-    RailsUrlHelpers.calendar_daily_path(date, opts.merge(UrlHelper.notebook_params(notebook)))
+      RailsUrlHelpers.calendar_daily_path(date, opts.merge(UrlHelper.notebook_params(notebook)))
     end
   end
 end

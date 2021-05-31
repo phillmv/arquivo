@@ -37,7 +37,11 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
       notebook = context[:entry].parent_notebook
 
       if linked_entry = notebook.entries.find_by(identifier: link)
-        entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry, owner: notebook.owner, notebook: notebook)
+        if Arquivo.static?
+          entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry)
+        else
+          entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry, owner: notebook.owner, notebook: notebook)
+        end
 
         "<a href=\"#{entry_path}\">#{to_description(desc || linked_entry.subject)}</a>"
       else

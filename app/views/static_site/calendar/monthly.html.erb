@@ -1,0 +1,33 @@
+<%= render partial: "static_site/shared/sidebar" %>
+
+<div class="calendar-container">
+    <% if FeatureFlag[:redesign] %>
+    <%= render partial: "shared/tabnav" %>
+  <% else %>
+    <div class="pagehead pt-2">
+      <h1 class="d-inline">Monthly</h1>
+      <a href="<%= new_entry_path(@current_notebook) %>" class="btn float-right mt-2"><%= octicon "pencil" %> New Entry</a>
+    </div>
+  <% end %>
+  <%= month_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
+    <% if entries.any? %>
+      <a href="<%= calendar_daily_path(date, @current_notebook) %>" style="width: 100%; display: block">
+        <%= date.day %>
+        <div class="py-2">
+          <%= entries.count %> entries
+        </div>
+
+        <%= entries.select(&:note?).reduce(Set.new) do |set, e| %>
+          <% set.merge(e.tags) %>
+        <% end.to_a.join(" ") %>
+
+      </a>
+    <% else %>
+      <a href="<%= calendar_daily_path(date, @current_notebook) %>" style="width: 100%; display: block" class="link-gray">
+        <%= date.day %>
+      </a>
+    <% end %>
+  <% end %>
+
+  <%= render partial: "shared/recent_tags_and_contacts" %>
+</div>

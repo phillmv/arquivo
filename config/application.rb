@@ -32,6 +32,10 @@ module Arquivo
   def self.logger
     @logger ||= Logger.new(File.join(Rails.root, "log", "arquivo.log"))
   end
+
+  def self.static?
+    ENV["STATIC_PLS"]
+  end
 end
 
 module Rails::ConsoleMethods

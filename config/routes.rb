@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   resources :notebooks
 
-  if Rails.env.development?
+  if Arquivo.static?
     # change the scope in a separate env
     # but what about the path helpers? won't they error out from not having owner
     # (didn't you rewrite all of them recently?)
@@ -31,48 +31,31 @@ Rails.application.routes.draw do
     get '/tags/:query', to: "static_site/timeline#tags", as: :search
     get '/page/:page', to: "static_site/timeline#index"
 
-    scope ':owner', defaults: { owner: "owner" } do
+    # this is a hack to preserve routing of previous attached files
+    # whose url will refer /owner/notebook/identifier/files/filename
+    scope ':owner' do
       # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
       # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
       # /user/_/
-      scope ':notebook', defaults: { notebook: "journal" }, constraints: lambda { |req| req.path.split("/")[2] != "_" } do
-        resources :doesnt_matter, path: "/" do
-          member do
-            get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
-          end
-        end
+      scope ':notebook', constraints: lambda { |req| req.path.split("/")[2] != "_" } do
+        get ":id/files/:filename", to: "entries#files", as: :entry_files, constraints: { filename: /[^\/]+/ }
       end
     end
 
 
     get '/', to: "static_site/timeline#index", as: :timeline
-    # get '/timeline/search', to: "timeline#search", as: :search
     delete '/timeline/save_search/:id', to: "timeline#delete_saved_search", as: :delete_saved_search
-    get '/review', to: "timeline#review", as: :review
-  
 
     get "/", to: redirect("/%{notebook}/timeline")
-    get '/entries', to: "entries#index"
-    get '/save_bookmark', to: "entries#save_bookmark", as: :save_bookmark
-    post "/create_or_update", to: "entries#create_or_update", as: :create_or_update_entry
-    patch "/create_or_update", to: "entries#create_or_update"
-
-    get "_tags/:query", to: "notebooks#tags"
-    get "_tags/", to: "notebooks#tags"
-    get "_subjects/", to: "notebooks#subjects"
-    get "_subjects/:query", to: "notebooks#subjects"
-
-    get "_contacts/:query", to: "notebooks#contacts"
-    get "_contacts/", to: "notebooks#contacts"
-
-    put "/update", to: "notebooks#update", as: :update_notebook
 
     resources :entries, path: "/", controller: "static_site/entries" do
       member do
-        # get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
+        get "thread", to: "static_site/entries#show", defaults: { thread: true }, as: :threaded
       end
     end
 
+    # only here to keep the UrlHelper ticking
+    get "/settings", to: "settings#index", as: :settings
   else
   scope ':owner', defaults: { owner: "owner" } do
     # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
@@ -80,10 +63,12 @@ Rails.application.routes.draw do
     # /user/_/
     scope ':notebook', defaults: { notebook: "journal" }, constraints: lambda { |req| req.path.split("/")[2] != "_" } do
       get '/', to: "timeline#index", as: :timeline
+      get '/page/:page', to: "timeline#index"
       get '/agenda', to: "timeline#agenda", as: :agenda
       get '/timeline/search', to: "timeline#search", as: :search
       post '/timeline/save_search', to: "timeline#save_search", as: :save_search
       delete '/timeline/save_search/:id', to: "timeline#delete_saved_search", as: :delete_saved_search
+
       get '/review', to: "timeline#review", as: :review
       get '/calendar', to: "calendar#monthly", as: :calendar
       get '/calendar/weekly', to: "calendar#weekly", as: :calendar_weekly
@@ -111,6 +96,7 @@ Rails.application.routes.draw do
 
       resources :entries, path: "/" do
         member do
+          get "thread", to: "entries#show", defaults: { thread: true }, as: :threaded
           post "copy/:target_notebook", to: "entries#copy", as: :copy
           get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
           post "direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload

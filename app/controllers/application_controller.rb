@@ -58,7 +58,7 @@ class ApplicationController < ActionController::Base
 
     # remember the last notebook we were on, so we can redirect to it
     # if we're visiting the root route
-    notebook_name = params[:notebook] || session[:notebook_name]
+    notebook_name = ENV["notebook_name"] || params[:notebook] || session[:notebook_name]
     if notebook_name
       @current_notebook = current_user.notebooks.find_by!(name: notebook_name).tap do
         session[:notebook_name] = notebook_name

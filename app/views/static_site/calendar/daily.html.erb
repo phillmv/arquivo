@@ -1,0 +1,28 @@
+<%= render partial: "static_site/shared/sidebar" %>
+
+
+<div class="content-container">
+  <div class="pagehead pt-2 mb-2">
+    <nav aria-label="Breadcrumb" class="mb-1">
+      <ol class="d-inline">
+        <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></h3></li>
+        <li class="breadcrumb-item" aria-current="page"><h3><%= @date %></h3></li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="mb-4 mt-3">
+    <% prev_date = @current_notebook.entries.where("occurred_at < ?", @date.beginning_of_day).order(occurred_at: :desc).limit(1).pluck(:occurred_at)&.first&.to_date %>
+    <% next_date = @current_notebook.entries.where("occurred_at > ?", (@date + 1.day).beginning_of_day).order(occurred_at: :asc).limit(1).pluck(:occurred_at)&.first&.to_date %>
+    <% if prev_date %>
+      <a href="<%= calendar_daily_path(prev_date, @current_notebook) %>" class="btn btn-sm">Previous Day</a>
+    <% end %>
+    <% if next_date %>
+      <a href="<%= calendar_daily_path(next_date, @current_notebook) %>" class="btn btn-sm float-right">Next Day</a>
+    <% end %>
+  </div>
+
+  <% @entries&.each do |entry| %>
+    <%= render partial: "static_site/entries/list_entry", locals: { entry: entry } %>
+  <% end %>
+</div>

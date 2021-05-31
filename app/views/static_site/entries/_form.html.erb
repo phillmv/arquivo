@@ -1,0 +1,88 @@
+<% skip_cancel = defined?(skip_cancel) ? skip_cancel : false %>
+<% skip_metadata = defined?(skip_metadata) ? skip_metadata : false %>
+<% bookmark = defined?(bookmark) ? bookmark : false %>
+<%# when we hit create_or_update from outside the bookmarklet, we will want to
+  redirect back to the timeline or per normal, as opposed to trying to window.close.
+  now the third time i have to special case this form, this is a strong smell
+  that i should just have a bookmark form separate from normal entry form
+%>
+<% outside_of_bookmarklet = defined?(outside_of_bookmarklet) ? outside_of_bookmarklet : false %>
+
+<% if bookmark %>
+  <% url = create_or_update_entry_path(owner: @current_notebook.owner, notebook: @current_notebook) %>
+<% elsif entry.new_record? %>
+  <% url = create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook) %>
+<% else %>
+  <% url = entry_path(entry) %>
+<% end %>
+
+
+<%= form_with(model: entry, url: url, local: true) do |form| %>
+  <%= form.hidden_field :identifier, value: @entry.set_identifier %>
+  <% if @parent_entry %>
+    <%= form.hidden_field :in_reply_to,  value: @parent_entry.identifier %>
+  <% end %>
+
+  <% if entry.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(entry.errors.count, "error") %> prohibited this entry from being saved:</h2>
+
+      <ul>
+        <% entry.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if bookmark %>
+    <%= form.text_field :url, class: "form-control input-block" %>
+    <br/>
+    <%= form.text_field :subject, class: "form-control input-block" %>
+    <% if outside_of_bookmarklet %>
+      <%= hidden_field_tag :outside_of_bookmarklet, true %>
+    <% end %>
+  <% end %>
+
+    <% unless skip_metadata %>
+      <%= form.label :occured_date, value: "Occurred:", class: "mr-2 Label Label--gray-darker" %>
+      <%= form.text_field :occurred_date, class: "form-control input-sm", style: "width: 7.3em;" %> @ <%= form.text_field :occurred_time, class: "form-control input-sm", style: "width: 9.3em;" %>
+    <% end %>
+
+
+  <div class="form-group" style="position: relative">
+    <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
+      <text-expander keys="# @ [[" multiword="[[">
+        <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
+      </text-expander>
+      <% unless bookmark %>
+      <%= form.file_field :files, multiple: true, "data-direct-upload-url" => direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook, owner: @current_notebook.owner) %>
+
+      <% if @entry.files.attached? %>
+        <div class="pt-2">
+          <h4>Attached files:</h4>
+          <table class="col-12">
+            <% @entry.files.each do |file| %>
+              <tr>
+                <td class="col-10">
+                  <%= form.hidden_field :files, multiple: true, value: file.signed_id %>
+                  <a href="<%= url_for(file)%>"><%= file.filename %></a></td>
+                <td>
+                  <a href="">delete</a>
+                </td>
+
+              </tr>
+            <% end %>
+          </table>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <% unless skip_cancel %>
+      <%= link_to 'Cancel', :back, class: "btn btn-danger float-left" %>
+    <% end %>
+  </div>
+<% end %>
