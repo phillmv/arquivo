@@ -18,7 +18,8 @@ class PipelineFilter::HashtagFilter < HTML::Pipeline::Filter
 
   def render_hashtags(str)
     str.gsub(HASHTAG_REGEX) do |match|
-      "<a href=\"#{search_url(match)}\">#{match}</a>"
+      stripped_match = match.strip
+      " <a href=\"#{search_url(stripped_match)}\">#{stripped_match}</a>"
     end
   end
 
