@@ -75,7 +75,7 @@ class Notebook < ApplicationRecord
   end
 
   def initialize_git
-    unless Rails.application.config.skip_local_sync
+    unless Rails.application.config.skip_local_sync || Arquivo.static?
       syncer = SyncWithGit.new(self)
       syncer.init!
     end
