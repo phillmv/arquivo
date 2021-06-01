@@ -7,7 +7,7 @@ namespace :static do
   task :generate do
     Dir.mkdir 'out' unless File.exist? 'out'
     Dir.chdir 'out' do
-      `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension  --convert-links -q -nH`
+      `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension  --convert-links -nH`
 
       Dir["*.html"].each do |file|
         next if file == "index.html"
