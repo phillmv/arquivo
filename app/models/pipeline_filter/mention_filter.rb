@@ -5,7 +5,7 @@ class PipelineFilter::MentionFilter < HTML::Pipeline::MentionFilter
 
     link_path = nil
     if Arquivo.static?
-      link_path = Rails.application.routes.url_helpers.search_path(query: "@#{login}")
+      link_path = Rails.application.routes.url_helpers.contacts_path(query: login)
     else
       link_path = Rails.application.routes.url_helpers.search_path(owner: context[:entry].parent_notebook.owner, notebook: context[:entry].notebook, query: "@#{login}")
     end

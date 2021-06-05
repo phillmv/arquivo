@@ -7,9 +7,22 @@ module StaticSite
         e.occurred_date
       end
     end
-    
+
     def tags
       @search_query = params[:query]
+      @search_query = "##{@search_query}"
+      search()
+    end
+
+    def contacts
+      @search_query = params[:query]
+      @search_query = "@#{@search_query}"
+      search()
+    end
+
+    def search
+      @search_query ||= params[:query]
+
       search = Search.new(current_notebook)
 
       if @search_query.present?
