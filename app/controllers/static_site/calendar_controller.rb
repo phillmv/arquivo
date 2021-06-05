@@ -17,13 +17,16 @@ module StaticSite
       if params[:date]
         @date = params[:date].to_date
       else
-        @date = Date.today
+        @date = @current_notebook.entries.where("occurred_at < ?", Date.today.beginning_of_day).order(occurred_at: :desc).limit(1).pluck(:occurred_at)&.first&.to_date
       end
 
       @start_date = @date.beginning_of_day
       @end_date = @date.end_of_day
 
       @entries = Entry.where(notebook: @current_notebook.name).order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
+
+      @prev_date = @current_notebook.entries.where("occurred_at < ?", @date.beginning_of_day).order(occurred_at: :desc).limit(1).pluck(:occurred_at)&.first&.to_date
+      @next_date = @current_notebook.entries.where("occurred_at > ?", (@date + 1.day).beginning_of_day).order(occurred_at: :asc).limit(1).pluck(:occurred_at)&.first&.to_date
     end
 
     def weekly
