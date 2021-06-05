@@ -12,15 +12,15 @@
   </div>
 
   <div class="mb-4 mt-3">
-    <% prev_date = @current_notebook.entries.where("occurred_at < ?", @date.beginning_of_day).order(occurred_at: :desc).limit(1).pluck(:occurred_at)&.first&.to_date %>
-    <% next_date = @current_notebook.entries.where("occurred_at > ?", (@date + 1.day).beginning_of_day).order(occurred_at: :asc).limit(1).pluck(:occurred_at)&.first&.to_date %>
-    <% if prev_date %>
-      <a href="<%= calendar_daily_path(prev_date, @current_notebook) %>" class="btn btn-sm">Previous Day</a>
+    <% if @prev_date %>
+      <a href="<%= calendar_daily_path(@prev_date, @current_notebook) %>" class="btn btn-sm">Previous Day</a>
     <%  else %>
       <a class="btn btn-sm disabled">Previous Day</a>
     <% end %>
-    <% if next_date %>
-      <a href="<%= calendar_daily_path(next_date, @current_notebook) %>" class="btn btn-sm float-right">Next Day</a>
+    <% if @next_date %>
+      <a href="<%= calendar_daily_path(@next_date, @current_notebook) %>" class="btn btn-sm float-right">Next Day</a>
+    <% else %>
+      <a class="btn btn-sm disabled float-right">Next Day</a>
     <% end %>
   </div>
 
