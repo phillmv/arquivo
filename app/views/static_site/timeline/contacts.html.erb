@@ -15,7 +15,7 @@
       <% end %>
     </ul>
 
-    <ul class="d-inline list-style-none">
+    <ul class="d-inline list-style-none float-left pl-2">
       <% @contacts[size/2+1..-1].each do |c| %>
         <li><a href="<%= contact_path(query: c.name) %>">@<%= c.name%></a></li>
       <% end %>
