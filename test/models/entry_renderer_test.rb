@@ -45,7 +45,7 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     # of note: bar was not converted, and the generated urls
     # point to /test/timeline/search
-    assert_equal "<p data-sourcepos=\"1:1-1:13\"><a href=\"/phillmv/test/timeline/search?query=%23foo\">#foo</a> bar<a href=\"/phillmv/test/timeline/search?query=+%23baz\"> #baz</a></p>", hashtag_markdown_html
+    assert_equal "<p data-sourcepos=\"1:1-1:13\"> <a href=\"/phillmv/test/timeline/search?query=%23foo\">#foo</a> bar <a href=\"/phillmv/test/timeline/search?query=%23baz\">#baz</a></p>", hashtag_markdown_html
   end
 
   test "parses contacts and links them" do
