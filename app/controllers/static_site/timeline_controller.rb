@@ -6,6 +6,8 @@ module StaticSite
       @entries = @all_entries.group_by do |e|
         e.occurred_date
       end
+
+      @colophon = current_notebook.entries.find_by(identifier: "colophon")
     end
 
     def tags

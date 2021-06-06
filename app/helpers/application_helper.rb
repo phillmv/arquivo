@@ -10,6 +10,10 @@ module ApplicationHelper
     "calendar/weekly" =>  :this_week,
     "calendar/monthly" => :this_month,
     "settings/index" =>   :settings,
+    "timeline/contacts" =>   :contacts,
+    "timeline/contact" =>   :contacts,
+    "timeline/tags" =>   :tags,
+    "timeline/tag" =>   :tags,
   }
 
   def current_sidebar?(type)

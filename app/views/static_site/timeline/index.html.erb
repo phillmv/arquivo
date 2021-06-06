@@ -2,7 +2,12 @@
 <div class="content-container">
   <div style="padding-top: 9px">
     <%# <%= render partial: "timeline/search_bar" %>
-    </div>
+  </div>
+
+
+  <% if @colophon %>
+    <%= render body: EntryRenderer.new(@colophon).to_html %>
+  <% end %>
 
   <div>
     <div class="TimelineItem-start"></div>

@@ -12,10 +12,10 @@
       <h4><a href="<%= calendar_daily_path(nil, @current_notebook) %>"><%= octicon "watch" %> <span class="<%= current_sidebar?(:this_day) %>">This Day</span></a></h4>
     </div>
     <div class="Box-row pl-0 mr-5">
-      <h4><a href="<%= contacts_path %>"><%= octicon "organization" %> <span class="<%= current_sidebar?(:this_day) %>">Contacts</span></a></h4>
+      <h4><a href="<%= contacts_path %>"><%= octicon "organization" %> <span class="<%= current_sidebar?(:contacts) %>">Contacts</span></a></h4>
     </div>
     <div class="Box-row pl-0 mr-5">
-      <h4><a href="<%= tags_path %>"><%= octicon "tag" %> <span class="<%= current_sidebar?(:this_day) %>">Tags</span></a></h4>
+      <h4><a href="<%= tags_path %>"><%= octicon "tag" %> <span class="<%= current_sidebar?(:tags) %>">Tags</span></a></h4>
     </div>
   </div>
 </div>
