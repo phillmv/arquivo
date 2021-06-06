@@ -9,12 +9,20 @@ module StaticSite
     end
 
     def tags
+      @tags = current_notebook.tags.order(:name)
+    end
+
+    def tag
       @search_query = params[:query]
       @search_query = "##{@search_query}"
       search()
     end
 
     def contacts
+      @contacts = current_notebook.contacts.order(:name)
+    end
+
+    def contact
       @search_query = params[:query]
       @search_query = "@#{@search_query}"
       search()

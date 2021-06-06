@@ -3,6 +3,7 @@ class Notebook < ApplicationRecord
   has_many :entries, foreign_key: :notebook, primary_key: :name
   has_many :links, foreign_key: :notebook, primary_key: :name
   has_many :tags, foreign_key: :notebook, primary_key: :name
+  has_many :contacts, foreign_key: :notebook, primary_key: :name
   has_many :saved_searches, foreign_key: :notebook, primary_key: :name
 
   has_many :sync_states, dependent: :delete_all

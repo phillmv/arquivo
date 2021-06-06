@@ -1,0 +1,25 @@
+<%= render partial: "static_site/shared/sidebar" %>
+
+<div class="content-container">
+  <div class="pagehead pt-2 mb-2">
+    <h2>Contacts</h2>
+    </nav>
+  </div>
+
+  <div class="entry-body">
+    <% size = @contacts.count %>
+
+    <ul class="d-inline float-left list-style-none">
+      <% @contacts[0..size/2].each do |c| %>
+        <li><a href="<%= contact_path(query: c.name) %>">@<%= c.name%></a></li>
+      <% end %>
+    </ul>
+
+    <ul class="d-inline list-style-none">
+      <% @contacts[size/2+1..-1].each do |c| %>
+        <li><a href="<%= contact_path(query: c.name) %>">@<%= c.name%></a></li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+

@@ -25,7 +25,7 @@ class PipelineFilter::HashtagFilter < HTML::Pipeline::Filter
 
   def search_url(str)
     if Arquivo.static?
-      Rails.application.routes.url_helpers.tags_path(query: str.gsub("#", ""))
+      Rails.application.routes.url_helpers.tag_path(query: str.gsub("#", ""))
     else
       Rails.application.routes.url_helpers.search_path(owner: context[:entry].parent_notebook.owner, notebook: context[:entry].notebook, query: str)
     end

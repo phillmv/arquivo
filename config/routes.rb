@@ -28,8 +28,10 @@ Rails.application.routes.draw do
     get '/calendar/weekly', to: "static_site/calendar#weekly", as: :calendar_weekly
     get '/calendar/daily/(:date)', to: "static_site/calendar#daily", as: :calendar_daily
 
-    get '/tags/:query', to: "static_site/timeline#tags", as: :tags
-    get '/contacts/:query', to: "static_site/timeline#contacts", as: :contacts
+    get '/tags/', to: "static_site/timeline#tags", as: :tags
+    get '/tags/:query', to: "static_site/timeline#tag", as: :tag
+    get '/contacts/', to: "static_site/timeline#contacts", as: :contacts
+    get '/contacts/:query', to: "static_site/timeline#contact", as: :contact
     get '/page/:page', to: "static_site/timeline#index"
 
     # this is a hack to preserve routing of previous attached files
