@@ -44,10 +44,16 @@
     <% end %>
   <% end %>
 
-    <% unless skip_metadata %>
-      <%= form.label :occured_date, value: "Occurred:", class: "mr-2 Label Label--gray-darker" %>
-      <%= form.text_field :occurred_date, class: "form-control input-sm", style: "width: 7.3em;" %> @ <%= form.text_field :occurred_time, class: "form-control input-sm", style: "width: 9.3em;" %>
-    <% end %>
+  <% unless skip_metadata %>
+    <%= form.label :occured_date, value: "Occurred:", class: "mr-2 Label Label--gray-darker" %>
+    <%= form.text_field :occurred_date, class: "form-control input-sm", style: "width: 7.3em;" %> @ <%= form.text_field :occurred_time, class: "form-control input-sm", style: "width: 9.3em;" %>
+
+    <%= form.label :identifier, value: "Identifier:", class: "ml-2 mr-2 Label Label--gray-darker" %>
+    <%= form.text_field :identifier, class: "form-control input-sm" %>
+
+    <%= form.label :hide, value: "Hide?", class: "ml-2 mr-2 Label Label--gray-darker" %>
+    <%= form.check_box :hide, class: "form-control input-sm" %>
+  <% end %>
 
 
   <div class="form-group" style="position: relative">

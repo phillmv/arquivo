@@ -13,6 +13,7 @@ class Search
     "not:note",
     "not:calendar",
     "not:bookmark",
+    "hide:true",
     "sort:asc",
     "sort:created",
     "sort:created-asc"
@@ -51,7 +52,7 @@ class Search
     sql_query = Entry.for_notebook(notebook).order(occurred_at: :desc).hitherto
 
     sql_where = tokens.map do |s|
-      ["body like ? or subject like ? or url like ?", "%#{s}%", "%#{s}%", "%#{s}%"]
+      ["body like ? or subject like ? or url like ? or identifier like ?", "%#{s}%", "%#{s}%", "%#{s}%", "%#{s}%"]
     end
 
     sql_where.each do |where|
@@ -76,6 +77,8 @@ class Search
                     sql_query.with_completed_todos
                   when "has:file"
                     sql_query.with_files.group(:id)
+                  when "hide:true"
+                    sql_query.hidden
                   when "not:todo"
                     sql_query.where("body not like ?", "%- [ ]%")
                   when "not:calendar"

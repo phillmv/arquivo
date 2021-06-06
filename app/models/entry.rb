@@ -11,6 +11,7 @@ class Entry < ApplicationRecord
   belongs_to :parent_notebook, foreign_key: :notebook, primary_key: :name, class_name: 'Notebook'
 
   scope :visible, -> { where(hide: false) }
+  scope :hidden, -> { where(hide: true) }
   scope :for_notebook, -> (notebook) { where(notebook: notebook.to_s) }
   scope :hitherto, -> { where("occurred_at <= ? ", Time.current.end_of_day) }
   scope :upcoming, -> { where("occurred_at > ? ", Time.now) }
