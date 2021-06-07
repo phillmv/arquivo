@@ -32,8 +32,14 @@ class Entry < ApplicationRecord
 
   scope :with_files, -> { joins(:files_attachments) }
 
-  has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
-  belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
+  # has_many :replies, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier
+  def replies
+    self.parent_notebook.entries.where(in_reply_to: self.identifier)
+  end
+  # belongs_to :parent, class_name: "Entry", foreign_key: :in_reply_to, primary_key: :identifier, optional: true
+  def parent
+    self.parent_notebook.entries.find_by(identifier: self.in_reply_to)
+  end
 
   # TODO: assert dependent destroys clean up through models if relevant
 
