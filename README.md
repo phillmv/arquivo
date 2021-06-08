@@ -42,11 +42,17 @@ Arquivo currently supports the following features:
 
 
 ## Installation
+### Dependencies
 
 At the time of writing, very little effort has gone into making the app comfortable for new users. These instructions may be out of date.
 
-I hereby assume you, dear reader, have a certain level of familiarity with ruby, rails, and node.
+I hereby assume you, dear reader, have a certain level of familiarity with ruby, rails, and node. You will need to install:
 
+- Ruby >= 2.6.5
+- Node ~13 or so
+- Yarn 1.22.4
+
+### Setup
 
 ```bash
 git clone git@github.com:phillmv/arquivo.git
@@ -55,9 +61,9 @@ bundle
 
 yarn install
 
-rails db:setup
+bundle exec rails db:setup
 
-rails c
+bundle exec rails c
 ```
 
 The app assumes you have a `$HOME/Documents` folder, and will try to create a `$HOME/Documents/arquivo` subdirectory.
@@ -69,6 +75,8 @@ Notebook.create(name: "journal") # default notebook
 
 Notebook.create(name: "work")
 ```
+
+Finally, at the moment the user is hardcoded. You will want to edit `app/models/user.rb` to change `def self.name` to point to your user.
 
 ### Adding a calendar
 
@@ -87,16 +95,16 @@ UpdateCalendarsJob.perform_now!
 Then just start the server:
 
 ```bash
-rails s
+bundle exec rails s
 
 # or
 
 forego start
 ```
 
-visit http://localhost:3000/work/timeline
+visit http://localhost:3000/
 
-I _highly_ recommend setting a local hostname of `arquivo.localhost` for your app. Some minor features may not work out of the box otherwise.
+I _highly_ recommend setting a local hostname of `arquivo.localhost` for your app, and a port 80 redirect via nginx or what have you. Some minor features may not work out of the box otherwise.
 
 ## Import / Export
 
@@ -106,6 +114,8 @@ Meant to sync notebooks between machines. This works quite well with Dropbox.
 rails runner 'SyncToDisk.export_all!("/your/path/here/arquivo")'
 rails runner 'SyncFromDisk.import_all!("/your/path/here/arquivo")'
 ```
+
+To automatically sync to a git remote, open a terminal, `cd $HOME/Documents/arquivo/your-notebook-here` and add a remote to the repository, i.e. `git remote origin add URLHERE`.
 
 ## Developing
 
