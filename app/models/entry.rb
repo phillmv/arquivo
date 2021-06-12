@@ -288,17 +288,21 @@ class Entry < ApplicationRecord
     File.join(arquivo_path,
               notebook,
               occurred_at.strftime("%Y/%m/%d"),
-              identifier)
+              identifier_sanitized)
   end
 
   def to_relative_file_path
     File.join(occurred_at.strftime("%Y/%m/%d"),
-              identifier,
+              identifier_sanitized,
               to_filename)
   end
 
+  def identifier_sanitized
+    @identifier_sanitized ||= ActiveStorage::Filename.new(identifier).sanitized
+  end
+
   def to_filename
-    "#{identifier}.yaml"
+    "#{identifier_sanitized}.yaml"
   end
 
   def to_full_file_path(arquivo_path)
