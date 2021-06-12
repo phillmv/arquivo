@@ -60,6 +60,7 @@ Rails.application.routes.draw do
     # only here to keep the UrlHelper ticking
     get "/settings", to: "settings#index", as: :settings
   else
+
   scope ':owner', defaults: { owner: "owner" } do
     # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
     # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
@@ -97,13 +98,30 @@ Rails.application.routes.draw do
 
       put "/update", to: "notebooks#update", as: :update_notebook
 
-      resources :entries, path: "/" do
-        member do
-          get "thread", to: "entries#show", defaults: { thread: true }, as: :threaded
-          post "copy/:target_notebook", to: "entries#copy", as: :copy
-          get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
-          post "direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload
-        end
+      # begin weird entry url fuckery
+      # in order to support slashes as valid parts of the url, and not have
+      # the url get escaped by the url helper, you have to specify the url as
+      # a glob match. but in order to do that, you can no longer have nice
+      # things like "resources do member do get 'foo'"
+      # cf https://github.com/rails/rails/issues/14636
+      #
+      # technically this also prevents me from being able to use formats but
+      # maybe that's not a big deal
+      get "/new", to: "entries#new", as: :new_entry
+      get "/*id/files/:filename", to: "entries#files", as: :files_entry, constraints: { filename: /[^\/]+/ }
+      get "/*id/thread", to: "entries#show", defaults: { thread: true }, as: :threaded_entry
+      post "/*id/copy/:target_notebook", to: "entries#copy", as: :copy_entry
+      post "/*id/direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload_entry
+      get "/*id/edit", to: "entries#edit", as: :edit_entry
+      get "/*id", to: "entries#show", as: :entry
+
+      resources :entries, path: "/", except: [:show, :edit] do
+        # member do
+          # get "thread", to: "entries#show", defaults: { thread: true }, as: :threaded
+          # post "copy/:target_notebook", to: "entries#copy", as: :copy
+          # get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
+          # post "direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload
+        # end
       end
     end
   end
