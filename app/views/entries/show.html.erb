@@ -20,7 +20,7 @@
     <div class="mb-3">
       <!-- <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon unselectable float&#45;right"> <%= octicon("pencil") %> edit </a> -->
 
-      <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon f4">
+      <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon f4 permalink">
         <%= octicon "link", class: "mr-1 v-visible " %><%= @entry.occurred_at %>
       </a>
 
