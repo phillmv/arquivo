@@ -11,7 +11,7 @@
 
     <ul class="d-inline float-left list-style-none">
       <% @tags[0..size/2].each do |c| %>
-        <li><a href="<%= tag_path(query: c.name.gsub("#","") %>"><%= c.name%></a></li>
+        <li><a href="<%= tag_path(query: c.name.gsub("#","")) %>"><%= c.name%></a></li>
       <% end %>
     </ul>
 
