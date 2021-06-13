@@ -41,24 +41,18 @@ Rails.application.routes.draw do
       # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
       # /user/_/
       scope ':notebook', constraints: lambda { |req| req.path.split("/")[2] != "_" } do
-        get ":id/files/:filename", to: "entries#files", as: :entry_files, constraints: { filename: /[^\/]+/ }
+        get "/*id/files/:filename", to: "entries#files", as: :files_entry, constraints: { filename: /[^\/]+/ }
       end
     end
-
 
     get '/', to: "static_site/timeline#index", as: :timeline
-    delete '/timeline/save_search/:id', to: "timeline#delete_saved_search", as: :delete_saved_search
 
-    get "/", to: redirect("/%{notebook}/timeline")
-
-    resources :entries, path: "/", controller: "static_site/entries" do
-      member do
-        get "thread", to: "static_site/entries#show", defaults: { thread: true }, as: :threaded
-      end
-    end
+    get "/*id/thread", to: "static_site/entries#show", defaults: { thread: true }, as: :threaded_entry
+    get "/*id", to: "static_site/entries#show", as: :entry
 
     # only here to keep the UrlHelper ticking
     get "/settings", to: "settings#index", as: :settings
+    get "/*id/edit", to: "entries#edit", as: :edit_entry
   else
 
   scope ':owner', defaults: { owner: "owner" } do
@@ -112,22 +106,22 @@ Rails.application.routes.draw do
       # resources :entries, path: "/" do
       #   member do
             # get "thread", to: "entries#show", defaults: { thread: true }, as: :threaded
-            get "/*id/thread", to: "entries#show", defaults: { thread: true }, as: :threaded_entry
             # post "copy/:target_notebook", to: "entries#copy", as: :copy
-            post "/*id/copy/:target_notebook", to: "entries#copy", as: :copy_entry
             # get "files/:filename", to: "entries#files", as: :files, constraints: { filename: /[^\/]+/ }
-            get "/*id/files/:filename", to: "entries#files", as: :files_entry, constraints: { filename: /[^\/]+/ }
             # post "direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload
+            get "/*id/thread", to: "entries#show", defaults: { thread: true }, as: :threaded_entry
+            post "/*id/copy/:target_notebook", to: "entries#copy", as: :copy_entry
+            get "/*id/files/:filename", to: "entries#files", as: :files_entry, constraints: { filename: /[^\/]+/ }
             post "/*id/direct_upload", to: "active_storage/direct_uploads#create", as: :direct_upload_entry
       #  end
       #  # normal resources stuff but with glob matches:
-      get    "/new", to: "entries#new", as: :new_entry
+      get    "/new",      to: "entries#new",  as: :new_entry
       get    "/*id/edit", to: "entries#edit", as: :edit_entry
-      get    "/*id", to: "entries#show", as: :entry
-      post   "/", to: "entries#create"
-      patch  "/*id", to: "entries#update"
-      put    "/*id", to: "entries#update"
-      delete "/*id", to: "entries#destroy"
+      get    "/*id",      to: "entries#show", as: :entry
+      post   "/",         to: "entries#create"
+      patch  "/*id",      to: "entries#update"
+      put    "/*id",      to: "entries#update"
+      delete "/*id",      to: "entries#destroy"
       # end weird entry url fuckery
     end
   end
