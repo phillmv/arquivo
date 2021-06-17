@@ -204,7 +204,7 @@ class SyncFromDisk
     create_time = File.ctime(md_path)
     {
       'notebook' => notebook.to_s,
-      'identifier' => md_path,
+      'identifier' => Pathname.new(md_path).relative_path_from(notebook_path).to_s,
       'body' => markdown.content,
       'created_at' =>  create_time,
       'occurred_at' =>  create_time,
