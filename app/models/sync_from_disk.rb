@@ -84,8 +84,10 @@ class SyncFromDisk
     # Generate entries for any markdown files:
     markdown_paths = File.join(notebook_path, MARKDOWN_GLOB)
     Dir[markdown_paths].each do |markdown_path|
-      markdown = FrontMatterParser::Parser.parse_file(markdown_path)
-      entry, updated = upsert_from_markdown!(notebook, markdown)
+      entry_attributes = entry_attributes_from_markdown(notebook, markdown_path)
+      entry_attributes[:skip_local_sync] = true
+
+      entry, updated = upsert_entry!(notebook, entry_attributes)
       updated_entry_ids << entry.identifier if updated
     end
 
@@ -196,12 +198,18 @@ class SyncFromDisk
     [entry, updated]
   end
 
-  def upsert_from_markdown!(notebook, markdown)
-    puts "yo #{markdown.front_matter}"
-    puts "yo #{markdown.content}"
-
-    binding.pry
-    entry = Entry.new
-    [entry, true]
+  def entry_attributes_from_markdown(notebook, md_path)
+    loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time])
+    markdown = FrontMatterParser::Parser.parse_file(md_path, loader: loader)
+    create_time = File.ctime(md_path)
+    {
+      'notebook' => notebook.to_s,
+      'identifier' => md_path,
+      'body' => markdown.content,
+      'created_at' =>  create_time,
+      'occurred_at' =>  create_time,
+      'updated_at' => File.mtime(md_path),
+      'hide' => false
+    }.merge(markdown.front_matter)
   end
 end
