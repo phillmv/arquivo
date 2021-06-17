@@ -4,6 +4,7 @@ class SyncFromDisk
   # pattern is notebook/year/month/day/identifier
   NOTEBOOK_GLOB = "/*" #notebook
   DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
+  MARKDOWN_GLOB = "**/*.md"
   def initialize(notebook_path, notebook = nil, override_notebook: false)
     @notebook_path = notebook_path
     @notebook = notebook
@@ -78,6 +79,14 @@ class SyncFromDisk
           updated_entry_ids << entry.identifier
         end
       end
+    end
+
+    # Generate entries for any markdown files:
+    markdown_paths = File.join(notebook_path, MARKDOWN_GLOB)
+    Dir[markdown_paths].each do |markdown_path|
+      markdown = FrontMatterParser::Parser.parse_file(markdown_path)
+      entry, updated = upsert_from_markdown!(notebook, markdown)
+      updated_entry_ids << entry.identifier if updated
     end
 
     # we're done processing all the entries for this notebook_path.
@@ -185,5 +194,14 @@ class SyncFromDisk
     end
 
     [entry, updated]
+  end
+
+  def upsert_from_markdown!(notebook, markdown)
+    puts "yo #{markdown.front_matter}"
+    puts "yo #{markdown.content}"
+
+    binding.pry
+    entry = Entry.new
+    [entry, true]
   end
 end
