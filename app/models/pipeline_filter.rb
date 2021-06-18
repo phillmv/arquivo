@@ -6,8 +6,17 @@ module PipelineFilter
   ESW = ENTRY_SANITIZATION_WHITELIST
   ESW[:elements] = ESW[:elements].dup
   ESW[:elements] << "table-of-contents"
+  ESW[:elements] << "section"
 
   ESW[:attributes] = ESW[:attributes].dup
+  # used for enabling footnotes
+  ESW[:attributes]['a'] = ESW[:attributes]['a'].dup
+  ESW[:attributes]['a'].push("id")
+  ESW[:attributes]['sup'] = ['class']
+  ESW[:attributes]['li'] = ['id']
+  # end footnotes
+
+  # used for enabling task lists in js
   ESW[:attributes][:all] = ESW[:attributes][:all].dup
   ESW[:attributes][:all].push("data-sourcepos")
 
