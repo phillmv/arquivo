@@ -44,9 +44,25 @@ class SyncFromDisk
   def import!
     raise "Path bad" unless File.exist?(notebook_path)
 
+    # if we have a notebook.yaml file, we're probably dealing with a normal
+    # arquivo notebook, and we can go ahead and assume that the entry folder
+    # paths follow the y/m/d/id/files convention
+    if File.exist?(File.join(notebook_path, "notebook.yaml"))
+      notebook = import_from_arquivo_folder
+    else
+      # if this is not a full arquivo notebook, then it's a folder full of
+      # ad-hoc markdown files and folders, and we're going to do some weird
+      # stuff to make everything "just work"
+      notebook = import_from_folder_full_of_markdown
+    end
+
+    notebook
+  end
+
+  def import_from_arquivo_folder
     notebook = load_or_create_notebook(notebook_path)
 
-    # fetch every entry yaml file
+    # fetch every entry yaml folder
     entry_folders_path = File.join(notebook_path, DIR_GLOB)
     entry_folders = Dir[entry_folders_path]
 
@@ -81,16 +97,6 @@ class SyncFromDisk
       end
     end
 
-    # Generate entries for any markdown files:
-    markdown_paths = File.join(notebook_path, MARKDOWN_GLOB)
-    Dir[markdown_paths].each do |markdown_path|
-      entry_attributes = entry_attributes_from_markdown(notebook, markdown_path)
-      entry_attributes[:skip_local_sync] = true
-
-      entry, updated = upsert_entry!(notebook, entry_attributes)
-      updated_entry_ids << entry.identifier if updated
-    end
-
     # we're done processing all the entries for this notebook_path.
     # let's sync it to our git repo
     if updated_entry_ids.any? && !Rails.application.config.skip_local_sync
@@ -102,6 +108,26 @@ class SyncFromDisk
     end
 
     notebook
+  end
+
+  def import_from_folder_full_of_markdown
+    # Generate entries for any markdown files:
+
+    # for now, let's guess a random notebook name
+    # in the future, maybe use an env var?
+    notebook_name = File.basename(notebook_path).strip
+    notebook = Notebook.find_by(name: notebook_name)
+    if notebook.nil?
+      notebook = Notebook.create(name: notebook_name)
+    end
+
+    markdown_paths = File.join(notebook_path, MARKDOWN_GLOB)
+    Dir[markdown_paths].each do |markdown_path|
+      entry_attributes = entry_attributes_from_markdown(notebook, markdown_path)
+      entry_attributes[:skip_local_sync] = true
+
+      entry, updated = upsert_entry!(notebook, entry_attributes)
+    end
   end
 
   def load_or_create_notebook(notebook_path)
