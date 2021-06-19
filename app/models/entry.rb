@@ -26,6 +26,7 @@ class Entry < ApplicationRecord
   scope :calendars, -> { where(kind: "calendar") }
   scope :bookmarks, -> { where(kind: "pinboard") }
   scope :except_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
+  scope :documents, -> { where(kind: "document") }
 
   scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
   scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
@@ -57,6 +58,7 @@ class Entry < ApplicationRecord
 
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
+
   attr_accessor :skip_local_sync # skip sync to git
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
   before_save :set_subject
@@ -155,6 +157,10 @@ class Entry < ApplicationRecord
 
   def bookmark?
     kind == "pinboard"
+  end
+
+  def document?
+    kind == "document"
   end
 
   def fold?

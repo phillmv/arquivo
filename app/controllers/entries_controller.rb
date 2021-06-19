@@ -10,9 +10,15 @@ class EntriesController < ApplicationController
   # GET /entries/1
   # GET /entries/1.json
   def show
-    @show_thread = params[:thread].present?
-    @renderer = EntryRenderer.new(@entry)
-    @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
+    if @entry.document?
+      blob = @entry.files.blobs.first
+      expires_in ActiveStorage.service_urls_expire_in
+      redirect_to rails_blob_path(blob, disposition: params[:disposition])
+    else
+      @show_thread = params[:thread].present?
+      @renderer = EntryRenderer.new(@entry)
+      @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
+    end
   end
 
   # GET /entries/new
@@ -146,10 +152,8 @@ class EntriesController < ApplicationController
   end
 
   private
-  # TODO: We can delete this now, right?
     def set_entry
-      # quick terrible hack for routing ical uuids
-      # that are email addresses
+      # quick terrible hack for routing document type entries
       if params[:format]
         identifier = "#{params[:id]}.#{params[:format]}"
         @entry = Entry.find_by(identifier: identifier, notebook: current_notebook.to_s)
