@@ -62,6 +62,7 @@ end
 
 gem 'pry-rails'
 gem 'simple_calendar'
+gem 'front_matter_parser'
 
 group :test do
   # Adds support for Capybara system testing and selenium driver

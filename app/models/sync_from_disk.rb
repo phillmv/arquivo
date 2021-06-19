@@ -4,6 +4,7 @@ class SyncFromDisk
   # pattern is notebook/year/month/day/identifier
   NOTEBOOK_GLOB = "/*" #notebook
   DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
+  EVERYTHING_GLOB = "**/*"
   def initialize(notebook_path, notebook = nil, override_notebook: false)
     @notebook_path = notebook_path
     @notebook = notebook
@@ -43,9 +44,25 @@ class SyncFromDisk
   def import!
     raise "Path bad" unless File.exist?(notebook_path)
 
+    # if we have a notebook.yaml file, we're probably dealing with a normal
+    # arquivo notebook, and we can go ahead and assume that the entry folder
+    # paths follow the y/m/d/id/files convention
+    if File.exist?(File.join(notebook_path, "notebook.yaml"))
+      notebook = import_from_arquivo_folder
+    else
+      # if this is not a full arquivo notebook, then it's a folder full of
+      # ad-hoc markdown files and folders, and we're going to do some weird
+      # stuff to make everything "just work"
+      notebook = import_from_folder_full_of_markdown
+    end
+
+    notebook
+  end
+
+  def import_from_arquivo_folder
     notebook = load_or_create_notebook(notebook_path)
 
-    # fetch every entry yaml file
+    # fetch every entry yaml folder
     entry_folders_path = File.join(notebook_path, DIR_GLOB)
     entry_folders = Dir[entry_folders_path]
 
@@ -111,7 +128,6 @@ class SyncFromDisk
 
     notebook
   end
-
 
   def attach_files(entry, entry_path)
     entry_files_path = File.join(entry_path, "files")
@@ -185,5 +201,63 @@ class SyncFromDisk
     end
 
     [entry, updated]
+  end
+
+  def import_from_folder_full_of_markdown
+    # Generate entries for any markdown files:
+
+    # for now, let's guess a random notebook name
+    # in the future, maybe use an env var?
+    notebook_name = File.basename(notebook_path).strip
+    notebook = Notebook.find_by(name: notebook_name)
+    if notebook.nil?
+      notebook = Notebook.create(name: notebook_name)
+    end
+
+    markdown_paths = File.join(notebook_path, EVERYTHING_GLOB)
+    Dir[markdown_paths].each do |markdown_path|
+      next unless markdown_path =~ /\.(md|markdown)$/
+      entry_attributes = entry_attributes_from_markdown(notebook, markdown_path)
+      entry_attributes[:skip_local_sync] = true
+
+      entry, updated = upsert_entry!(notebook, entry_attributes)
+    end
+  end
+
+  def entry_attributes_from_markdown(notebook, md_path)
+    loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time])
+    md_parser = FrontMatterParser::SyntaxParser::Md.new
+    parsed_file = FrontMatterParser::Parser.new(md_parser, loader: loader).call(File.read(md_path))
+
+    occurred_at = parsed_file["occurred_at"]
+    if occurred_at.blank?
+      # let's try to guess it from the file
+      basename = File.basename(md_path)
+      date = basename.match(/([0-9]{4}-*[0-9]{2}-*[0-9]{2}-*)/).to_a[0]
+
+      # most of the time this does the right thing but it does have the habit
+      # of sometimes throwing an exception
+      begin
+        occurred_at = DateTime.parse(date.to_s)
+      rescue ArgumentError
+      end
+
+      # if still nil, let's look at the file itself
+      if occurred_at.nil?
+        occurred_at = File.ctime(md_path)
+      end
+    end
+
+    # if we're parsing front-mattered markdown, you don't get to define an
+    # identifier separate from the file's relative path, don't want to deal
+    # with collisions etc, too confusing
+    identifier = Pathname.new(md_path).relative_path_from(notebook_path).to_s
+    identifier = identifier.gsub(/\.(md|markdown)/, "")
+
+    parsed_file.front_matter.merge({
+      "identifier" => identifier,
+      "occurred_at" => occurred_at,
+      "body" => parsed_file.content
+    }).slice(*Entry.accepted_attributes)
   end
 end

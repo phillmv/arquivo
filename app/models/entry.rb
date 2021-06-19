@@ -312,4 +312,27 @@ class Entry < ApplicationRecord
   def truncated_description(n = 30)
     (subject || body || "").truncate(n)
   end
+
+  def self.accepted_attributes
+    ["notebook",
+     "body",
+     "metadata",
+     "kind",
+     "source",
+     "url",
+     "latitude",
+     "longitude",
+     "occurred_at",
+     "ended_at",
+     "created_at",
+     "updated_at",
+     "summary",
+     "identifier",
+     "subject",
+     "from",
+     "to",
+     "in_reply_to",
+     "state",
+     "hide"]
+  end
 end
