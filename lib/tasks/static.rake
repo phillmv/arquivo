@@ -8,6 +8,7 @@ namespace :static do
     Dir.mkdir 'out' unless File.exist? 'out'
     Dir.chdir 'out' do
       `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension  --convert-links -nH`
+      # TODO: iterate over hidden entries, somehow
 
       # i thought this was necessary but it turns out that in GH Pages it auto forwards /foo to /foo.html
       # Dir["*.html"].each do |file|
