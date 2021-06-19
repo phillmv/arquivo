@@ -221,8 +221,27 @@ class SyncFromDisk
         entry_attributes[:skip_local_sync] = true
 
         entry, updated = upsert_entry!(notebook, entry_attributes)
-      else
+      elsif !File.directory?(file_path)
+        # gonna need some entry attributes
+
+        identifier = path_to_relative_identifier(file_path),
+        entry_attributes = {
+          identifier: identifier,
+          occurred_at: File.ctime(file_path),
+          updated_at: File.mtime(file_path),
+          skip_local_sync: true,
+          kind: :document
+        }
+
+        entry, updated = upsert_entry!(notebook, entry_attributes)
+
         binding.pry
+        entry.files.attach({
+          io: File.open(file_path),
+          filename: File.basename(identifier),
+        })
+
+        # now i need to upload the doc
       end
     end
   end
@@ -254,7 +273,7 @@ class SyncFromDisk
     # if we're parsing front-mattered markdown, you don't get to define an
     # identifier separate from the file's relative path, don't want to deal
     # with collisions etc, too confusing
-    identifier = Pathname.new(md_path).relative_path_from(notebook_path).to_s
+    identifier = path_to_relative_identifier(md_path)
     identifier = identifier.gsub(/\.(md|markdown)/, "")
 
     parsed_file.front_matter.merge({
@@ -262,5 +281,9 @@ class SyncFromDisk
       "occurred_at" => occurred_at,
       "body" => parsed_file.content
     }).slice(*Entry.accepted_attributes)
+  end
+
+  def path_to_relative_identifier(file_path)
+    Pathname.new(file_path).relative_path_from(notebook_path).to_s
   end
 end
