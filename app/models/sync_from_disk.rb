@@ -224,22 +224,32 @@ class SyncFromDisk
       elsif !File.directory?(file_path)
         # gonna need some entry attributes
 
-        identifier = path_to_relative_identifier(file_path),
+        identifier = path_to_relative_identifier(file_path)
+        filename = File.basename(identifier)
+
         entry_attributes = {
-          identifier: identifier,
-          occurred_at: File.ctime(file_path),
-          updated_at: File.mtime(file_path),
+          "identifier" => identifier,
+          "occurred_at" => File.ctime(file_path),
+          "updated_at" => File.mtime(file_path),
+          "kind" => :document,
+          "hide" => true,
           skip_local_sync: true,
-          kind: :document
         }
 
         entry, updated = upsert_entry!(notebook, entry_attributes)
 
-        binding.pry
-        entry.files.attach({
-          io: File.open(file_path),
-          filename: File.basename(identifier),
-        })
+        if !entry.files.blobs.find_by(filename: filename)
+          blob = ActiveStorage::Blob.create_and_upload!(io: File.open(file_path),
+                                                        filename: filename)
+
+          # run analysis step synchronously, so we skip the async job
+          # for reasons i don't comprehend, in dev mode at least
+          # ActiveStorage::AnalyzeJob just hangs there indefinitely, doing
+          # naught to improve our lot, and this is very frustrating and further
+          # i have close to zero desire to debug ActiveJob async shenanigans
+          blob.analyze
+          entry.files.create(blob_id: blob.id, created_at: blob.created_at)
+        end
 
         # now i need to upload the doc
       end
@@ -270,6 +280,9 @@ class SyncFromDisk
       end
     end
 
+    created_at = parsed_file["created_at"] || File.ctime(md_path)
+    updated_at = parsed_file["updated_at"] || File.mtime(md_path)
+
     # if we're parsing front-mattered markdown, you don't get to define an
     # identifier separate from the file's relative path, don't want to deal
     # with collisions etc, too confusing
@@ -279,7 +292,9 @@ class SyncFromDisk
     parsed_file.front_matter.merge({
       "identifier" => identifier,
       "occurred_at" => occurred_at,
-      "body" => parsed_file.content
+      "body" => parsed_file.content,
+      "created_at" => created_at,
+      "updated_at" => updated_at
     }).slice(*Entry.accepted_attributes)
   end
 
