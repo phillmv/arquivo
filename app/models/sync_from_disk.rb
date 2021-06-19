@@ -214,13 +214,16 @@ class SyncFromDisk
       notebook = Notebook.create(name: notebook_name)
     end
 
-    markdown_paths = File.join(notebook_path, EVERYTHING_GLOB)
-    Dir[markdown_paths].each do |markdown_path|
-      next unless markdown_path =~ /\.(md|markdown)$/
-      entry_attributes = entry_attributes_from_markdown(notebook, markdown_path)
-      entry_attributes[:skip_local_sync] = true
+    everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
+    Dir[everything_paths].each do |file_path|
+      if file_path =~ /\.(md|markdown)$/
+        entry_attributes = entry_attributes_from_markdown(notebook, file_path)
+        entry_attributes[:skip_local_sync] = true
 
-      entry, updated = upsert_entry!(notebook, entry_attributes)
+        entry, updated = upsert_entry!(notebook, entry_attributes)
+      else
+        binding.pry
+      end
     end
   end
 
