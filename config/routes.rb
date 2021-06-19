@@ -48,7 +48,7 @@ Rails.application.routes.draw do
     get '/', to: "static_site/timeline#index", as: :timeline
 
     get "/*id/thread", to: "static_site/entries#show", defaults: { thread: true }, as: :threaded_entry
-    get "/*id", to: "static_site/entries#show", as: :entry
+    get "/*id", to: "static_site/entries#show", as: :entry, constraints: lambda { |req| req.path.split("/")[2] != "_" }
 
     # only here to keep the UrlHelper ticking
     get "/settings", to: "settings#index", as: :settings
@@ -58,7 +58,7 @@ Rails.application.routes.draw do
   scope ':owner', defaults: { owner: "owner" } do
     # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
     # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
-    # /user/_/
+    # /user/_/ in config/environment/*
     scope ':notebook', defaults: { notebook: "journal" }, constraints: lambda { |req| req.path.split("/")[2] != "_" } do
       get '/', to: "timeline#index", as: :timeline
       get '/page/:page', to: "timeline#index"
