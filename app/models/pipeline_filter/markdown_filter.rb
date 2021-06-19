@@ -15,7 +15,7 @@
 module CommonMarker
   module Config
     class Render
-      define :FOOTNOTES, (1 << 13)
+      define(:FOOTNOTES, (1 << 13)) unless key?(:FOOTNOTES)
     end
   end
 end
