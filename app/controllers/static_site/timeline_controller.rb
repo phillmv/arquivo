@@ -52,5 +52,9 @@ module StaticSite
         redirect_to timeline_path(current_notebook)
       end
     end
+
+    def hidden_entries
+      @entries = current_notebook.entries.hidden.order(occurred_at: :asc).paginate(page: params[:page])
+    end
   end
 end

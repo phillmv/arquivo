@@ -7,8 +7,9 @@ namespace :static do
   task :generate do
     Dir.mkdir 'out' unless File.exist? 'out'
     Dir.chdir 'out' do
-      `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension  --convert-links -nH`
-      # TODO: iterate over hidden entries, somehow
+      `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH`
+      `wget localhost:3000/hidden_entries --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension -nH`
+      `rm -rf hidden_entries*`
 
       # i thought this was necessary but it turns out that in GH Pages it auto forwards /foo to /foo.html
       # Dir["*.html"].each do |file|

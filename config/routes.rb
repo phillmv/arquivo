@@ -33,6 +33,8 @@ Rails.application.routes.draw do
     get '/contacts/', to: "static_site/timeline#contacts", as: :contacts
     get '/contacts/:query', to: "static_site/timeline#contact", as: :contact
     get '/page/:page', to: "static_site/timeline#index"
+    get '/hidden_entries/', to: "static_site/timeline#hidden_entries"
+    get '/hidden_entries/:page', to: "static_site/timeline#hidden_entries"
 
     # this is a hack to preserve routing of previous attached files
     # whose url will refer /owner/notebook/identifier/files/filename

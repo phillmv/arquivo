@@ -1,0 +1,10 @@
+<h1>The purpose of this page is to list all the hidden entries so that wget can get them.</h1>
+<div>
+  <% @entries.each do |entry| %>
+    <%= link_to entry.identifier, entry_path(entry) %>
+  <% end %>
+
+</div>
+<div>
+<%= will_paginate @entries, class: "pagination mt-4 mb-4"%>
+</div>
