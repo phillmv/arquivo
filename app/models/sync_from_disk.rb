@@ -257,7 +257,7 @@ class SyncFromDisk
   end
 
   def entry_attributes_from_markdown(notebook, md_path)
-    loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time])
+    loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time, Date, DateTime])
     md_parser = FrontMatterParser::SyntaxParser::Md.new
     parsed_file = FrontMatterParser::Parser.new(md_parser, loader: loader).call(File.read(md_path))
 
