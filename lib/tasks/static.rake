@@ -1,7 +1,7 @@
 namespace :static do
   desc 'Generate static site in ./out/ directory'
   task :import => :environment do
-    SyncFromDisk.new(ENV["GITHUB_WORKSPACE"] || ENV["NOTEBOOK_PATH"]).import!
+    SyncFromDisk.new(ENV["NOTEBOOK_PATH"]).import!
   end
 
   task :generate do
