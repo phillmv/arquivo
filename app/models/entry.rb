@@ -223,14 +223,16 @@ class Entry < ApplicationRecord
 
     copy = notebook.entries.find_by(identifier: copy.identifier)
 
-    self.files.each do |file|
-      file.blob.open do |tempfile|
-        copy.files.attach({
-          io: tempfile,
-          filename: file.blob.filename,
-          content_type: file.blob.content_type
-        })
+    self.files.each do |orig_file|
+      orig_blob = orig_file.blob
+      orig_blob.open do |tempfile|
+        copy_blob = ActiveStorage::Blob.create_and_upload!(io: tempfile,
+                                                           filename: orig_blob.filename,
+                                                           content_type: orig_blob.content_type,
+                                                           identify: false)
+        copy.files.create(blob_id: copy_blob.id, created_at: copy_blob.created_at)
       end
+
     end
 
     copy.save!
