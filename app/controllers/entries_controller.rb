@@ -1,5 +1,6 @@
 class EntriesController < ApplicationController
-  before_action :set_entry, only: [:show, :edit, :update, :destroy, :files, :copy]
+  before_action :find_or_build_entry, only: [:show, :edit]
+  before_action :find_entry, only: [:update, :destroy, :files, :copy]
 
   # GET /entries
   # GET /entries.json
@@ -167,15 +168,59 @@ class EntriesController < ApplicationController
         # id params, so we can throw a 404
       end
 
-      @entry = Entry.find_by!(identifier: params[:id], notebook: current_notebook.to_s)
+  def find_entry
+    identifier = params[:id]
+    # quick terrible hack for routing document type entries
+    if params[:format]
+      identifier = "#{identifier}.#{params[:format]}"
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def entry_params
-      params.require(:entry).permit(:identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, :occurred_date, :occurred_time, files: [])
+    @entry = current_notebook.entries.find_by!(identifier: identifier)
+  end
+
+  # if we're asked to visit a page whose identifier doesn't exist yet,
+  # then we should prompt the user to create an entry with that identifier
+  # this is used to support wikified links that are typed ahead of time, and
+  # rendered in red; clicking on the red link lets you fill in the entry.
+  def find_or_build_entry
+    identifier = params[:id]
+    # quick terrible hack for routing document type entries
+    if params[:format]
+      identifier = "#{identifier}.#{params[:format]}"
     end
 
-    def bookmark_params
-      params.permit(:body, :url, :subject)
+    @entry = current_notebook.entries.find_by(identifier: identifier)
+
+    if @entry.nil?
+      @entry = current_notebook.entries.build(identifier: identifier,
+                                              occurred_at: Time.current)
+
+      if action_name == "show"
+        redirect_to edit_entry_path(@entry)
+      else
+        # if the referrer exists,
+        referrer = request.referrer
+        if referrer
+          nwo = current_notebook.name_with_owner
+          i = referrer.index(nwo)
+          # referrer[index + size + "/"]
+          referrer_identifier = referrer[i+nwo.size+1..-1]
+
+          # and there's a valid identifier in the referrer,
+          # then we set the parent entry so that wikified links
+          # reply to / are threaded with the entry that was "clicked thru"
+          @parent_entry = current_notebook.entries.find_by(identifier: referrer_identifier)
+        end
+      end
     end
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def entry_params
+    params.require(:entry).permit(:identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, :occurred_date, :occurred_time, files: [])
+  end
+
+  def bookmark_params
+    params.permit(:body, :url, :subject)
+  end
 end

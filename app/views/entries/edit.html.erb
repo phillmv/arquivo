@@ -2,8 +2,18 @@
 
 <div class="content-container">
   <div class="pagehead">
-    <h1>Editing Entry</h1>
+    <% if @entry.persisted? %>
+      <h1>Editing Entry</h1>
+    <% else %>
+      <h1>Create <%= @entry.identifier %></h1>
+    <% end %>
   </div>
+
+  <% if @parent_entry %>
+    <%= render partial: "entries/list_entry", locals: { entry: @parent_entry } %>
+    <br/>
+  <% end %>
+
 
   <%= render 'form', entry: @entry, bookmark: @entry.bookmark?, skip_metadata: @entry.bookmark?, outside_of_bookmarklet: true %>
 
