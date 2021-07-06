@@ -6,19 +6,21 @@
     </nav>
   </div>
 
-  <div class="entry-body">
-    <% size = @tags.count %>
+  <% size = @tags.count %>
+  <% if size > 0 %>
+    <div class="entry-body">
 
-    <ul class="d-inline float-left list-style-none">
-      <% @tags[0..size/2].each do |c| %>
-        <li><a href="<%= tag_path(query: c.name.gsub("#","")) %>"><%= c.name%></a></li>
-      <% end %>
-    </ul>
+      <ul class="d-inline float-left list-style-none">
+        <% @tags[0..size/2].each do |c| %>
+          <li><a href="<%= tag_path(query: c.name.gsub("#","")) %>"><%= c.name%></a></li>
+        <% end %>
+      </ul>
 
-    <ul class="d-inline list-style-none">
-      <% @tags[size/2+1..-1].each do |c| %>
-        <li><a href="<%= tag_path(query: c.name.gsub("#","")) %>"><%= c.name%></a></li>
-      <% end %>
-    </ul>
-  </div>
+      <ul class="d-inline list-style-none">
+        <% @tags[size/2+1..-1].each do |c| %>
+          <li><a href="<%= tag_path(query: c.name.gsub("#","")) %>"><%= c.name%></a></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 </div>
