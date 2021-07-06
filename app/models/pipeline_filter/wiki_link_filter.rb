@@ -36,16 +36,17 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
 
       notebook = context[:entry].parent_notebook
 
-      if linked_entry = notebook.entries.find_by(identifier: link)
+      if linked_entry = notebook.entries.find_by(identifier: link.strip.gsub(/\s+/, @space_replacement))
         if Arquivo.static?
           entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry)
         else
           entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry, owner: notebook.owner, notebook: notebook)
         end
 
-        "<a href=\"#{entry_path}\">#{to_description(desc || linked_entry.subject)}</a>"
+        "<a href=\"#{entry_path}\">#{to_description(desc || linked_entry.subject || link)}</a>"
       else
-        "<a href=\"#{to_link link}\">#{to_description(desc || link)}</a>"
+        # TODO: test color-red / usage of #s in links / link generates well
+        "<a href=\"#{to_link link}\" class='color-red-5'>#{to_description(desc || link)}</a>"
       end
     end
   end

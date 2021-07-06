@@ -12,6 +12,7 @@ module PipelineFilter
   # used for enabling footnotes
   ESW[:attributes]['a'] = ESW[:attributes]['a'].dup
   ESW[:attributes]['a'].push("id")
+  ESW[:attributes]['a'].push("class")
   ESW[:attributes]['sup'] = ['class']
   ESW[:attributes]['li'] = ['id']
   # end footnotes
@@ -36,6 +37,7 @@ module PipelineFilter
     PipelineFilter::TableOfContentsFilter, # ids to headers, toc tag
     HTML::Pipeline::ImageMaxWidthFilter, # max 100% for imgs
   ], { unsafe: true,
+       space_replacement: "-",
        commonmarker_render_options: [:SOURCEPOS],
        whitelist: ENTRY_SANITIZATION_WHITELIST
   }
