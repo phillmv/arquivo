@@ -270,9 +270,10 @@ class Entry < ApplicationRecord
   # The YAML serialization captures this, which causes problems in downstream
   # consumers of the yaml, i.e. the YAML can't be easily consumed by a plain
   # Ruby environment without ActiveSupport. (At time of writing, we consume
-  # entry yaml for arbitrating git merge conflicts, and picking the most
-  # recently updated entry). This should be Fine™, since we store everything
-  # in UTC anyways.
+  # entry yaml for arbitrating git merge conflicts, which we resolve by picking
+  # the most recently updated entry; see lib/assets/git_defaults/script/ and
+  # the `SyncWithGit` class for more information). This should be Fine™,
+  # since we store everything in UTC anyways.
   #
   # I feel like there's probably a better way to do this!, and keep the YAML
   # more "portable".
