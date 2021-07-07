@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class StaticImportExportTest < ActionDispatch::IntegrationTest
+class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
   # i should be testing the rake task directly?
   # and i should be able to:
   # - test this without the test suite being run in "static mode"
@@ -11,7 +11,7 @@ class StaticImportExportTest < ActionDispatch::IntegrationTest
   # First let's build some guarantees that the SyncerFromDisk
   # does the right thing:
 
-  test "static import reads in non-standard notebooks & figures out what to do with it" do
+  test "we can import non-standard notebook paths, make some clever inferences wrt content, and generate a default site using the simple_site fixture" do
     if !Arquivo.static?
       puts "Not in static mode. Try again, with STATIC_PLS=true"
       return
@@ -21,7 +21,7 @@ class StaticImportExportTest < ActionDispatch::IntegrationTest
     assert_equal 0, Notebook.count
     assert_equal 0, Entry.count
 
-    notebook_path = File.join(Rails.root, "test/fixtures/test_static_site")
+    notebook_path = File.join(Rails.root, "test/fixtures/static_sites/simple_site")
     SyncFromDisk.new(notebook_path).import!
 
     assert_equal 1, Notebook.count
