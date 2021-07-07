@@ -33,15 +33,14 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     # okay so a count of 2 documents is wrong:
     # we want the about.html to be processed as an entry methinks,
-    # not a plain ol' document. let's fix that later.
+    # not a plain ol' document. TODO: let's fix that later.
 
     get "/"
     assert_response 200, "if this fails, ensure that the spring preloader isn't stuck loading tests in non-static mode"
     # TODO: ideally, test that pagination triggers, works, etc
 
-    # by the default we get the following links for free:
-    # /tags
-    # /contacts
+    # by default we get the following links for free:
+    # /tags, /contacts, /hidden_entries
     get "/tags"
     assert_response 200
 
@@ -49,10 +48,10 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_response 200
 
     # the simple_site fixture intentionally does not define @mentions or #tags
-    # TODO: test that /tags and /contacts are empty
+    # TODO: test that /tags and /contacts are empty?
 
     # we also get /hidden_entries to process entries with hide: true, ie
-    # entries that aren't linked from the timeline view.
+    # entries that aren't linked from the timeline view / document type entries
     get "/hidden_entries"
     assert_response 200
 
@@ -62,8 +61,28 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_select "a[href='/about.html']"
 
     # try getting individual pages:
-    # get /about.html
-    # get /2021/new_blog.html
+    # get "/about.html"
+    get "/2021/new_blog.html"
+    assert_response 200
+
+    get "/musings.html"
+    assert_response 200
+
+    # TODO: needs a /foo entry too
+
+    get "/youvechanged.jpg"
+    # we get redirected to the blobs path
+    assert_response 302
+
+    get response.location
+    # we get redirected to the signed service url
+    assert_response 302
+
+    get response.location
+    # we finally get the content:
+    assert_response 200
+    assert_equal "image/jpeg", response.content_type
+
     # want to test certain extensions (md & markdown),
     # want to test the folder paths
     # want to test the dates being set properly in the entries

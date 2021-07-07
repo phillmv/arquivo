@@ -4,6 +4,8 @@
 # and recreated between test runs. Don't rely on the data there!
 
 Rails.application.configure do
+  config.active_storage.routes_prefix = "/#{User.current}/_"
+
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.cache_classes = false

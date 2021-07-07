@@ -1,8 +1,14 @@
 class User
   attr_accessor :name
 
-  def self.name
-    "phillmv"
+  if Arquivo.static?
+    def self.name
+      "owner"
+    end
+  else
+    def self.name
+      "phillmv"
+    end
   end
 
   def self.tz
