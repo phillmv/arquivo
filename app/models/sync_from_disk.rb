@@ -216,7 +216,7 @@ class SyncFromDisk
 
     everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
     Dir[everything_paths].each do |file_path|
-      if file_path =~ /\.(md|markdown)$/
+      if file_path =~ /\.(md|markdown|html)$/
         entry_attributes = entry_attributes_from_markdown(notebook, file_path)
         entry_attributes[:skip_local_sync] = true
 
