@@ -26,28 +26,40 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     assert_equal 1, Notebook.count
     notebook = Notebook.last
-    assert_equal "test_static_site", notebook.name
+    assert_equal "simple_site", notebook.name
     assert_equal 4, notebook.entries.count
     assert_equal 2, notebook.entries.documents.count
     assert_equal 2, notebook.entries.notes.count
 
     # okay so a count of 2 documents is wrong:
     # we want the about.html to be processed as an entry methinks,
-    # not a plain ol' document
+    # not a plain ol' document. let's fix that later.
 
     get "/"
     assert_response 200, "if this fails, ensure that the spring preloader isn't stuck loading tests in non-static mode"
+    # TODO: ideally, test that pagination triggers, works, etc
 
     # by the default we get the following links for free:
-    # (todo: test notebooks where entries don't define any tags or contacts)
+    # /tags
+    # /contacts
     get "/tags"
     assert_response 200
 
     get "/contacts"
     assert_response 200
 
+    # the simple_site fixture intentionally does not define @mentions or #tags
+    # TODO: test that /tags and /contacts are empty
+
+    # we also get /hidden_entries to process entries with hide: true, ie
+    # entries that aren't linked from the timeline view.
     get "/hidden_entries"
     assert_response 200
+
+    # i expect exactly two links:
+    assert_equal 2, css_select("a").count
+    assert_select "a[href='/youvechanged.jpg']"
+    assert_select "a[href='/about.html']"
 
     # try getting individual pages:
     # get /about.html
