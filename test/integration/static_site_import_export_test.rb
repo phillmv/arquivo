@@ -142,4 +142,56 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # 2. a very basic site with no tags or contacts
     # 3. same as 1 or 2 but overriding the templates
   end
+
+  test "we can do all of the previous test, but also with tags and contacts" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
+    # let's establish that the system is empty
+    assert_equal 0, Notebook.count
+    assert_equal 0, Entry.count
+
+    # and then we load in the simple_site content:
+    notebook_path = File.join(Rails.root, "test/fixtures/static_sites/simple_site_with_contacts_and_tags")
+    SyncFromDisk.new(notebook_path).import!
+
+    assert_equal 1, Notebook.count
+    notebook = Notebook.last
+    assert_equal "simple_site_with_contacts_and_tags", notebook.name
+    assert_equal 6, notebook.entries.count
+
+    assert_equal 1, notebook.entries.documents.count
+    assert_equal 5, notebook.entries.notes.count
+
+    # the simple_site_with_contact_and_tags site has the same content as the
+    # simple_site example, but here I added a few random tags and @mentions
+    # I split these out into separate examples, because not everyone trying out
+    # this app on the first time will neccessarily have tags or mentions
+    # defined, and one early bug I'd encountered was the /tags link 500'ing
+
+    assert_equal ["#convention", "#configuration", "#musings"].to_set,
+                 notebook.tags.pluck(:name).to_set
+
+    assert_equal ["phillmv", "youvechanged"].to_set,
+                 notebook.contacts.pluck(:name).to_set
+
+    get "/tags"
+    assert_response 200
+    assert_select "a[href='/tags/convention']"
+    assert_select "a[href='/tags/configuration']"
+    assert_select "a[href='/tags/musings']"
+
+    get "/tags/convention"
+    assert_response 200
+
+    get "/contacts"
+    assert_response 200
+    assert_select "a[href='/contacts/phillmv']"
+    assert_select "a[href='/contacts/youvechanged']"
+
+    get "/contacts/phillmv"
+    assert_response 200
+  end
 end
