@@ -21,19 +21,60 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_equal 0, Notebook.count
     assert_equal 0, Entry.count
 
+    # and then we load in the simple_site content:
     notebook_path = File.join(Rails.root, "test/fixtures/static_sites/simple_site")
     SyncFromDisk.new(notebook_path).import!
 
     assert_equal 1, Notebook.count
     notebook = Notebook.last
     assert_equal "simple_site", notebook.name
-    assert_equal 4, notebook.entries.count
-    assert_equal 2, notebook.entries.documents.count
-    assert_equal 2, notebook.entries.notes.count
+    assert_equal 6, notebook.entries.count
 
-    # okay so a count of 2 documents is wrong:
-    # we want the about.html to be processed as an entry methinks,
-    # not a plain ol' document. TODO: let's fix that later.
+    assert_equal 1, notebook.entries.documents.count
+    assert_equal 5, notebook.entries.notes.count
+
+    # All imported files in the notebook_path that do NOT have .html or
+    # .(md|markdown) extensions get imported as document type entries.
+    # To wit:
+
+    notebook.entries.documents.find_by!(identifier: "youvechanged.jpg")
+
+    # Some of these entries have special properties we want to verify.
+    # Let us verify some attributes from:
+    # - about.html
+    # - 2021-07-06-convention-over-configuration
+    # - musings.html
+    # - yet-another-static-site
+    # - 2021/should-just-work.html
+
+    about_html = notebook.entries.notes.find_by!(identifier: "about.html")
+    # even tho it is an html file, we can set metadata attributes thru its
+    # frontmatter yaml, in this case the hide attribute.
+    # aso, the contents of the file get stuffed into the body attribute
+    assert about_html.hide
+    assert_equal 0, about_html.body.index("<h1>Sample About Page")
+
+    # we lop off .markdown extensions, we should have a 2021-07-06-convention-over-configuration
+    # and its occurred at was defined in the filename.
+    convention_over_conf = notebook.entries.notes.find_by!(identifier: "2021-07-06-convention-over-configuration")
+    assert_equal DateTime.parse("Tue, 06 Jul 2021 00:00:00 UTC +00:00"), convention_over_conf.occurred_at
+
+    # we lop off .markdown extensions, so we should have a musings.html
+    musings = notebook.entries.notes.find_by!(identifier: "musings.html")
+
+    # we lop off .md extensions, so we should have a yet-another-static-site
+    # also, the date was defined in its front matter
+    yass = notebook.entries.notes.find_by!(identifier: "yet-another-static-site")
+    assert_equal DateTime.parse("2021-07-08"), yass.occurred_at
+
+    # finally, the full folder path name becomes the identifier, so we should
+    # also have a 2021/should-just-work.html
+    should_just_work = notebook.entries.notes.find_by!(identifier: "2021/should-just-work.html")
+
+    # ---
+    # marvelous! let's go and test the properties of the default site that
+    # gets generated with this content.
+    # ---
 
     get "/"
     assert_response 200, "if this fails, ensure that the spring preloader isn't stuck loading tests in non-static mode"
@@ -61,14 +102,19 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_select "a[href='/about.html']"
 
     # try getting individual pages:
-    # get "/about.html"
-    get "/2021/new_blog.html"
+    get "/2021/should-just-work.html"
+    assert_response 200
+
+    get "/2021-07-06-convention-over-configuration"
     assert_response 200
 
     get "/musings.html"
     assert_response 200
 
-    # TODO: needs a /foo entry too
+    get "/about.html"
+    assert_response 200
+
+    # and now we test the document:
 
     get "/youvechanged.jpg"
     # we get redirected to the blobs path
@@ -83,18 +129,12 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_response 200
     assert_equal "image/jpeg", response.content_type
 
-    # want to test certain extensions (md & markdown),
-    # want to test the folder paths
-    # want to test the dates being set properly in the entries
-    # want to test hidden field, and that hidden entries do not show up in the timeline
-
     # in the future, we can do:
     # get /feed.atom
     # get /calendar or /archive
 
     # and then we can start doing fancy shit like,
     # overriding layouts and custom stylesheets
-
 
     # okay so i've already discovered i want to test at least 3 versions of
     # static site generation:
