@@ -1,7 +1,7 @@
 module StaticSite
   class TimelineController < ApplicationController
     def index
-      @all_entries = current_notebook.entries.visible.hitherto.order(occurred_at: :desc).paginate(page: params[:page])
+      @all_entries = current_notebook.entries.visible.order(occurred_at: :desc).paginate(page: params[:page])
 
       @entries = @all_entries.group_by do |e|
         e.occurred_date
@@ -55,6 +55,11 @@ module StaticSite
 
     def hidden_entries
       @entries = current_notebook.entries.hidden.order(occurred_at: :asc).paginate(page: params[:page])
+    end
+
+    # drop `static_site/` prefix, see StaticSiteController#prepend_custom_paths
+    def self.controller_path
+      "timeline"
     end
   end
 end

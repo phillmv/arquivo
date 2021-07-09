@@ -41,5 +41,10 @@ module StaticSite
       @contacts = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:contacts).group("contacts.name").count.sort_by { |k,v| -v }
 
     end
+
+    # drop `static_site/` prefix, see StaticSiteController#prepend_custom_paths
+    def self.controller_path
+      "calendar"
+    end
   end
 end

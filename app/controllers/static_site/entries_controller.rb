@@ -22,6 +22,11 @@ module StaticSite
       redirect_to rails_blob_url(blob, disposition: params[:disposition])
     end
 
+    # drop `static_site/` prefix, see StaticSiteController#prepend_custom_paths
+    def self.controller_path
+      "entries"
+    end
+
     private
     def set_entry
       # quick terrible hack for routing document type entries
