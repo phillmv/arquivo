@@ -17,17 +17,8 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
       return
     end
 
-    # let's establish that the system is empty
-    assert_equal 0, Notebook.count
-    assert_equal 0, Entry.count
+    notebook = load_and_assert_notebook("simple_site")
 
-    # and then we load in the simple_site content:
-    notebook_path = File.join(Rails.root, "test/fixtures/static_sites/simple_site")
-    SyncFromDisk.new(notebook_path).import!
-
-    assert_equal 1, Notebook.count
-    notebook = Notebook.last
-    assert_equal "simple_site", notebook.name
     assert_equal 6, notebook.entries.count
 
     assert_equal 1, notebook.entries.documents.count
@@ -78,6 +69,9 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     get "/"
     assert_response 200, "if this fails, ensure that the spring preloader isn't stuck loading tests in non-static mode"
+    # the timeline lists at least a few of the entries
+    assert_select "h1", text: "Things should Just Work."
+    assert_select "h1", text: "Convention over configuration."
     # TODO: ideally, test that pagination triggers, works, etc
 
     # by default we get the following links for free:
@@ -104,9 +98,11 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # try getting individual pages:
     get "/2021/should-just-work.html"
     assert_response 200
+    assert_select "h1", text: "Things should Just Work."
 
     get "/2021-07-06-convention-over-configuration"
     assert_response 200
+    assert_select "h1", text: "Convention over configuration."
 
     get "/musings.html"
     assert_response 200
@@ -149,17 +145,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
       return
     end
 
-    # let's establish that the system is empty
-    assert_equal 0, Notebook.count
-    assert_equal 0, Entry.count
-
-    # and then we load in the simple_site content:
-    notebook_path = File.join(Rails.root, "test/fixtures/static_sites/simple_site_with_contacts_and_tags")
-    SyncFromDisk.new(notebook_path).import!
-
-    assert_equal 1, Notebook.count
-    notebook = Notebook.last
-    assert_equal "simple_site_with_contacts_and_tags", notebook.name
+    notebook = load_and_assert_notebook("simple_site_with_contacts_and_tags")
     assert_equal 6, notebook.entries.count
 
     assert_equal 1, notebook.entries.documents.count
@@ -193,5 +179,55 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     get "/contacts/phillmv"
     assert_response 200
+  end
+
+  test "we can override the default views when generating a static site" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
+    notebook = load_and_assert_notebook("simple_site_with_custom_layouts")
+
+    assert_equal 8, notebook.entries.count
+    assert_equal 2, notebook.entries.system.count
+    assert_equal 1, notebook.entries.documents.count
+    assert_equal 5, notebook.entries.notes.count
+
+
+    entry_show = notebook.entries.find_by!(identifier: ".site/views/entries/show.html.erb")
+    timeline_index = notebook.entries.find_by!(identifier: ".site/views/timeline/index.html.erb")
+
+    assert entry_show.hide
+    assert timeline_index.hide
+
+    get "/2021/should-just-work.html"
+    assert_response 200
+    assert_select "h1", text: "Things should Just Work."
+    assert_select "h1", text: "Custom template!!!!"
+
+    get "/2021-07-06-convention-over-configuration"
+    assert_response 200
+    assert_select "h1", text: "Convention over configuration."
+    assert_select "h1", text: "Custom template!!!!"
+
+    get "/"
+    assert_response 200
+    assert_select "h1", text: "Custom timeline index!!!!"
+  end
+
+  def load_and_assert_notebook(name)
+    # let's establish that the system is empty
+    assert_equal 0, Notebook.count
+    assert_equal 0, Entry.count
+
+    # and then we load in the simple_site content:
+    notebook_path = File.join(Rails.root, "test/fixtures/static_sites/#{name}")
+    SyncFromDisk.new(notebook_path).import!
+
+    assert_equal 1, Notebook.count
+    notebook = Notebook.last
+    assert_equal name, notebook.name
+    notebook
   end
 end

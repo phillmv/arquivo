@@ -218,7 +218,7 @@ class SyncFromDisk
     end
 
     everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
-    Dir[everything_paths].each do |file_path|
+    Dir.glob(everything_paths, File::FNM_DOTMATCH).each do |file_path|
       if file_path =~ /\.(md|markdown|html)$/
         entry_attributes = entry_attributes_from_markdown(notebook, file_path)
         entry_attributes[:skip_local_sync] = true
@@ -233,7 +233,7 @@ class SyncFromDisk
         # by default we treat everything that is not markdown/html as a 'document'
         entry_kind = :document
         # but all the files within the _site folder are special
-        if file_path =~ /^\.site/
+        if identifier =~ /^\.site/
           entry_kind = :system
         end
         entry_attributes = {
