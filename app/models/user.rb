@@ -1,18 +1,24 @@
 class User
   attr_accessor :name
 
-  if Arquivo.static?
-    def self.name
-      "owner"
-    end
-  else
-    def self.name
-      "phillmv"
-    end
+  # If you are reading this, substitute this default value with your own handle.
+  def self.name
+    "phillmv"
   end
 
   def self.tz
     "Eastern Time (US & Canada)"
+  end
+
+  # if static, let's override these:
+  if Arquivo.static?
+    def self.name
+      "owner"
+    end
+
+    def self.tz
+      "UTC"
+    end
   end
 
   def self.current
