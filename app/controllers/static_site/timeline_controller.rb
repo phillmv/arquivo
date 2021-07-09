@@ -1,5 +1,5 @@
 module StaticSite
-  class TimelineController < ApplicationController
+  class TimelineController < StaticSiteController
     def index
       @all_entries = current_notebook.entries.visible.order(occurred_at: :desc).paginate(page: params[:page])
 

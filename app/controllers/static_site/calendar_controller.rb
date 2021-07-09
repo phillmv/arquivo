@@ -1,5 +1,5 @@
 module StaticSite
-  class CalendarController < ApplicationController
+  class CalendarController < StaticSiteController
     def monthly
       query_date = params[:start_date]&.to_datetime || Time.current
 
