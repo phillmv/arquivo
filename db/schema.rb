@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_14_213433) do
+ActiveRecord::Schema.define(version: 2021_07_09_143025) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -168,6 +168,7 @@ ActiveRecord::Schema.define(version: 2021_02_14_213433) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "colour", default: "#0366d6", null: false
+    t.string "import_path"
   end
 
   create_table "saved_searches", force: :cascade do |t|

@@ -66,7 +66,12 @@ class Notebook < ApplicationRecord
   end
 
   def to_folder_path(path = nil)
+    # if we do not supply a path, first check to see if we stored a a notebook
+    # path on import. If we did not, then let's go ahead and use the system
+    # default arquivo path
+    path ||= self.import_path
     path ||= Setting.get(:arquivo, :arquivo_path)
+
     File.join(path, self.to_s)
   end
 

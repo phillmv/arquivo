@@ -294,8 +294,7 @@ class Entry < ApplicationRecord
   end
 
   def to_folder_path(arquivo_path)
-    File.join(arquivo_path,
-              notebook,
+    File.join(parent_notebook.to_folder_path(arquivo_path),
               occurred_at.strftime("%Y/%m/%d"),
               identifier_sanitized)
   end
