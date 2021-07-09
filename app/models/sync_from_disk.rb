@@ -211,7 +211,10 @@ class SyncFromDisk
     notebook_name = File.basename(notebook_path).strip
     notebook = Notebook.find_by(name: notebook_name)
     if notebook.nil?
-      notebook = Notebook.create(name: notebook_name)
+      notebook = Notebook.create(name: notebook_name,
+                                 import_path: notebook_path)
+    else
+      notebook.update(import_path: notebook_path)
     end
 
     everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
@@ -227,11 +230,17 @@ class SyncFromDisk
         identifier = path_to_relative_identifier(file_path)
         filename = File.basename(identifier)
 
+        # by default we treat everything that is not markdown/html as a 'document'
+        entry_kind = :document
+        # but all the files within the _site folder are special
+        if file_path =~ /^\.site/
+          entry_kind = :system
+        end
         entry_attributes = {
           "identifier" => identifier,
           "occurred_at" => File.ctime(file_path),
           "updated_at" => File.mtime(file_path),
-          "kind" => :document,
+          "kind" => entry_kind,
           "hide" => true,
           skip_local_sync: true,
         }
@@ -250,8 +259,6 @@ class SyncFromDisk
           blob.analyze
           entry.files.create(blob_id: blob.id, created_at: blob.created_at)
         end
-
-        # now i need to upload the doc
       end
     end
   end

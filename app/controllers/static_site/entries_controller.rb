@@ -1,5 +1,5 @@
 module StaticSite
-  class EntriesController < ApplicationController
+  class EntriesController < StaticSite::StaticSiteController
     before_action :set_entry, only: [:show, :edit, :update, :destroy, :files, :copy]
 
     # GET /entries/1

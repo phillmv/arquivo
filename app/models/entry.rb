@@ -27,6 +27,7 @@ class Entry < ApplicationRecord
   scope :bookmarks, -> { where(kind: "pinboard") }
   scope :except_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
   scope :documents, -> { where(kind: "document") }
+  scope :system, -> { where(kind: "system") }
 
   scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
   scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
