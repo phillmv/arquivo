@@ -153,21 +153,6 @@ class EntriesController < ApplicationController
   end
 
   private
-    def set_entry
-      # quick terrible hack for routing document type entries
-      if params[:format]
-        identifier = "#{params[:id]}.#{params[:format]}"
-        @entry = Entry.find_by(identifier: identifier, notebook: current_notebook.to_s)
-
-        # if an entry exists, great!
-        if @entry
-          return
-        end
-
-        # but if it doesn't, we should try again with just the
-        # id params, so we can throw a 404
-      end
-
   def find_entry
     identifier = params[:id]
     # quick terrible hack for routing document type entries
