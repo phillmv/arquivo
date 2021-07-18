@@ -9,6 +9,8 @@ module StaticSite
         blob = @entry.files.blobs.first
         expires_in ActiveStorage.service_urls_expire_in
         redirect_to rails_blob_path(blob, disposition: params[:disposition])
+      elsif @entry.system?
+        render plain: "", status: 404
       else
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry)

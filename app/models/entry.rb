@@ -164,6 +164,10 @@ class Entry < ApplicationRecord
     kind == "document"
   end
 
+  def system?
+    kind == "system"
+  end
+
   def fold?
     self.body.size > 500
   end

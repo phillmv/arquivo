@@ -229,6 +229,17 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_equal 4, notebook.entries.documents.count
     assert_equal 5, notebook.entries.notes.count
 
+    # so with this test i want to verify a few things:
+    # - we found the stylesheets/application.css.scss and marked it as a system entry
+    # - we're loading in the normalize.css file, ie other files in the
+    # stylesheets/ folder will get sent down the pipe like any other attachment
+    #   - as a side-effect, we don't do anything special to the non
+    #   application.css.scss files
+    # - finally, that the system application.css.scss generates a document-type
+    # stylesheets/application.css entry
+    #
+    # the intention here is that if you're editing the layouts, you will add a stylesheet link
+    # to your own css, which is rendered to a predictable spot.
     notebook.entries.system.find_by!(identifier: "stylesheets/application.css.scss")
     notebook.entries.documents.find_by!(identifier: "stylesheets/normalize.css")
     notebook.entries.documents.find_by!(identifier: "stylesheets/clearfix.scss")
@@ -237,19 +248,25 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_equal 1, rendered_stylesheet.files.count
     assert rendered_stylesheet.hide
 
+    # we don't intend for the raw manifest file to be available
+    get "/stylesheets/application.css.scss"
+    assert_response 404
+
+    # but the rendered stylesheet will load:
     get "/stylesheets/application.css"
-    # we get redirected to the blobs path
-    assert_response 302
 
-    get response.location
-    # we get redirected to the signed service url
-    assert_response 302
-
-    get response.location
+    # we get redirected to the blobs path &
+    # we get redirected to the signed service url &
     # we finally get the content:
+    assert_response 302
+    get response.location
+    assert_response 302
+    get response.location
     assert_response 200
     assert_equal "text/css", response.content_type
 
+    # in this case, application.css.scss is importing & including a clearfix
+    # mixin, which adds an ::after pseudo-selector to the sample example style
     assert response.body.index("example::after"), "content should have been rendered"
   end
 
