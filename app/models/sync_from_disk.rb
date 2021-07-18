@@ -265,7 +265,13 @@ class SyncFromDisk
       end
     end
 
-    # now let's handle the stylesheet
+    # TODO: cleanup, isolate/refactor. A bit awkward we do this scss render
+    # step here in the sync from disk, is it not?
+    # also, what about .sass files?
+    #
+    # now let's handle the stylesheet manifest & render it.
+    # if there is a stylesheets/application.css.scss we want to render the
+    # Sass and convert it to a stylesheets/application.css
     if stylesheet = notebook.entries.system.find_by(identifier: "stylesheets/application.css.scss")
       load_path = File.join(notebook.import_path, "stylesheets")
       manifest_path = File.join(load_path, "application.css.scss")
