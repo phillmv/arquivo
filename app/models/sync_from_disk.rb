@@ -233,9 +233,12 @@ class SyncFromDisk
         # by default we treat everything that is not markdown/html as a 'document'
         entry_kind = :document
         # but all the files within the _site folder are special
-        if identifier =~ /^\.site/
+        if identifier.index(".site/") == 0
+          entry_kind = :system
+        elsif identifier.index("stylesheets/application.css.scss")
           entry_kind = :system
         end
+
         entry_attributes = {
           "identifier" => identifier,
           "occurred_at" => File.ctime(file_path),
@@ -251,7 +254,7 @@ class SyncFromDisk
           blob = ActiveStorage::Blob.create_and_upload!(io: File.open(file_path),
                                                         filename: filename)
 
-          # run analysis step synchronously, so we skip the async job
+          # run analysis step synchronously, so we skip the async job.
           # for reasons i don't comprehend, in dev mode at least
           # ActiveStorage::AnalyzeJob just hangs there indefinitely, doing
           # naught to improve our lot, and this is very frustrating and further
@@ -260,6 +263,28 @@ class SyncFromDisk
           entry.files.create(blob_id: blob.id, created_at: blob.created_at)
         end
       end
+    end
+
+    # now let's handle the stylesheet
+    if stylesheet = notebook.entries.system.find_by(identifier: "stylesheets/application.css.scss")
+      load_path = File.join(notebook.import_path, "stylesheets")
+      manifest_path = File.join(load_path, "application.css.scss")
+
+      rendered_css = SassC::Engine.new(File.read(manifest_path), {
+        filename: "application.css.scss",
+        syntax: :scss,
+        load_paths: [load_path],
+      }).render
+
+      rendered_stylesheet = notebook.entries.new(stylesheet.export_attributes)
+      rendered_stylesheet.identifier = "stylesheets/application.css"
+      rendered_stylesheet.kind = :document
+      rendered_stylesheet.save!
+
+      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(rendered_css),
+                                                    filename: "application.css")
+      blob.analyze
+      rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
     end
   end
 

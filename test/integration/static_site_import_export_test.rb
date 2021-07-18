@@ -216,6 +216,44 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_select "h1", text: "Custom timeline index!!!!"
   end
 
+  test "we can provide custom .scss stylesheets, and they load!" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
+    notebook = load_and_assert_notebook("simple_site_with_stylesheets")
+
+    assert_equal 12, notebook.entries.count
+    assert_equal 3, notebook.entries.system.count
+    assert_equal 4, notebook.entries.documents.count
+    assert_equal 5, notebook.entries.notes.count
+
+    notebook.entries.system.find_by!(identifier: "stylesheets/application.css.scss")
+    notebook.entries.documents.find_by!(identifier: "stylesheets/normalize.css")
+    notebook.entries.documents.find_by!(identifier: "stylesheets/clearfix.scss")
+    rendered_stylesheet = notebook.entries.documents.find_by!(identifier: "stylesheets/application.css")
+
+    assert_equal 1, rendered_stylesheet.files.count
+    assert rendered_stylesheet.hide
+
+    get "/stylesheets/application.css"
+    # we get redirected to the blobs path
+    assert_response 302
+
+    get response.location
+    # we get redirected to the signed service url
+    assert_response 302
+
+    get response.location
+    # we finally get the content:
+    assert_response 200
+    assert_equal "text/css", response.content_type
+
+    assert response.body.index("example::after"), "content should have been rendered"
+  end
+
+
   def load_and_assert_notebook(name)
     # let's establish that the system is empty
     assert_equal 0, Notebook.count
