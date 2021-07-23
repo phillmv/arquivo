@@ -17,4 +17,4 @@ jobs:
       - name: "rake db:setup"
         run: "rails db:setup"
       - name: "test"
-        run: "rails test
+        run: "rails test"
