@@ -259,6 +259,7 @@ class SyncFromDisk
           "occurred_at" => File.ctime(file_path),
           "updated_at" => File.mtime(file_path),
           "kind" => entry_kind,
+          "source" => entry_source,
           "hide" => true,
           skip_local_sync: true,
           skip_set_subject: true,
