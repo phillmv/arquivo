@@ -1,0 +1,20 @@
+name: run tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run_rails_test:
+    runs-on: ubuntu-latest
+    name: "rails test"
+    container:
+      image: ghcr.io/phillmv/arquivo:latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: "bundle"
+        run: "bundle install && yarn install"
+      - name: "rake db:setup"
+        run: "rails db:setup"
+      - name: "test"
+        run: "rails test
