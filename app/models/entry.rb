@@ -28,6 +28,7 @@ class Entry < ApplicationRecord
   scope :except_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
   scope :documents, -> { where(kind: "document") }
   scope :system, -> { where(kind: "system") }
+  scope :templates, -> { where(kind: "templates") }
 
   scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
   scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
@@ -61,6 +62,7 @@ class Entry < ApplicationRecord
   before_create :set_identifier
 
   attr_accessor :skip_local_sync # skip sync to git
+  attr_accessor :skip_set_subject # TODO fix / do something about
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
   before_save :set_subject
 
@@ -122,7 +124,7 @@ class Entry < ApplicationRecord
   end
 
   def set_subject
-    if self.note?
+    if self.note? && !skip_set_subject
       self.subject = EntryRenderer.new(self).subject
     end
   end
@@ -166,6 +168,10 @@ class Entry < ApplicationRecord
 
   def system?
     kind == "system"
+  end
+
+  def template?
+    kind == "template"
   end
 
   def fold?

@@ -11,6 +11,9 @@ module StaticSite
         redirect_to rails_blob_path(blob, disposition: params[:disposition])
       elsif @entry.system?
         render plain: "", status: 404
+      elsif @entry.template?
+        # don't love it but fix later, lol do not deploy this to untrusted user contexts???
+        render file: File.join(current_notebook.import_path, @entry.source)
       else
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry)

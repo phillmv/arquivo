@@ -219,6 +219,7 @@ class SyncFromDisk
 
     everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
     Dir.glob(everything_paths, File::FNM_DOTMATCH).each do |file_path|
+      puts "processing #{file_path}"
       if file_path =~ /\.(md|markdown|html)$/
         entry_attributes = entry_attributes_from_markdown(notebook, file_path)
         entry_attributes[:skip_local_sync] = true
@@ -230,13 +231,27 @@ class SyncFromDisk
         identifier = path_to_relative_identifier(file_path)
         filename = File.basename(identifier)
 
-        # by default we treat everything that is not markdown/html as a 'document'
-        entry_kind = :document
+
+        entry_kind = nil
+        entry_source = nil
         # but all the files within the _site folder are special
         if identifier.index(".site/") == 0
+          # TODO: I've decided that system is a bad name
           entry_kind = :system
         elsif identifier.index("stylesheets/application.css.scss")
+          # TODO: tbh should probably also be a template eh?
           entry_kind = :system
+        elsif identifier =~ /\.erb$/
+          # idea is that templates are rendered from within context of a
+          # controller, which is too painful to setup here
+          entry_kind = :template
+          # we store the original file name in the source field in case in the
+          # future we ever support something other than erb or move sass into this
+          entry_source = identifier
+          identifier = identifier.gsub(".erb", "")
+        else
+          # by default we treat everything that is not markdown/html as a 'document'
+          entry_kind = :document
         end
 
         entry_attributes = {
@@ -246,6 +261,7 @@ class SyncFromDisk
           "kind" => entry_kind,
           "hide" => true,
           skip_local_sync: true,
+          skip_set_subject: true,
         }
 
         entry, updated = upsert_entry!(notebook, entry_attributes)
