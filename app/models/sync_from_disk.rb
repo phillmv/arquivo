@@ -203,11 +203,20 @@ class SyncFromDisk
     [entry, updated]
   end
 
+  # Generate entries for an ad-hoc folder of markdown files & other documents
   def import_from_folder_full_of_markdown
-    # Generate entries for any markdown files:
+    # by and large if we're in this method we're dealing with a "static" import
+
+    # 1. Create a notebook for storing the entries
+    # 2. Iterate over all of the files in the folder
+    # 3. Perform post-import processing, if any.
+
+    # ---
+
+    # 1. A notebook
 
     # for now, let's guess a random notebook name
-    # in the future, maybe use an env var?
+    # TODO: in the future, maybe use an env var?
     notebook_name = File.basename(notebook_path).strip
     notebook = Notebook.find_by(name: notebook_name)
     if notebook.nil?
@@ -217,29 +226,37 @@ class SyncFromDisk
       notebook.update(import_path: notebook_path)
     end
 
+    # 2. Iterate over everything, including hidden files
+
     everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
     Dir.glob(everything_paths, File::FNM_DOTMATCH).each do |file_path|
-      puts "processing #{file_path}"
-      if file_path =~ /\.(md|markdown|html)$/
+
+      identifier = path_to_relative_identifier(file_path)
+
+      if identifier.index(".site/") == 0
+        # These are special files that don't need to become Entries.
+        # Do nothing.
+      elsif identifier.index(".git/") == 0
+        # also do nothing
+      elsif file_path =~ /\.(md|markdown|html)$/
+        # Files that become normal entries, the content in our site.
+        puts "processing #{file_path}" if Rails.env.development?
         entry_attributes = entry_attributes_from_markdown(notebook, file_path)
         entry_attributes[:skip_local_sync] = true
 
         entry, updated = upsert_entry!(notebook, entry_attributes)
       elsif !File.directory?(file_path)
-        # gonna need some entry attributes
-
-        identifier = path_to_relative_identifier(file_path)
-        filename = File.basename(identifier)
-
+        # everything that is not markdown is treated a bit differently.
+        puts "processing #{file_path}" if Rails.env.development?
 
         entry_kind = nil
         entry_source = nil
-        # but all the files within the _site folder are special
-        if identifier.index(".site/") == 0
-          # TODO: I've decided that system is a bad name
-          entry_kind = :system
-        elsif identifier.index("stylesheets/application.css.scss")
+
+        # TODO: non-documents are still a bit experimental, still figuring out
+        # how to support it properly. See StaticSiteImportExportTest.
+        if identifier == "stylesheets/application.css.scss"
           # TODO: tbh should probably also be a template eh?
+          # I don't love the name "system"
           entry_kind = :system
         elsif identifier =~ /\.erb$/
           # idea is that templates are rendered from within context of a
@@ -267,6 +284,7 @@ class SyncFromDisk
 
         entry, updated = upsert_entry!(notebook, entry_attributes)
 
+        filename = File.basename(identifier)
         if !entry.files.blobs.find_by(filename: filename)
           blob = ActiveStorage::Blob.create_and_upload!(io: File.open(file_path),
                                                         filename: filename)
@@ -282,8 +300,12 @@ class SyncFromDisk
       end
     end
 
+    # 3. Post-import process
+
     # TODO: cleanup, isolate/refactor. A bit awkward we do this scss render
-    # step here in the sync from disk, is it not?
+    # step here in the sync from disk, is it not? This works as a post-import
+    # step only because we don't expect to edit it, this is being done within
+    # context of a one-time static import->export loop.
     # also, what about .sass files?
     #
     # now let's handle the stylesheet manifest & render it.

@@ -189,17 +189,9 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     notebook = load_and_assert_notebook("simple_site_with_custom_layouts")
 
-    assert_equal 8, notebook.entries.count
-    assert_equal 2, notebook.entries.system.count
+    assert_equal 6, notebook.entries.count
     assert_equal 1, notebook.entries.documents.count
     assert_equal 5, notebook.entries.notes.count
-
-
-    entry_show = notebook.entries.find_by!(identifier: ".site/views/entries/show.html.erb")
-    timeline_index = notebook.entries.find_by!(identifier: ".site/views/timeline/index.html.erb")
-
-    assert entry_show.hide
-    assert timeline_index.hide
 
     get "/2021/should-just-work.html"
     assert_response 200
@@ -224,8 +216,8 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     notebook = load_and_assert_notebook("simple_site_with_stylesheets")
 
-    assert_equal 12, notebook.entries.count
-    assert_equal 3, notebook.entries.system.count
+    assert_equal 10, notebook.entries.count
+    assert_equal 1, notebook.entries.system.count
     assert_equal 4, notebook.entries.documents.count
     assert_equal 5, notebook.entries.notes.count
 
