@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/phillmv/commonmarker.git
+  revision: fe85191964b17b4ad7057f818f67a8c2de036223
+  branch: footnotes-patch
+  specs:
+    commonmarker (0.22.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -74,9 +81,7 @@ GEM
     childprocess (3.0.0)
     chronic (0.10.2)
     coderay (1.1.2)
-    commonmarker (0.20.2)
-      ruby-enum (~> 0.5)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.9)
     crass (1.0.6)
     deckar01-task_list (2.3.1)
       html-pipeline
@@ -102,7 +107,7 @@ GEM
     html-pipeline (2.12.3)
       activesupport (>= 2)
       nokogiri (>= 1.4)
-    i18n (1.7.0)
+    i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     icalendar (2.6.1)
       ice_cube (~> 0.16)
@@ -184,8 +189,6 @@ GEM
       ffi (~> 1.0)
     rchardet (1.8.0)
     regexp_parser (1.6.0)
-    ruby-enum (0.7.2)
-      i18n
     ruby_dep (1.5.0)
     rubyzip (2.0.0)
     sanitize (5.2.1)
@@ -257,7 +260,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
-  commonmarker
+  commonmarker!
   deckar01-task_list
   dotenv-rails
   escape_utils (~> 1.0)

@@ -28,7 +28,7 @@ gem 'jbuilder', '~> 2.7'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem "commonmarker"
+gem "commonmarker", git: 'https://github.com/phillmv/commonmarker.git', branch: 'footnotes-patch'
 gem "octicons"
 gem "octicons_helper"
 gem "html-pipeline"
