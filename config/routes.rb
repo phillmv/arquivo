@@ -47,6 +47,7 @@ Rails.application.routes.draw do
       end
     end
 
+    get '/atom.xml', to: 'static_site/timeline#index'
     get '/', to: "static_site/timeline#index", as: :timeline
 
     get "/*id/thread", to: "static_site/entries#show", defaults: { thread: true }, as: :threaded_entry

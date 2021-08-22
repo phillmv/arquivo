@@ -260,8 +260,31 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # in this case, application.css.scss is importing & including a clearfix
     # mixin, which adds an ::after pseudo-selector to the sample example style
     assert response.body.index("example::after"), "content should have been rendered"
-  end
 
+    # ---
+    # in the future i should split this out into a separate test, where i cache
+    # the loaded notebooks so i can do a variety of isolated tests.
+    # _in the meantime_ I just want to assert that we have rss feeds.
+    # ---
+
+    get "/atom.xml"
+    assert_response 200
+
+    assert response.body.index("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\""), "should look like an atom feed"
+    assert response.body.index("<title>Designed to be flexible</title>"), "should contain the blog posts we've defined 1"
+    assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts we've defined 2"
+    assert response.body.index("<title>Things should Just Work.</title>"), "should contain the blog posts we've defined 3"
+    assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts we've defined 4"
+
+    refute response.body.index("<title>Sample About Page</title>"), "but hidden pages should not show up."
+
+    get "/tags/convention.xml"
+    assert_response 200
+    assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts with the tag 1"
+    assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts with the tag 2"
+
+    refute response.body.index("<title>Designed to be flexible</title>"), "should NOT contain the posts without the tag"
+  end
 
   def load_and_assert_notebook(name)
     # let's establish that the system is empty

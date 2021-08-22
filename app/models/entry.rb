@@ -125,7 +125,17 @@ class Entry < ApplicationRecord
 
   def set_subject
     if self.note? && !skip_set_subject
-      self.subject = EntryRenderer.new(self).subject
+      if Arquivo.static?
+        # in "static" mode, sometimes the subject is set explicitly
+        # so we don't want to override it. ie the attributes set a subject,
+        # and then when the Entry is saved, this callback overrides it by
+        # trying to guess a subject out of the entry body.
+        self.subject ||= EntryRenderer.new(self).subject
+      else
+        # whereas in normal edit mode, the subject should always be defined
+        # within the body
+        self.subject = EntryRenderer.new(self).subject
+      end
     end
   end
 
