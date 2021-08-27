@@ -30,8 +30,10 @@ Rails.application.routes.draw do
 
     get '/tags/', to: "static_site/timeline#tags", as: :tags
     get '/tags/:query', to: "static_site/timeline#tag", as: :tag
+    get '/tags/:query/atom.xml', to: "static_site/timeline#tag_feed", as: :tag_feed
     get '/contacts/', to: "static_site/timeline#contacts", as: :contacts
     get '/contacts/:query', to: "static_site/timeline#contact", as: :contact
+    get '/contacts/:query/atom.xml', to: "static_site/timeline#contact_feed", as: :contact_feed
     get '/page/:page', to: "static_site/timeline#index"
     get '/hidden_entries/', to: "static_site/timeline#hidden_entries"
     get '/hidden_entries/:page', to: "static_site/timeline#hidden_entries"
@@ -47,7 +49,7 @@ Rails.application.routes.draw do
       end
     end
 
-    get '/atom.xml', to: 'static_site/timeline#index'
+    get '/atom.xml', to: 'static_site/timeline#feed', as: :timeline_feed
     get '/', to: "static_site/timeline#index", as: :timeline
 
     get "/*id/thread", to: "static_site/entries#show", defaults: { thread: true }, as: :threaded_entry

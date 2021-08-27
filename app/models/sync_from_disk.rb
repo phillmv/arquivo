@@ -331,6 +331,16 @@ class SyncFromDisk
       blob.analyze
       rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
     end
+
+    # 4. Load in setings from .site/config.yaml
+
+    if File.exist?(File.join(notebook.import_path, ".site/config.yaml"))
+      config = YAML.load_file(File.join(notebook.import_path, ".site/config.yaml"))
+      # ideally, keys match options in https://api.rubyonrails.org/v6.0.2.1/classes/ActionDispatch/Routing/UrlFor.html#method-i-url_for
+      config.each do |k,v|
+        Setting.set(:site, k, v)
+      end
+    end
   end
 
   def entry_attributes_from_markdown(notebook, md_path)

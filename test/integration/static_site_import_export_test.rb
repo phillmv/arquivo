@@ -259,17 +259,39 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     # in this case, application.css.scss is importing & including a clearfix
     # mixin, which adds an ::after pseudo-selector to the sample example style
+    # this is a little hard to discern, so maybe in the future replace with a
+    # better example.
     assert response.body.index("example::after"), "content should have been rendered"
+  end
 
-    # ---
-    # in the future i should split this out into a separate test, where i cache
-    # the loaded notebooks so i can do a variety of isolated tests.
-    # _in the meantime_ I just want to assert that we have rss feeds.
-    # ---
+  test "in addition to stylesheets etc etc we also can provide configuration" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
+    notebook = load_and_assert_notebook("simple_site_with_stylesheets_and_config")
+    assert_equal 10, notebook.entries.count
+    assert_equal 1, notebook.entries.system.count
+    assert_equal 4, notebook.entries.documents.count
+    assert_equal 5, notebook.entries.notes.count
+
+    assert_equal "example.okayfail.com", Setting.get(:site, :host)
+    assert_equal "Phillip Mendonça-Vieira", Setting.get(:site, :author_name)
+    assert_equal "My amazing website!", Setting.get(:site, :title)
+  end
+
+  test "btw, feeds work (without config)" do
+    notebook = load_and_assert_notebook("simple_site_with_stylesheets")
 
     get "/atom.xml"
     assert_response 200
 
+    assert response.body.index("<id>http://example.com/atom.xml</id>"), "should have the default id"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/atom.xml\"/>"), "should have the default links"
+    assert response.body.index("<title>This is a default title.</title>"), "should have the default title"
+
+    # actual content:
     assert response.body.index("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\""), "should look like an atom feed"
     assert response.body.index("<title>Designed to be flexible</title>"), "should contain the blog posts we've defined 1"
     assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts we've defined 2"
@@ -278,13 +300,62 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     refute response.body.index("<title>Sample About Page</title>"), "but hidden pages should not show up."
 
-    get "/tags/convention.xml"
+    get "/tags/convention/atom.xml"
     assert_response 200
+    assert response.body.index("<id>http://example.com/tags/convention/atom.xml</id>"), "should have the default id"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/tags/convention\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/tags/convention/atom.xml\"/>"), "should have the right tag links"
+    assert response.body.index("<title>This is a default title. (feed for #convention)</title>"), "should have the tag title"
     assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts with the tag 1"
     assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts with the tag 2"
 
     refute response.body.index("<title>Designed to be flexible</title>"), "should NOT contain the posts without the tag"
+
+    get "/contacts/phillmv/atom.xml"
+    assert_response 200
+    assert response.body.index("<id>http://example.com/contacts/phillmv/atom.xml</id>"), "should have the default id"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/contacts/phillmv\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/contacts/phillmv/atom.xml\"/>"), "should have the right contact links"
+    assert response.body.index("<title>This is a default title. (feed for @phillmv)</title>"), "should have the contact title"
+    assert response.body.index("<title>Sample About Page</title>"), "should contain blog post with the contact name"
   end
+
+   test "btw, feeds work (with config)" do
+    notebook = load_and_assert_notebook("simple_site_with_stylesheets_and_config")
+
+    get "/atom.xml"
+    assert_response 200
+
+    assert response.body.index("<id>http://example.okayfail.com/atom.xml</id>"), "should have the configured id"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/atom.xml\"/>"), "should have the configured links"
+    assert response.body.index("<title>My amazing website!</title>"), "should have the configured title"
+
+    # actual content:
+    assert response.body.index("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\""), "should look like an atom feed"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/2021/should-just-work.html\"/>"), "entries should have urls"
+
+    assert response.body.index("<title>Designed to be flexible</title>"), "should contain the blog posts we've defined 1"
+    assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts we've defined 2"
+    assert response.body.index("<title>Things should Just Work.</title>"), "should contain the blog posts we've defined 3"
+    assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts we've defined 4"
+
+    refute response.body.index("<title>Sample About Page</title>"), "but hidden pages should not show up."
+
+    get "/tags/convention/atom.xml"
+    assert_response 200
+    assert response.body.index("<id>http://example.okayfail.com/tags/convention/atom.xml</id>"), "should have the default id"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/tags/convention\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/tags/convention/atom.xml\"/>"), "should have the right tag links"
+    assert response.body.index("<title>My amazing website! (feed for #convention)</title>"), "should have the tag title"
+    assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts with the tag 1"
+    assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts with the tag 2"
+
+    refute response.body.index("<title>Designed to be flexible</title>"), "should NOT contain the posts without the tag"
+
+    get "/contacts/phillmv/atom.xml"
+    assert_response 200
+    assert response.body.index("<id>http://example.okayfail.com/contacts/phillmv/atom.xml</id>"), "should have the default id"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/contacts/phillmv\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/contacts/phillmv/atom.xml\"/>"), "should have the right contact links"
+    assert response.body.index("<title>My amazing website! (feed for @phillmv)</title>"), "should have the contact title"
+    assert response.body.index("<title>Sample About Page</title>"), "should contain blog post with the contact name"
+   end
 
   def load_and_assert_notebook(name)
     # let's establish that the system is empty
