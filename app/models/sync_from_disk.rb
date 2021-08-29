@@ -338,7 +338,7 @@ class SyncFromDisk
       config = YAML.load_file(File.join(notebook.import_path, ".site/config.yaml"))
       # ideally, keys match options in https://api.rubyonrails.org/v6.0.2.1/classes/ActionDispatch/Routing/UrlFor.html#method-i-url_for
       config.each do |k,v|
-        Setting.set(:site, k, v)
+        notebook.settings.set(k, v)
       end
     end
   end

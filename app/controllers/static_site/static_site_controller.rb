@@ -29,7 +29,7 @@ module StaticSite
     #
     # :site settings are provided via `.site/config.yaml`, see SyncFromDisk
     def default_url_options
-      if host = Setting.get(:site, :host)
+      if host = current_notebook.settings.get(:host)
         # Here, we make sure to provide a port (default to 80) because otherwise
         # the route builders are """smart""" and use the request headers for
         # generating the different route fragments. In dev mode, I experienced
@@ -38,7 +38,7 @@ module StaticSite
         # enough to emit the example.com:port section.
         #
         # Naturally, this can also be overrided via `.site/config.yaml`
-        { host: host, port: Setting.get(:site, :port) }
+        { host: host, port: current_notebook.settings.get(:port) }
       else
         {}
       end

@@ -279,9 +279,9 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_equal 4, notebook.entries.documents.count
     assert_equal 5, notebook.entries.notes.count
 
-    assert_equal "example.okayfail.com", Setting.get(:site, :host)
-    assert_equal "Phillip Mendonça-Vieira", Setting.get(:site, :author_name)
-    assert_equal "My amazing website!", Setting.get(:site, :title)
+    assert_equal "example.okayfail.com", notebook.settings.get(:host)
+    assert_equal "Phillip Mendonça-Vieira", notebook.settings.get(:author_name)
+    assert_equal "My amazing website!", notebook.settings.get(:title)
   end
 
   test "btw, feeds work (without config)" do

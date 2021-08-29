@@ -93,4 +93,8 @@ class Notebook < ApplicationRecord
   def owner
     @owner ||= User.current
   end
+
+  def settings
+    @settings ||= NotebookSettings.new(self)
+  end
 end

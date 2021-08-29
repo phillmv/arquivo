@@ -15,9 +15,9 @@ module StaticSite
 
       @feed_root_url = timeline_url
       @feed_id = timeline_feed_url
-      @feed_title = Setting.get(:site, :title)
+      @feed_title = current_notebook.settings.get(:title)
       @feed_updated_at = @all_entries.first&.occurred_at
-      @author_name = Setting.get(:site, :author_name)
+      @author_name = current_notebook.settings.get(:author_name)
 
       render :atom
     end
@@ -40,9 +40,9 @@ module StaticSite
 
       @feed_root_url = tag_url(params[:query])
       @feed_id = tag_feed_url(params[:query])
-      @feed_title = Setting.get(:site, :title) + " (feed for #{@search_query})"
+      @feed_title = current_notebook.settings.get(:title) + " (feed for #{@search_query})"
       @feed_updated_at = @all_entries.first&.occurred_at
-      @author_name = Setting.get(:site, :author_name)
+      @author_name = current_notebook.settings.get(:author_name)
 
       render :atom
     end
@@ -65,9 +65,9 @@ module StaticSite
 
       @feed_root_url = contact_url(params[:query])
       @feed_id = contact_feed_url(params[:query])
-      @feed_title = Setting.get(:site, :title) + " (feed for #{@search_query})"
+      @feed_title = current_notebook.settings.get(:title) + " (feed for #{@search_query})"
       @feed_updated_at = @all_entries.first&.occurred_at
-      @author_name = Setting.get(:site, :author_name)
+      @author_name = current_notebook.settings.get(:author_name)
 
       render :atom
     end
