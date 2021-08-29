@@ -39,11 +39,14 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # - 2021/should-just-work.html
 
     about_html = notebook.entries.notes.find_by!(identifier: "about.html")
-    # even tho it is an html file, we can set metadata attributes thru its
-    # frontmatter yaml, in this case the hide attribute.
-    # aso, the contents of the file get stuffed into the body attribute
+    # even tho it is an html file, we can set attributes thru its frontmatter
+    # yaml, in this case the hide attribute. additional keys get dumped into
+    # the metadata attribute.
+    #
+    # also, the contents of the file get stuffed into the body attribute
     assert about_html.hide
-    assert_equal 0, about_html.body.index("<h1>Sample About Page")
+    assert_equal 1234, about_html.metadata["some_other_key"]
+    assert_equal 0, about_html.body.index("<h1>Sample About Page</h1>")
 
     # we lop off .markdown extensions, we should have a 2021-07-06-convention-over-configuration
     # and its occurred at was defined in the filename.

@@ -376,13 +376,31 @@ class SyncFromDisk
     identifier = path_to_relative_identifier(md_path)
     identifier = identifier.gsub(/\.(md|markdown)/, "")
 
-    parsed_file.front_matter.merge({
+    entry_attributes = parsed_file.front_matter.merge({
       "identifier" => identifier,
       "occurred_at" => occurred_at,
       "body" => parsed_file.content,
       "created_at" => created_at,
       "updated_at" => updated_at
     }).slice(*Entry.accepted_attributes)
+
+    # handle metadata!
+    metadata_keys = (parsed_file.front_matter.keys - Entry.accepted_attributes)
+    if metadata_keys.any?
+      # if the user has specified a non Hash value, ie "metadata: foo", then
+      # throw a slightly easier to understand error here, instead of later on
+      # when we try to instantiate the Entry object & the error gets thrown there.
+      if entry_attributes["metadata"] && !entry_attributes["metadata"].is_a?(Hash)
+        raise "I expected the 'metadata' key on #{identifier} to be Hash, but something else is going on."
+      end
+
+      entry_attributes["metadata"] ||= {}
+      metadata_keys.each do |mkey|
+        entry_attributes["metadata"][mkey] ||= parsed_file.front_matter[mkey]
+      end
+    end
+
+    entry_attributes
   end
 
   def path_to_relative_identifier(file_path)

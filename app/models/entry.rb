@@ -61,6 +61,9 @@ class Entry < ApplicationRecord
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
 
+  # let's treat all metadata as a hash, saved as yaml
+  serialize :metadata, Hash
+
   attr_accessor :skip_local_sync # skip sync to git
   attr_accessor :skip_set_subject # TODO fix / do something about
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
