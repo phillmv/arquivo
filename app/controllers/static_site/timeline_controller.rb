@@ -10,6 +10,14 @@ module StaticSite
       @colophon = current_notebook.entries.find_by(identifier: "colophon")
     end
 
+    def archive
+      @all_entries = current_notebook.entries.visible.order(occurred_at: :desc).paginate(page: params[:page])
+
+      @entries = @all_entries.group_by do |e|
+        e.occurred_date
+      end
+    end
+
     def feed
       @all_entries = current_notebook.entries.visible.order(occurred_at: :desc).limit(10)
 

@@ -34,6 +34,8 @@ Rails.application.routes.draw do
     get '/contacts/', to: "static_site/timeline#contacts", as: :contacts
     get '/contacts/:query', to: "static_site/timeline#contact", as: :contact
     get '/contacts/:query/atom.xml', to: "static_site/timeline#contact_feed", as: :contact_feed
+    get '/archive/', to: "static_site/timeline#archive"
+    get '/archive/page/:page', to: "static_site/timeline#archive"
     get '/page/:page', to: "static_site/timeline#index"
     get '/hidden_entries/', to: "static_site/timeline#hidden_entries"
     get '/hidden_entries/:page', to: "static_site/timeline#hidden_entries"

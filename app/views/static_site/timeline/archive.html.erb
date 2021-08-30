@@ -1,0 +1,22 @@
+<%= render partial: "static_site/shared/sidebar" %>
+<div class="content-container">
+  <div>
+    <% @all_entries&.each do |entry| %>
+
+      <div>
+        <% if entry.subject %>
+          <h2><%= link_to entry.subject, entry %></h2>
+        <% else %>
+          <h2><%= link_to entry.identifier, entry %></h2>
+        <% end %>
+        <p><%= entry.occurred_at.strftime("%A, %Y-%m-%d") %></p>
+        <% if entry.summary %>
+          <p><%= entry.summary.html_safe %></p>
+        <% end %>
+      </div>
+
+    <% end %>
+
+  </div>
+  <%= will_paginate @all_entries, class: "pagination mt-4 mb-4"%>
+</div>
