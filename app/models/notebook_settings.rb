@@ -16,4 +16,20 @@ class NotebookSettings
   def all
     Setting.where(namespace: notebook_namespace)
   end
+
+  def render_options
+    self.all.where(key: ["sanitize", "smart_punctuation"]).map do |s|
+
+      value = case s.value
+              when "f"
+                false
+              when "t"
+                true
+              else
+                s.value
+              end
+
+      [s.key.to_sym,value]
+    end.to_h
+  end
 end

@@ -8,7 +8,7 @@ class Setting < KeyValue
     },
     :site => {
       host: "example.com",
-      port: 80,
+      port: "80",
       title: "This is a default title.",
       author_name: "Example Author Name",
     }
