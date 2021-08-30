@@ -36,6 +36,30 @@ class EntryRendererTest < ActiveSupport::TestCase
     assert_equal "<h1 data-sourcepos=\"1:1-1:18\">\n<a id=\"this-is-a-header\" class=\"anchor\" href=\"#this-is-a-header\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>this is a header</h1>\n<p data-sourcepos=\"2:1-3:29\"><strong>this is bolded</strong> and <em>this is italicized</em><br>\n<a href=\"example.com\">this is a link</a></p>\n&lt;script&gt;this gets sanitized out&lt;/script&gt;\n<div>no attributes</div>", basic_markdown_html
   end
 
+  test "sanitize: false means we let slip all sorts of stuff" do
+    assert_equal "<script>alert(1)</script>", @renderer.render_html("<script>alert(1)</script>", sanitize: false)
+  end
+
+  test "sanitize: true means we really do sanitize nasty stuff" do
+    assert_equal "&lt;script&gt;alert(1)&lt;/script&gt;&lt;iframe src=\"http://example.com\" title=\"lol\"&gt;&lt;/iframe&gt;", @renderer.render_html("<script>alert(1)</script><iframe src=\"http://example.com\" title=\"lol\"></iframe>", sanitize: true)
+
+    # it's also the default
+    assert_equal "&lt;script&gt;alert(1)&lt;/script&gt;&lt;iframe src=\"http://example.com\" title=\"lol\"&gt;&lt;/iframe&gt;", @renderer.render_html("<script>alert(1)</script><iframe src=\"http://example.com\" title=\"lol\"></iframe>")
+
+    # merely being unset will still sanitize, it HAS to be false
+    assert_equal "&lt;script&gt;alert(1)&lt;/script&gt;&lt;iframe src=\"http://example.com\" title=\"lol\"&gt;&lt;/iframe&gt;", @renderer.render_html("<script>alert(1)</script><iframe src=\"http://example.com\" title=\"lol\"></iframe>", sanitize: nil)
+  end
+
+  test "smart_punctuation does funny stuff to some chars" do
+    assert_equal "<p data-sourcepos=\"1:1-1:10\">– “hello”</p>", @renderer.render_html("-- \"hello\"", smart_punctuation: true)
+
+    # but not when turned on
+    assert_equal "<p data-sourcepos=\"1:1-1:10\">-- \"hello\"</p>", @renderer.render_html("-- \"hello\"", smart_punctuation: false)
+
+    # also not turned on by default
+    assert_equal "<p data-sourcepos=\"1:1-1:10\">-- \"hello\"</p>", @renderer.render_html("-- \"hello\"", smart_punctuation: false)
+  end
+
   test "parses hashtags and links them" do
     hashtag_markdown = <<~FOO
     #foo bar #baz
