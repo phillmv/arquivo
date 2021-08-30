@@ -28,13 +28,15 @@ Rails.application.routes.draw do
     get '/calendar/weekly', to: "static_site/calendar#weekly", as: :calendar_weekly
     get '/calendar/daily/(:date)', to: "static_site/calendar#daily", as: :calendar_daily
 
+    # TODO: paginate
     get '/tags/', to: "static_site/timeline#tags", as: :tags
     get '/tags/:query', to: "static_site/timeline#tag", as: :tag
     get '/tags/:query/atom.xml', to: "static_site/timeline#tag_feed", as: :tag_feed
     get '/contacts/', to: "static_site/timeline#contacts", as: :contacts
     get '/contacts/:query', to: "static_site/timeline#contact", as: :contact
     get '/contacts/:query/atom.xml', to: "static_site/timeline#contact_feed", as: :contact_feed
-    get '/archive/', to: "static_site/timeline#archive"
+
+    get '/archive/', to: "static_site/timeline#archive", as: :archive
     get '/archive/page/:page', to: "static_site/timeline#archive"
     get '/page/:page', to: "static_site/timeline#index"
     get '/hidden_entries/', to: "static_site/timeline#hidden_entries"

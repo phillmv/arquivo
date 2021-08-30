@@ -38,7 +38,6 @@ module StaticSite
       @search_query = params[:query]
       @search_query = "##{@search_query}"
       compile_search(@search_query)
-      render :index
     end
 
     def tag_feed
@@ -63,7 +62,6 @@ module StaticSite
       @search_query = params[:query]
       @search_query = "@#{@search_query}"
       compile_search(@search_query)
-      render :index
     end
 
     def contact_feed
