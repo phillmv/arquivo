@@ -211,22 +211,22 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     notebook = load_and_assert_notebook("simple_site_with_stylesheets")
 
     assert_equal 10, notebook.entries.count
-    assert_equal 1, notebook.entries.system.count
+    assert_equal 1, notebook.entries.manifests.count
     assert_equal 4, notebook.entries.documents.count
     assert_equal 5, notebook.entries.notes.count
 
     # so with this test i want to verify a few things:
-    # - we found the stylesheets/application.css.scss and marked it as a system entry
+    # - we found the stylesheets/application.css.scss and marked it as a manifest entry
     # - we're loading in the normalize.css file, ie other files in the
     # stylesheets/ folder will get sent down the pipe like any other attachment
     #   - as a side-effect, we don't do anything special to the non
     #   application.css.scss files
-    # - finally, that the system application.css.scss generates a document-type
+    # - finally, that the manifest application.css.scss generates a document-type
     # stylesheets/application.css entry
     #
     # the intention here is that if you're editing the layouts, you will add a stylesheet link
     # to your own css, which is rendered to a predictable spot.
-    notebook.entries.system.find_by!(identifier: "stylesheets/application.css.scss")
+    notebook.entries.manifests.find_by!(identifier: "stylesheets/application.css.scss")
     notebook.entries.documents.find_by!(identifier: "stylesheets/normalize.css")
     notebook.entries.documents.find_by!(identifier: "stylesheets/clearfix.scss")
     rendered_stylesheet = notebook.entries.documents.find_by!(identifier: "stylesheets/application.css")
@@ -234,11 +234,11 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_equal 1, rendered_stylesheet.files.count
     assert rendered_stylesheet.hide
 
-    # we don't intend for the raw manifest file to be available
+    # meanwhile, the raw manifest is available
     get "/stylesheets/application.css.scss"
-    assert_response 404
+    assert_response 200
 
-    # but the rendered stylesheet will load:
+    # and the rendered stylesheet will load:
     get "/stylesheets/application.css"
 
     assert_response 200
@@ -259,7 +259,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     notebook = load_and_assert_notebook("simple_site_with_stylesheets_and_config")
     assert_equal 10, notebook.entries.count
-    assert_equal 1, notebook.entries.system.count
+    assert_equal 1, notebook.entries.manifests.count
     assert_equal 4, notebook.entries.documents.count
     assert_equal 5, notebook.entries.notes.count
 

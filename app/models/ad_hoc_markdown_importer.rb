@@ -174,9 +174,8 @@ class AdHocMarkdownImporter
     # TODO: non-documents are still a bit experimental, still figuring out
     # how to support it properly. See StaticSiteImportExportTest.
     if identifier == "stylesheets/application.css.scss"
-      # TODO: tbh should probably also be a template eh?
-      # I don't love the name "system"
-      entry_kind = :system
+      # TODO: should this also be a "template"? doesn't super matter.
+      entry_kind = :manifest
       entry_body = File.read(file_path)
     elsif identifier =~ /\.erb$/
       # idea is that templates are rendered from within context of a
@@ -213,7 +212,7 @@ class AdHocMarkdownImporter
     # now let's handle the stylesheet manifest & render it.
     # if there is a stylesheets/application.css.scss we want to render the
     # Sass and convert it to a stylesheets/application.css
-    if stylesheet = notebook.entries.system.find_by(identifier: "stylesheets/application.css.scss")
+    if stylesheet = notebook.entries.manifests.find_by(identifier: "stylesheets/application.css.scss")
       load_path = File.join(notebook.import_path, "stylesheets")
 
       rendered_css = SassC::Engine.new(stylesheet.body, {

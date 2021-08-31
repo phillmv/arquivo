@@ -9,16 +9,20 @@ module StaticSite
         blob = @entry.files.blobs.first
         serve_blob(blob)
 
-      elsif @entry.system?
-        render plain: "", status: 404
+      elsif @entry.manifest?
+        render plain: @entry.body
 
-      elsif @entry.template?
+      # TODO: make up my mind on how to handle templates.
+      # elsif @entry.template?
         # don't love it but fix later, lol do not deploy this to untrusted user contexts???
-        render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
-      else
+        # render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
+
+      elsif @entry.note?
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
+      else
+        render plain: "", status: 404
       end
     end
 
