@@ -7,10 +7,11 @@ module StaticSite
     def show
       if @entry.document?
         blob = @entry.files.blobs.first
-        expires_in ActiveStorage.service_urls_expire_in
-        redirect_to rails_blob_path(blob, disposition: params[:disposition])
+        serve_blob(blob)
+
       elsif @entry.system?
         render plain: "", status: 404
+
       elsif @entry.template?
         # don't love it but fix later, lol do not deploy this to untrusted user contexts???
         render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
@@ -23,8 +24,7 @@ module StaticSite
 
     def files
       blob = @entry.files.blobs.find_by!(filename: params[:filename])
-      expires_in ActiveStorage.service_urls_expire_in
-      redirect_to rails_blob_url(blob, disposition: params[:disposition])
+      serve_blob(blob)
     end
 
     # drop `static_site/` prefix, see StaticSiteController#prepend_custom_paths
@@ -49,6 +49,25 @@ module StaticSite
       end
 
       @entry = Entry.find_by!(identifier: params[:id], notebook: current_notebook.to_s)
+    end
+
+    def serve_blob(blob)
+      path = blob.service.path_for(blob.key)
+      content_type = blob.content_type
+      disposition = params[:disposition]
+
+      # Taken from ActiveStorage::DiskController#serve_file @ 6.0.2.1
+      Rack::File.new(nil).serving(request, path).tap do |(status, headers, body)|
+        self.status = status
+        self.response_body = body
+
+        headers.each do |name, value|
+          response.headers[name] = value
+        end
+
+        response.headers["Content-Type"] = content_type ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_TYPE
+        response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
+      end
     end
   end
 end
