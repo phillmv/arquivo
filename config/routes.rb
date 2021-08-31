@@ -1,29 +1,13 @@
 Rails.application.routes.draw do
-  resources :notebooks
-
   if Arquivo.static?
-    # change the scope in a separate env
-    # but what about the path helpers? won't they error out from not having owner
-    # (didn't you rewrite all of them recently?)
-    # slash copy the templates as opposed to trying to fix them. benefit is you can run in that mode
-    # maybe a StaticGen controller of its own
-    # i only really have like 3 types in this system? post{note,bookmark,calendar}, tag, contact?
+    # This set of routes is used exclusively in 'static' mode, which allows us
+    # to generate static versions of the notebook's content. in order to make it
+    # play nicely, i have largely duplicated & augmented the main app's set of routes
     #
-    # scope :notebook do
-    #   get / to timeline
-    #   get /page/:number
-    #   get /tags
-    #   get /tags/:tag
-    #   get /bookmarks
-    #   get /bookmarks/:bookmark
-    #   get /calendar
-    #   get /index
-    #   get /index/:word
-    #   get /:identifier
-    #   get /:identifier/files/:filename
-    #
-    # that's easy dude.
-
+    # of key interest:
+    # - can't use ?param=value when storing to flat files, so those routes have been changed
+    # - extensive hack around ActiveStorage route prefixes
+    # - naturally, these routes define forbidden Entry identifiers, but that is not yet enforced
     get '/calendar', to: "static_site/calendar#monthly", as: :calendar
     get '/calendar/weekly', to: "static_site/calendar#weekly", as: :calendar_weekly
     get '/calendar/daily/(:date)', to: "static_site/calendar#daily", as: :calendar_daily
@@ -39,11 +23,18 @@ Rails.application.routes.draw do
     get '/archive/', to: "static_site/timeline#archive", as: :archive
     get '/archive/page/:page', to: "static_site/timeline#archive"
     get '/page/:page', to: "static_site/timeline#index"
+
+    # used for downloading any entries marked as hidden, and which are not linked
+    # to from anywhere else in the site.
     get '/hidden_entries/', to: "static_site/timeline#hidden_entries"
     get '/hidden_entries/:page', to: "static_site/timeline#hidden_entries"
 
     # this is a hack to preserve routing of previous attached files
     # whose url will refer /owner/notebook/identifier/files/filename
+    # i.e. in normal mode when I attach a file the generated url will look like
+    # the above, and that is what will get inserted into the text.
+    # When the Entry gets rendered in static mode, we want to be able to serve
+    # that URL all the same.
     scope ':owner' do
       # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
       # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
@@ -64,6 +55,7 @@ Rails.application.routes.draw do
     get "/*id/edit", to: "entries#edit", as: :edit_entry
   else
 
+  resources :notebooks
   scope ':owner', defaults: { owner: "owner" } do
     # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
     # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
