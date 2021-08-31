@@ -26,11 +26,11 @@ class Notebook < ApplicationRecord
   end
 
   def push_to_git!
-    SyncWithGit.new(self).push!
+    SyncWithGit.new(self).push! unless Arquivo.static?
   end
 
   def pull_from_git!
-    SyncWithGit.new(self).pull!
+    SyncWithGit.new(self).pull! unless Arquivo.static?
   end
 
   def to_s
@@ -69,10 +69,13 @@ class Notebook < ApplicationRecord
     # if we do not supply a path, first check to see if we stored a a notebook
     # path on import. If we did not, then let's go ahead and use the system
     # default arquivo path
-    path ||= self.import_path
-    path ||= Setting.get(:arquivo, :arquivo_path)
+    if self.import_path
+      return import_path
+    else
+      path ||= Setting.get(:arquivo, :arquivo_path)
 
-    File.join(path, self.to_s)
+      File.join(path, self.to_s)
+    end
   end
 
   def to_full_file_path(path = nil)
@@ -89,5 +92,9 @@ class Notebook < ApplicationRecord
 
   def owner
     @owner ||= User.current
+  end
+
+  def settings
+    @settings ||= NotebookSettings.new(self)
   end
 end

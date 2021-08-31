@@ -4,7 +4,6 @@ class SyncFromDisk
   # pattern is notebook/year/month/day/identifier
   NOTEBOOK_GLOB = "/*" #notebook
   DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
-  EVERYTHING_GLOB = "**/*"
   def initialize(notebook_path, notebook = nil, override_notebook: false)
     @notebook_path = notebook_path
     @notebook = notebook
@@ -53,7 +52,7 @@ class SyncFromDisk
       # if this is not a full arquivo notebook, then it's a folder full of
       # ad-hoc markdown files and folders, and we're going to do some weird
       # stuff to make everything "just work"
-      notebook = import_from_folder_full_of_markdown
+      notebook = AdHocMarkdownImporter.new(notebook_path).import!
     end
 
     notebook
@@ -201,142 +200,5 @@ class SyncFromDisk
     end
 
     [entry, updated]
-  end
-
-  def import_from_folder_full_of_markdown
-    # Generate entries for any markdown files:
-
-    # for now, let's guess a random notebook name
-    # in the future, maybe use an env var?
-    notebook_name = File.basename(notebook_path).strip
-    notebook = Notebook.find_by(name: notebook_name)
-    if notebook.nil?
-      notebook = Notebook.create(name: notebook_name,
-                                 import_path: notebook_path)
-    else
-      notebook.update(import_path: notebook_path)
-    end
-
-    everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
-    Dir.glob(everything_paths, File::FNM_DOTMATCH).each do |file_path|
-      if file_path =~ /\.(md|markdown|html)$/
-        entry_attributes = entry_attributes_from_markdown(notebook, file_path)
-        entry_attributes[:skip_local_sync] = true
-
-        entry, updated = upsert_entry!(notebook, entry_attributes)
-      elsif !File.directory?(file_path)
-        # gonna need some entry attributes
-
-        identifier = path_to_relative_identifier(file_path)
-        filename = File.basename(identifier)
-
-        # by default we treat everything that is not markdown/html as a 'document'
-        entry_kind = :document
-        # but all the files within the _site folder are special
-        if identifier.index(".site/") == 0
-          entry_kind = :system
-        elsif identifier.index("stylesheets/application.css.scss")
-          entry_kind = :system
-        end
-
-        entry_attributes = {
-          "identifier" => identifier,
-          "occurred_at" => File.ctime(file_path),
-          "updated_at" => File.mtime(file_path),
-          "kind" => entry_kind,
-          "hide" => true,
-          skip_local_sync: true,
-        }
-
-        entry, updated = upsert_entry!(notebook, entry_attributes)
-
-        if !entry.files.blobs.find_by(filename: filename)
-          blob = ActiveStorage::Blob.create_and_upload!(io: File.open(file_path),
-                                                        filename: filename)
-
-          # run analysis step synchronously, so we skip the async job.
-          # for reasons i don't comprehend, in dev mode at least
-          # ActiveStorage::AnalyzeJob just hangs there indefinitely, doing
-          # naught to improve our lot, and this is very frustrating and further
-          # i have close to zero desire to debug ActiveJob async shenanigans
-          blob.analyze
-          entry.files.create(blob_id: blob.id, created_at: blob.created_at)
-        end
-      end
-    end
-
-    # TODO: cleanup, isolate/refactor. A bit awkward we do this scss render
-    # step here in the sync from disk, is it not?
-    # also, what about .sass files?
-    #
-    # now let's handle the stylesheet manifest & render it.
-    # if there is a stylesheets/application.css.scss we want to render the
-    # Sass and convert it to a stylesheets/application.css
-    if stylesheet = notebook.entries.system.find_by(identifier: "stylesheets/application.css.scss")
-      load_path = File.join(notebook.import_path, "stylesheets")
-      manifest_path = File.join(load_path, "application.css.scss")
-
-      rendered_css = SassC::Engine.new(File.read(manifest_path), {
-        filename: "application.css.scss",
-        syntax: :scss,
-        load_paths: [load_path],
-      }).render
-
-      rendered_stylesheet = notebook.entries.new(stylesheet.export_attributes)
-      rendered_stylesheet.identifier = "stylesheets/application.css"
-      rendered_stylesheet.kind = :document
-      rendered_stylesheet.save!
-
-      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(rendered_css),
-                                                    filename: "application.css")
-      blob.analyze
-      rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
-    end
-  end
-
-  def entry_attributes_from_markdown(notebook, md_path)
-    loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time, Date, DateTime])
-    md_parser = FrontMatterParser::SyntaxParser::Md.new
-    parsed_file = FrontMatterParser::Parser.new(md_parser, loader: loader).call(File.read(md_path))
-
-    occurred_at = parsed_file["occurred_at"]
-    if occurred_at.blank?
-      # let's try to guess it from the file
-      basename = File.basename(md_path)
-      date = basename.match(/([0-9]{4}-*[0-9]{2}-*[0-9]{2}-*)/).to_a[0]
-
-      # most of the time this does the right thing but it does have the habit
-      # of sometimes throwing an exception
-      begin
-        occurred_at = DateTime.parse(date.to_s)
-      rescue ArgumentError
-      end
-
-      # if still nil, let's look at the file itself
-      if occurred_at.nil?
-        occurred_at = File.ctime(md_path)
-      end
-    end
-
-    created_at = parsed_file["created_at"] || File.ctime(md_path)
-    updated_at = parsed_file["updated_at"] || File.mtime(md_path)
-
-    # if we're parsing front-mattered markdown, you don't get to define an
-    # identifier separate from the file's relative path, don't want to deal
-    # with collisions etc, too confusing
-    identifier = path_to_relative_identifier(md_path)
-    identifier = identifier.gsub(/\.(md|markdown)/, "")
-
-    parsed_file.front_matter.merge({
-      "identifier" => identifier,
-      "occurred_at" => occurred_at,
-      "body" => parsed_file.content,
-      "created_at" => created_at,
-      "updated_at" => updated_at
-    }).slice(*Entry.accepted_attributes)
-  end
-
-  def path_to_relative_identifier(file_path)
-    Pathname.new(file_path).relative_path_from(notebook_path).to_s
   end
 end

@@ -9,7 +9,7 @@ class KeyValue < ApplicationRecord
 
   def self.set(namespace, key, value)
     self.transaction do
-      if kv = get(namespace, key)
+      if kv = fetch(namespace, key)
         kv.update(value: value)
       else
         create(namespace: namespace, key: key, value: value)

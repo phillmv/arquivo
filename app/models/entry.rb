@@ -27,7 +27,8 @@ class Entry < ApplicationRecord
   scope :bookmarks, -> { where(kind: "pinboard") }
   scope :except_bookmarks, -> { where(kind: nil).or(where.not(kind: "pinboard")) }
   scope :documents, -> { where(kind: "document") }
-  scope :system, -> { where(kind: "system") }
+  scope :manifests, -> { where(kind: "manifest") }
+  scope :templates, -> { where(kind: "templates") }
 
   scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
   scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
@@ -59,6 +60,9 @@ class Entry < ApplicationRecord
 
   validates :identifier, uniqueness: { scope: :notebook }
   before_create :set_identifier
+
+  # let's treat all metadata as a hash, saved as yaml
+  serialize :metadata, Hash
 
   attr_accessor :skip_local_sync # skip sync to git
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
@@ -123,7 +127,17 @@ class Entry < ApplicationRecord
 
   def set_subject
     if self.note?
-      self.subject = EntryRenderer.new(self).subject
+      if Arquivo.static?
+        # in "static" mode, sometimes the subject is set explicitly
+        # so we don't want to override it. ie the attributes set a subject,
+        # and then when the Entry is saved, this callback overrides it by
+        # trying to guess a subject out of the entry body.
+        self.subject ||= EntryRenderer.new(self).subject
+      else
+        # whereas in normal edit mode, the subject should always be defined
+        # within the body
+        self.subject = EntryRenderer.new(self).subject
+      end
     end
   end
 
@@ -164,8 +178,12 @@ class Entry < ApplicationRecord
     kind == "document"
   end
 
-  def system?
-    kind == "system"
+  def manifest?
+    kind == "manifest"
+  end
+
+  def template?
+    kind == "template"
   end
 
   def fold?
