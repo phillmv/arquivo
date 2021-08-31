@@ -48,59 +48,23 @@ class AdHocMarkdownImporter
   end
 
   def process_import_path(notebook)
-    everything_paths = File.join(notebook_path, EVERYTHING_GLOB)
+    everything_paths = File.join(notebook.import_path, EVERYTHING_GLOB)
     Dir.glob(everything_paths, File::FNM_DOTMATCH).each do |file_path|
 
-      identifier = path_to_relative_identifier(file_path)
+      identifier = path_to_relative_identifier(file_path, notebook.import_path)
 
-      if identifier.index(".site/") == 0
-        # These are special files that don't need to become Entries.
+      if skip_file_path?(identifier, file_path)
         # Do nothing.
-      elsif identifier.index(".git/") == 0
-        # also do nothing
-      elsif file_path =~ /\.(md|markdown|html)$/
+      elsif looks_like_text?(file_path)
         # Files that become normal entries, the content in our site.
         puts "processing #{file_path}" if Rails.env.development?
-        entry_attributes = entry_attributes_from_markdown(file_path)
-        entry_attributes[:skip_local_sync] = true
+        entry_attributes = entry_attributes_from_markdown(identifier, file_path)
 
         entry = add_entry!(notebook, entry_attributes)
-      elsif !File.directory?(file_path)
+      else
         # everything that is not markdown is treated a bit differently.
         puts "processing #{file_path}" if Rails.env.development?
-
-        entry_kind = nil
-        entry_source = nil
-
-        # TODO: non-documents are still a bit experimental, still figuring out
-        # how to support it properly. See StaticSiteImportExportTest.
-        if identifier == "stylesheets/application.css.scss"
-          # TODO: tbh should probably also be a template eh?
-          # I don't love the name "system"
-          entry_kind = :system
-        elsif identifier =~ /\.erb$/
-          # idea is that templates are rendered from within context of a
-          # controller, which is too painful to setup here
-          entry_kind = :template
-          # we store the original file name in the source field in case in the
-          # future we ever support something other than erb or move sass into this
-          entry_source = identifier
-          identifier = identifier.gsub(".erb", "")
-        else
-          # by default we treat everything that is not markdown/html as a 'document'
-          entry_kind = :document
-        end
-
-        entry_attributes = {
-          "identifier" => identifier,
-          "occurred_at" => File.ctime(file_path),
-          "updated_at" => File.mtime(file_path),
-          "kind" => entry_kind,
-          "source" => entry_source,
-          "hide" => true,
-          skip_local_sync: true,
-          skip_set_subject: true,
-        }
+        entry_attributes = entry_attributes_from_document(identifier, file_path)
 
         entry = add_entry!(notebook, entry_attributes)
 
@@ -119,6 +83,19 @@ class AdHocMarkdownImporter
         end
       end
     end
+  end
+
+  def skip_file_path?(identifier, file_path)
+    # skip folders, nothing to do
+    File.directory?(file_path) ||
+      # skip .site/ files, which are special & rn do not become Entries
+      identifier.index(".site/") == 0 ||
+      # skip git folders, obv
+      identifier.index(".git/") == 0
+  end
+
+  def looks_like_text?(file_path)
+    file_path =~ /\.(md|markdown|html)$/
   end
 
   def process_templates(notebook)
@@ -153,7 +130,7 @@ class AdHocMarkdownImporter
     end
   end
 
-  def entry_attributes_from_markdown(md_path)
+  def entry_attributes_from_markdown(identifier, md_path)
     loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time, Date, DateTime])
     md_parser = FrontMatterParser::SyntaxParser::Md.new
     parsed_file = FrontMatterParser::Parser.new(md_parser, loader: loader).call(File.read(md_path))
@@ -182,16 +159,23 @@ class AdHocMarkdownImporter
 
     # if we're parsing front-mattered markdown, you don't get to define an
     # identifier separate from the file's relative path, don't want to deal
-    # with collisions etc, too confusing
-    identifier = path_to_relative_identifier(md_path)
-    identifier = identifier.gsub(/\.(md|markdown)/, "")
+    # with collisions etc, too confusing, the ad hoc markdown is for ad hoc
+    # files, loosely slapped together!
+    #
+    # here, we lop off `.md` and `.markdown` from the end – but keep .html
+    # (why keep .html? no reason in particular. maybe a mild assumption that
+    # .html is the 'terminal' format the content will be delivered in. i may
+    # revisit this in the future.)
+    chopped_identifier = identifier.gsub(/\.(md|markdown)/, "")
 
     entry_attributes = parsed_file.front_matter.merge({
-      "identifier" => identifier,
+      "identifier" => chopped_identifier,
+      "source" => identifier,
       "occurred_at" => occurred_at,
       "body" => parsed_file.content,
       "created_at" => created_at,
-      "updated_at" => updated_at
+      "updated_at" => updated_at,
+      skip_local_sync: true
     }).slice(*Entry.accepted_attributes)
 
     # handle metadata!
@@ -213,12 +197,44 @@ class AdHocMarkdownImporter
     entry_attributes
   end
 
-  def path_to_relative_identifier(file_path)
-    Pathname.new(file_path).relative_path_from(notebook_path).to_s
+  def entry_attributes_from_document(identifier, file_path)
+    entry_kind = nil
+    entry_source = nil
+
+    # TODO: non-documents are still a bit experimental, still figuring out
+    # how to support it properly. See StaticSiteImportExportTest.
+    if identifier == "stylesheets/application.css.scss"
+      # TODO: tbh should probably also be a template eh?
+      # I don't love the name "system"
+      entry_kind = :system
+    elsif identifier =~ /\.erb$/
+      # idea is that templates are rendered from within context of a
+      # controller, which is too painful to setup here
+      entry_kind = :template
+      # we store the original file name in the source field in case in the
+      # future we ever support something other than erb or move sass into this
+      entry_source = identifier
+      identifier = identifier.gsub(".erb", "")
+    else
+      # by default we treat everything that is not markdown/html as a 'document'
+      entry_kind = :document
+    end
+
+    entry_attributes = {
+      "identifier" => identifier,
+      "occurred_at" => File.ctime(file_path),
+      "updated_at" => File.mtime(file_path),
+      "kind" => entry_kind,
+      "source" => entry_source,
+      "hide" => true,
+      skip_local_sync: true,
+    }
   end
 
-  # if identifier already exists, only update if the timestamp is newer
-  # than what is in our copy
+  def path_to_relative_identifier(file_path, import_path)
+    Pathname.new(file_path).relative_path_from(import_path).to_s
+  end
+
   def add_entry!(notebook, entry_attributes)
     identifier = entry_attributes["identifier"]
 
@@ -233,5 +249,4 @@ class AdHocMarkdownImporter
 
     entry
   end
-
 end

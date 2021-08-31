@@ -65,7 +65,6 @@ class Entry < ApplicationRecord
   serialize :metadata, Hash
 
   attr_accessor :skip_local_sync # skip sync to git
-  attr_accessor :skip_set_subject # TODO fix / do something about
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
   before_save :set_subject
 
@@ -127,7 +126,7 @@ class Entry < ApplicationRecord
   end
 
   def set_subject
-    if self.note? && !skip_set_subject
+    if self.note?
       if Arquivo.static?
         # in "static" mode, sometimes the subject is set explicitly
         # so we don't want to override it. ie the attributes set a subject,
