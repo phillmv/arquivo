@@ -98,38 +98,6 @@ class AdHocMarkdownImporter
     file_path =~ /\.(md|markdown|html)$/
   end
 
-  def process_templates(notebook)
-    # TODO: cleanup, isolate/refactor. A bit awkward we do this scss render
-    # step here in the sync from disk, is it not? This works as a post-import
-    # step only because we don't expect to edit it, this is being done within
-    # context of a one-time static import->export loop.
-    # also, what about .sass files?
-    #
-    # now let's handle the stylesheet manifest & render it.
-    # if there is a stylesheets/application.css.scss we want to render the
-    # Sass and convert it to a stylesheets/application.css
-    if stylesheet = notebook.entries.system.find_by(identifier: "stylesheets/application.css.scss")
-      load_path = File.join(notebook.import_path, "stylesheets")
-      manifest_path = File.join(load_path, "application.css.scss")
-
-      rendered_css = SassC::Engine.new(File.read(manifest_path), {
-        filename: "application.css.scss",
-        syntax: :scss,
-        load_paths: [load_path],
-      }).render
-
-      rendered_stylesheet = notebook.entries.new(stylesheet.export_attributes)
-      rendered_stylesheet.identifier = "stylesheets/application.css"
-      rendered_stylesheet.kind = :document
-      rendered_stylesheet.save!
-
-      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(rendered_css),
-                                                    filename: "application.css")
-      blob.analyze
-      rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
-    end
-  end
-
   def entry_attributes_from_markdown(identifier, md_path)
     loader = FrontMatterParser::Loader::Yaml.new(allowlist_classes: [Time, Date, DateTime])
     md_parser = FrontMatterParser::SyntaxParser::Md.new
@@ -166,11 +134,12 @@ class AdHocMarkdownImporter
     # (why keep .html? no reason in particular. maybe a mild assumption that
     # .html is the 'terminal' format the content will be delivered in. i may
     # revisit this in the future.)
-    chopped_identifier = identifier.gsub(/\.(md|markdown)/, "")
+    entry_source = identifier # store the unmodified identifier as the "source"
+    identifier = identifier.gsub(/\.(md|markdown)/, "")
 
     entry_attributes = parsed_file.front_matter.merge({
-      "identifier" => chopped_identifier,
-      "source" => identifier,
+      "identifier" => identifier,
+      "source" => entry_source,
       "occurred_at" => occurred_at,
       "body" => parsed_file.content,
       "created_at" => created_at,
@@ -199,7 +168,8 @@ class AdHocMarkdownImporter
 
   def entry_attributes_from_document(identifier, file_path)
     entry_kind = nil
-    entry_source = nil
+    entry_source = identifier
+    entry_body = nil
 
     # TODO: non-documents are still a bit experimental, still figuring out
     # how to support it properly. See StaticSiteImportExportTest.
@@ -207,6 +177,7 @@ class AdHocMarkdownImporter
       # TODO: tbh should probably also be a template eh?
       # I don't love the name "system"
       entry_kind = :system
+      entry_body = File.read(file_path)
     elsif identifier =~ /\.erb$/
       # idea is that templates are rendered from within context of a
       # controller, which is too painful to setup here
@@ -222,6 +193,7 @@ class AdHocMarkdownImporter
 
     entry_attributes = {
       "identifier" => identifier,
+      "body" => entry_body,
       "occurred_at" => File.ctime(file_path),
       "updated_at" => File.mtime(file_path),
       "kind" => entry_kind,
@@ -230,6 +202,44 @@ class AdHocMarkdownImporter
       skip_local_sync: true,
     }
   end
+
+  def process_templates(notebook)
+    # TODO: cleanup, isolate/refactor. A bit awkward we do this scss render
+    # step here in the sync from disk, is it not? This works as a post-import
+    # step only because we don't expect to edit it, this is being done within
+    # context of a one-time static import->export loop.
+    # also, what about .sass files?
+    #
+    # now let's handle the stylesheet manifest & render it.
+    # if there is a stylesheets/application.css.scss we want to render the
+    # Sass and convert it to a stylesheets/application.css
+    if stylesheet = notebook.entries.system.find_by(identifier: "stylesheets/application.css.scss")
+      load_path = File.join(notebook.import_path, "stylesheets")
+
+      rendered_css = SassC::Engine.new(stylesheet.body, {
+        filename: "application.css.scss",
+        syntax: :scss,
+        load_paths: [load_path],
+      }).render
+
+      # there can only be ONE application.css
+      if to_delete = notebook.entries.find_by(identifier: "stylesheets/application.css")
+        puts "Destroying extraneous stylesheets/application.css, so it can be replaced."
+        to_delete.destroy
+      end
+
+      rendered_stylesheet = notebook.entries.new(stylesheet.export_attributes)
+      rendered_stylesheet.identifier = "stylesheets/application.css"
+      rendered_stylesheet.kind = :document
+      rendered_stylesheet.save!
+
+      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(rendered_css),
+                                                    filename: "application.css")
+      blob.analyze
+      rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
+    end
+  end
+
 
   def path_to_relative_identifier(file_path, import_path)
     Pathname.new(file_path).relative_path_from(import_path).to_s
