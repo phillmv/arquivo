@@ -116,15 +116,6 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # and now we test the document:
 
     get "/youvechanged.jpg"
-    # we get redirected to the blobs path
-    assert_response 302
-
-    get response.location
-    # we get redirected to the signed service url
-    assert_response 302
-
-    get response.location
-    # we finally get the content:
     assert_response 200
     assert_equal "image/jpeg", response.content_type
 
@@ -250,13 +241,6 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # but the rendered stylesheet will load:
     get "/stylesheets/application.css"
 
-    # we get redirected to the blobs path &
-    # we get redirected to the signed service url &
-    # we finally get the content:
-    assert_response 302
-    get response.location
-    assert_response 302
-    get response.location
     assert_response 200
     assert_equal "text/css", response.content_type
 
