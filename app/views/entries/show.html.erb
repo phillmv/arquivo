@@ -6,7 +6,7 @@
       <ol>
         <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></h3></li>
         <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= calendar_daily_path(@current_date, @entry.parent_notebook) %>"><%= @current_date %></a></h3></li>
-        <li class="breadcrumb-item" aria-current="page"><h3 class="d-inline"><%= @entry.identifier %></h3></li>
+        <li class="breadcrumb-item" aria-current="page"><h3 class="d-inline"><%= @entry.occurred_at.strftime("%H:%M:%S") %></h3></li>
       </ol>
     </nav>
   </div>

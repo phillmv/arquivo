@@ -17,6 +17,7 @@
     <div class="show-all-toggle">
       <p class="text-blue"><%= octicon "chevron-down" %> Show all content</p>
     </div>
+
     <%# task click to update requires the following hidden form: %>
     <div class="entry-edit d-none">
       <%= form_with(model: entry, url: entry_path(entry, notebook: entry.notebook)) do |form| %>
@@ -31,3 +32,4 @@
     </div>
   </div>
 </div>
+<!-- <hr class="divider"> -->

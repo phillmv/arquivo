@@ -111,6 +111,29 @@
 // used for rendering entry bodies
 .entry-box {
   @extend .Box;
+  // experimenting with removing the box borders HAX
+  border: unset;
+  .Box-body {
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    border-bottom: unset
+  }
+ }
+
+// let's turn off that little timeline line, HAX
+.content-container {
+  .TimelineItem::before {
+    width: 0px;
+  }
+
+  .TimelineItem {
+    // border-bottom: 1px solid #d1d5da;
+    margin-left: unset;
+    .TimelineItem-badge {
+      margin-left: unset;
+    }
+  }
 }
 
 // unused
@@ -158,6 +181,21 @@ summary::-webkit-details-marker {
   @extend .mb-3;
 
   @extend .text-gray-dark;
+
+  // HAX
+  .actions {
+  visibility: hidden;
+}
+}
+
+// HAX
+.entry-box:hover .entry-list-header .actions {
+  visibility: unset;
+}
+
+.markdown-body h1 {
+  padding-bottom: 0px;
+  border: unset;
 }
 
 // prevent controls (edit, fold, etc) from appearing when selecting text
