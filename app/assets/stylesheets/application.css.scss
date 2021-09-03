@@ -53,7 +53,24 @@
     margin-right: $spacer-0;
   }
 
-
+  // notebook selector
+  .SelectMenu-modal {
+    width: 100%;
+    border: none;
+    // border-radius: unset;
+    // box-shadow: unset;
+    // background: unset;
+    .SelectMenu-list {
+      // padding-top is to prevent the thick 'item selected' border
+      // from being cropped by the parent SelectMenu-modal (?) (not totally sure)
+      padding-top: 4px;
+      padding-right: 1em;
+      padding-left: 0.5em;
+      padding-bottom: 4px;
+      border-top: unset;
+      overflow-x: unset;
+    }
+  }
 }
 
 .context-container {

@@ -18,7 +18,7 @@ module ApplicationHelper
 
   def current_sidebar?(type)
     if SIDEBAR_NAV_OPTS[current_action] == type
-      "black-underline"
+      "text-purple"
     else
       nil
     end
