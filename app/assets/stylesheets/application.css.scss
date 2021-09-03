@@ -264,11 +264,23 @@ summary::-webkit-details-marker {
 
 // override dark grey in calendar view
 table.weekly {
+  table-layout: fixed;
   .next-month, .prev-month {
     &.today {
       background-color: #FFFFC0
     }
-    background-color: inherit;
+  }
+
+  td {
+    padding: 0;
+    overflow: hidden;
+    background-color: #F2F2F2;
+    .weekly-entry {
+      padding: 6px;
+      background-color: white;
+      border-bottom: 1px solid #dfe2e5;
+      padding-bottom: 15px;
+    }
   }
 }
 

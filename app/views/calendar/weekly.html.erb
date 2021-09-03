@@ -12,9 +12,10 @@
   <% end %>
   <%= week_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
-      <div class="pt-2">
         <% entries.each do |entry| %>
-          <a href="<%= entry_path(entry)%>" class="link-gray-dark f5"  style="width: 100%; display: block">
+          <div class="weekly-entry">
+            <a href="<%= entry_path(entry)%>" class="link-gray-dark f5"  style="width: 100%; display: block">
+              <span class="f6 text-gray"><%= entry.occurred_at.strftime("@%H:%M") %></span><br/>
            <% if entry.calendar? %>
              <%= octicon("person", class: "text-gray-dark") %>
              <%= entry.truncated_description(18) %>
@@ -25,10 +26,8 @@
            <% else %>
              <%= entry.truncated_description(100) %>
           <% end %>
-
-          <hr>
+          </div>
         <% end %>
-      </div>
     <% else %>
     <% end %>
   <% end %>
