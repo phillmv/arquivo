@@ -273,8 +273,9 @@ summary::-webkit-details-marker {
 table.weekly {
   table-layout: fixed;
   .next-month, .prev-month {
+    background-color: #F2F2F2;
     &.today {
-      background-color: #FFFFC0
+      background-color: #FFFFC0 // commented out for now.
     }
   }
 
@@ -291,6 +292,13 @@ table.weekly {
   }
 }
 
+table.monthly {
+  table-layout: fixed;
+  background-color: #F2F2F2;
+  td.has-events {
+    background-color: white;
+  }
+}
 
 // brand
 h1.arquivo {
