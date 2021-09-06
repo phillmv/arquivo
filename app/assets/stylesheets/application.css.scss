@@ -173,6 +173,9 @@ summary::-webkit-details-marker {
   @extend .mb-3;
 
   @extend .text-gray-dark;
+  // HAX
+  border-bottom: 1px solid #e1e4e8;
+  padding-bottom: 16px;
 }
 
 // prevent controls (edit, fold, etc) from appearing when selecting text
@@ -305,4 +308,11 @@ h1.arquivo {
   &:hover {
     text-decoration: underline $blue-500;
   }
+}
+
+// HAX
+// the h1, h2 has a border bottom that is a bit excessive
+.markdown-body h1, .markdown-body h2 {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
