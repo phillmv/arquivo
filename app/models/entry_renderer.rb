@@ -121,7 +121,15 @@ class EntryRenderer
     SAFE_PIPELINE.call(entry.body, entry: entry)[:entry_subject]
   end
 
+  def subject_html
+    SAFE_PIPELINE.call(entry.body, entry: entry)[:entry_subject_html].html_safe
+  end
+
   def gimme_html(str)
     SAFE_PIPELINE.to_html(str, entry: entry).html_safe
+  end
+
+  def render_body(opt = {})
+    render_html(entry.body, opt)
   end
 end
