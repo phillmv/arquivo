@@ -111,16 +111,19 @@
 // used for rendering entry bodies
 .entry-box {
   @extend .Box;
-  // experimenting with removing the box borders begin HAX
-  border-right: 0px;
-  border-left: 0px;
-  border-bottom: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
-  .Box-body {
-    border-bottom: unset;
+  .markdown-body img {
+    width: 100%;
   }
+  // experimenting with removing the box borders begin HAX
+  // border-right: 0px;
+  // border-left: 0px;
+  // border-bottom: 0px;
+  // border-bottom-left-radius: 0px;
+  // border-top-right-radius: 0px;
+  // border-top-left-radius: 0px;
+  // .Box-body {
+  //   border-bottom: unset;
+  // }
   // end HAX
 }
 
