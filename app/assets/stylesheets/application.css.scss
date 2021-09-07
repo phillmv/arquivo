@@ -337,7 +337,7 @@ h1.arquivo {
   // here we deviate & make it longer than the content-container to force the
   // adjacent over sidebar-container to go on the next block
   @extend .col-lg-9;
-  @extend .mb-lg-2;
+  // @extend .mb-lg-2;
 
   @include breakpoint(sm) {
     margin-right: $spacer-4;
