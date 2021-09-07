@@ -84,12 +84,12 @@ class EntryRenderer
   # should it accept: an attribute, a method, a full string?, a flag (i.e. :todo)
   # or just make everything a named keyword.
 
-  def to_html(attribute_name = "body")
+  def to_html(attribute_name = "body", opt = {})
     attribute = entry.attributes[attribute_name]
     if !attribute
       ""
     else
-      render_html(attribute)
+      render_html(attribute, opt)
     end
   end
 
