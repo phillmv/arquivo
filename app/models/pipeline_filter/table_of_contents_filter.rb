@@ -11,6 +11,7 @@ class PipelineFilter::TableOfContentsFilter < HTML::Pipeline::Filter
   end
 
   def call
+    return doc if context[:skip_toc]
     result[:toc] = String.new('')
 
     headers = Hash.new(0)
