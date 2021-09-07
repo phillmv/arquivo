@@ -38,6 +38,7 @@ class EntryRenderer
 
   SAFE_PIPELINE = HTML::Pipeline.new [
     PipelineFilter::MarkdownFilter, # convert to HTML
+    PipelineFilter::SubjectExtractorFilter,
     PipelineFilter::WikiLinkFilter,
     HTML::Pipeline::SanitizationFilter, # strip scary tags
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
@@ -54,6 +55,7 @@ class EntryRenderer
   # Exactly the same as the SAFE_PIPELINE but minus the sanitizationfilter
   UNSAFE_PIPELINE = HTML::Pipeline.new [
     PipelineFilter::MarkdownFilter, # convert to HTML
+    PipelineFilter::SubjectExtractorFilter,
     PipelineFilter::WikiLinkFilter,
     # Here we commented out: HTML::Pipeline::SanitizationFilte
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
@@ -122,7 +124,7 @@ class EntryRenderer
   end
 
   def subject_html
-    SAFE_PIPELINE.call(entry.body, entry: entry)[:entry_subject_html].html_safe
+    SAFE_PIPELINE.call(entry.body, entry: entry)[:entry_subject_html]&.html_safe
   end
 
   def gimme_html(str)

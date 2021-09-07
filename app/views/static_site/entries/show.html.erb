@@ -26,9 +26,11 @@
     <div class="Box-body border-0 markdown-body js-task-list-container">
         <div class="entry-subject">
         <% if @entry.subject %>
-          <%= @renderer.subject_html %>
+          <a href="<%= entry_path(@entry) %>" class="text-gray-dark">
+            <%= @renderer.subject_html %>
+          </a>
         <% else %>
-          <h2>(untitled note)</h2>
+          <a href="<%= entry_path(@entry) %>" class="text-gray"><h2>(untitled note)</h2></a>
         <% end %>
       </div>
 
