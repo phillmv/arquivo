@@ -2,18 +2,27 @@ module ApplicationHelper
   SIDEBAR_NAV_OPTS = {
     "timeline/index" =>   :timeline,
     "timeline/search" =>  :timeline,
-    "calendar/daily" =>  :this_day,
+    "entries/show" =>     :about,
+    "calendar/daily" =>   :this_day,
     "calendar/weekly" =>  :this_week,
     "calendar/monthly" => :this_month,
     "settings/index" =>   :settings,
-    "timeline/contacts" =>   :contacts,
-    "timeline/contact" =>   :contacts,
-    "timeline/tags" =>   :tags,
-    "timeline/tag" =>   :tags,
+    "timeline/contacts" =>:contacts,
+    "timeline/contact" => :contacts,
+    "timeline/tags" =>    :tags,
+    "timeline/tag" =>     :tags,
   }
 
   def current_sidebar?(type)
-    if SIDEBAR_NAV_OPTS[current_action] == type
+    match = SIDEBAR_NAV_OPTS[current_action] == type
+
+    if match && type == :about
+      if params[:id] == "about"
+        "text-purple"
+      else
+        "text-blue"
+      end
+    elsif match
       "text-purple"
     else
       "text-blue"

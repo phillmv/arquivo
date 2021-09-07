@@ -7,8 +7,14 @@
 </div>
 <div class="static_pls nav-header-container">
 
+  <% if title_entry = @current_notebook.entries.find_by(identifier: "_title") %>
+    <a href="<%= timeline_path(@current_notebook) %>" class="text-gray-dark"><%= EntryRenderer.new(title_entry).to_html("body", skip_toc: true) %></a>
+  <% else %>
+  <% end %>
   <div class="nav-header" style="display:flex; align-items: baseline">
-    <h1 class="arquivo mr-4" style="display: flex;"><a href="<%= timeline_path(@current_notebook) %>">Arquivo</a></u></h1>
+    <% if title_entry.nil? %>
+      <h1 class="arquivo mr-4" style="display: flex;"><a href="<%= timeline_path(@current_notebook) %>">Arquivo</a></u></h1>
+    <% end %>
 
     <ul style="list-style: none; display: flex;">
       <li>
@@ -33,6 +39,14 @@
           <span class="<%= current_sidebar?(:contacts) %>"><%= octicon "mention", height: 20 %> <a href="<%= contacts_path %>" class="<%= current_sidebar?(:contacts) %>">Mentions</a></span>
         </h3>
       </li>
+      <% if about_page = @current_notebook.entries.find_by(identifier: "about") || @current_notebook.entries.find_by(identifier: "about.html") %>
+        <li>
+          <h3>
+            <span class="<%= current_sidebar?(:about) %>"><%= octicon "ellipsis", height: 20 %> <a href="<%= entry_path(about_page) %>" class="<%= current_sidebar?(:about) %>">About</a></span>
+          </h3>
+        </li>
+      <% end %>
+
        <li>
         <h3>
           <span class="text-blue"><%= octicon "rss", height: 20 %> <a href="<%= timeline_feed_path %>">Feed</a></span>

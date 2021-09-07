@@ -30,7 +30,7 @@
             <%= @renderer.subject_html %>
           </a>
         <% else %>
-          <a href="<%= entry_path(@entry) %>" class="text-gray"><h2>(untitled note)</h2></a>
+          <a href="<%= entry_path(@entry) %>" class="text-gray-light"><h2>(untitled note)</h2></a>
         <% end %>
       </div>
 
@@ -88,9 +88,9 @@
   <% end %>
   </div>
 
-  <div class="form-actions pt-3">
-    <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(@current_notebook), class: "btn float-left" %>
-   </div>
+  <!-- <div class="form&#45;actions pt&#45;3"> -->
+    <%# <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(@current_notebook), class: "btn float-left" %>
+  <!--  </div> -->
 
   <% if @show_thread && @entry.replies.any? %>
     <div class="mt-3">
