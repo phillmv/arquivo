@@ -16,7 +16,7 @@ module ApplicationHelper
     if SIDEBAR_NAV_OPTS[current_action] == type
       "text-purple"
     else
-      nil
+      "text-blue"
     end
   end
 
