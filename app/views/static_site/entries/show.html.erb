@@ -18,8 +18,10 @@
   </div>
 <% end %>
 
-  <% if @show_thread && @entry.parent %>
+<% if @show_thread && @entry.parent %>
+  <div class="mt-3">
     <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent } %>
+  </div>
   <% end %>
 
   <div class="entry-box entry-show static_pls">
