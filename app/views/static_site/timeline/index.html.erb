@@ -1,4 +1,10 @@
-<%= render partial: "static_site/shared/sidebar" %>
+<%# <%= render partial: "static_site/shared/sidebar" %>
+
+<%= render partial: "shared/nav_header" %>
+<div class="sidebar-container">
+  &nbsp;
+</div>
+
 <div class="content-container">
   <% if @colophon %>
     <%= render body: EntryRenderer.new(@colophon).to_html %>

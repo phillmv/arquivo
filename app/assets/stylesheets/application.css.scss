@@ -324,3 +324,89 @@ h1.arquivo {
   border-bottom: 0;
   padding-bottom: 0;
 }
+
+
+
+/////////
+
+// largely mimics content-container
+.static_pls.nav-header-container {
+  @extend .float-left;
+  @extend .col-sm-11;
+  @extend .col-md-8;
+  // here we deviate & make it longer than the content-container to force the
+  // adjacent over sidebar-container to go on the next block
+  @extend .col-lg-9;
+  @extend .mb-lg-2;
+
+  @include breakpoint(sm) {
+    margin-right: $spacer-4;
+    margin-left: $spacer-4;
+  }
+
+  @include breakpoint(md) {
+    margin-right: $spacer-0;
+    margin-left: $spacer-0;
+  }
+
+  // match padding in entry-box
+  @include breakpoint(lg) {
+    padding-left: 0;
+  }
+
+
+  // match padding in entry-box
+  padding-left: 16px;
+  max-width: 100%;
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+
+    ul {
+      display: flex;
+      li {
+        @extend .mr-4;
+      }
+    }
+  }
+
+  // scale down brand
+  h1.arquivo {
+    font-size: 30px;
+  }
+}
+
+.static_pls.entry-box {
+  // let's drop the Box borders
+  border: 0px;
+
+  .entry-subject {
+    h1, h2 {
+      margin-top: $spacer-3;
+      margin-bottom: $spacer-1;
+    }
+  }
+
+  .Box-body {
+    // given we're no longer drawin the Box borders, having padding looks off
+    // in the larger screen sizes.
+    @include breakpoint(lg) {
+      padding: 0;
+    }
+
+    // reduce whitespace between subject and brand header
+    padding-top: 0;
+  }
+
+  .action-bar {
+    @extend .text-small;
+    @extend .mb-3;
+
+    @extend .text-gray-dark;
+    // HAX
+    // border-bottom: 1px solid #e1e4e8;
+    padding-bottom: 8px;
+
+  }
+}

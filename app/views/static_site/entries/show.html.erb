@@ -1,6 +1,12 @@
-<%= render partial: "static_site/shared/sidebar" %>
+<%# <%= render partial: "static_site/shared/sidebar" %>
+
+<%= render partial: "shared/nav_header" %>
+<div class="sidebar-container">
+  &nbsp;
+</div>
 
 <div class="content-container">
+  <% if false %>
   <div class="pagehead pt-2 mb-2" style="border-bottom: 0">
     <nav aria-label="Breadcrumb" class="mb-1">
       <ol>
@@ -10,26 +16,35 @@
       </ol>
     </nav>
   </div>
+<% end %>
 
   <% if @show_thread && @entry.parent %>
     <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent } %>
   <% end %>
 
-  <div class="entry-box entry-show">
-  <div class="Box-body border-0 markdown-body js-task-list-container">
-    <div class="mb-3">
-      <!-- <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook)%>" class="Box&#45;btn&#45;octicon btn&#45;octicon unselectable float&#45;right"> <%= octicon("pencil") %> edit </a> -->
+  <div class="entry-box entry-show static_pls">
+    <div class="Box-body border-0 markdown-body js-task-list-container">
+        <div class="entry-subject">
+        <% if @entry.subject %>
+          <%= @renderer.subject_html %>
+        <% else %>
+          <h2>(untitled note)</h2>
+        <% end %>
+      </div>
 
-      <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon f4">
-        <%= octicon "link", class: "mr-1 v-visible " %><%= @entry.occurred_at %>
-      </a>
 
-      <% if !@show_thread && (@entry.reply? || @entry.replies.any?) %><a href="<%= threaded_entry_path(@entry, notebook: @entry.notebook) %>" class="Box-btn-octicon btn-octicon unselectable mr-1 float-right">
-          <%= octicon("comment-discussion") %> thread</a><%end%>
+      <div class="action-bar">
+        <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon">
+          <%= octicon "link", class: "mr-1 v-visible " %><%= @entry.occurred_at.strftime("%Y-%m-%d @ %H:%M") %>
+        </a>
 
-    </div>
+        <% if !@show_thread && (@entry.reply? || @entry.replies.any?) %><a href="<%= threaded_entry_path(@entry, notebook: @entry.notebook) %>" class="Box-btn-octicon btn-octicon unselectable mr-1 float-right">
+            <%= octicon("comment-discussion") %> thread</a>
+      <%end%>
 
-    <div class="entry-body">
+      </div>
+
+        <div class="entry-body">
     <% if @entry.calendar? %>
       <h3><%= @entry.subject %></h3>
 
@@ -46,7 +61,7 @@
       <%= @renderer.to_html %>
 
     <% else %>
-      <%= @renderer.to_html %>
+      <%= @renderer.render_body(remove_subject: true) %>
     <% end %>
     </div>
 

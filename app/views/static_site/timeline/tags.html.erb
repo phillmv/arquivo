@@ -1,9 +1,13 @@
-<%= render partial: "static_site/shared/sidebar" %>
+<%# <%= render partial: "static_site/shared/sidebar" %>
+
+<%= render partial: "shared/nav_header" %>
+<div class="sidebar-container">
+  &nbsp;
+</div>
 
 <div class="content-container">
-  <div class="pagehead pt-2 mb-2">
-    <h2>Tags</h2>
-    </nav>
+  <div class="pagehead pt-2 mb-4">
+    <h2>Archive of every tag</h2>
   </div>
 
   <% size = @tags.count %>

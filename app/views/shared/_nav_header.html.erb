@@ -1,0 +1,38 @@
+<% # for now, the header-container has to line up perfectly with the content-container content
+   # and therefore, it's easier to just insert an empty sidebar-container so all
+  # the padding & margins line up just-right.
+  # TODO: uh fix this! %>
+<div class="sidebar-container">
+  &nbsp;
+</div>
+<div class="static_pls nav-header-container">
+
+  <div class="nav-header" style="display:flex; align-items: center">
+    <h1 class="arquivo mr-4" style="display: flex;"><a href="<%= timeline_path(@current_notebook) %>">Arquivo</a></u></h1>
+
+    <ul style="list-style: none; display: flex;">
+      <li>
+        <h3>
+          <a href="<%= timeline_path(@current_notebook) %>"><span class="<%= current_sidebar?(:timeline) %>"><%= octicon "zap", height: 20 %> Timeline</span></a>
+        </h3>
+      </li>
+      <% if false #useless in static mode? / why browse day by day? %>
+      <li>
+        <h3>
+          <a href="<%= calendar_daily_path(nil, @current_notebook) %>"><span class="<%= current_sidebar?(:this_day) %>">This Day</span></a>
+        </h3>
+      </li>
+    <% end %>
+      <li>
+        <h3>
+          <a href="<%= tags_path %>"><span class="<%= current_sidebar?(:tags) %>"><%= octicon "tag", height: 20 %> Tags</span></a>
+        </h3>
+      </li>
+      <li>
+        <h3>
+          <a href="<%= contacts_path %>"><span class="<%= current_sidebar?(:contacts) %>"><%= octicon "mention", height: 20 %> Mentions</span></a>
+        </h3>
+      </li>
+    </ul>
+  </div>
+</div>

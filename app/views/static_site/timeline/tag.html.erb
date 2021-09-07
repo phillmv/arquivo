@@ -1,8 +1,17 @@
-<%= render partial: "static_site/shared/sidebar" %>
+<%# <%= render partial: "static_site/shared/sidebar" %>
+
+<%= render partial: "shared/nav_header" %>
+<div class="sidebar-container">
+  &nbsp;
+</div>
 <div class="content-container">
   <% if @colophon %>
     <%= render body: EntryRenderer.new(@colophon).to_html %>
   <% end %>
+
+  <div class="pagehead pt-2 mb-2">
+    <h2>Entries tagged with <%= @search_query %></h2>
+  </div>
 
   <div>
     <div class="TimelineItem-start"></div>
