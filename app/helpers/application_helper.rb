@@ -2,10 +2,6 @@ module ApplicationHelper
   SIDEBAR_NAV_OPTS = {
     "timeline/index" =>   :timeline,
     "timeline/search" =>  :timeline,
-    "calendar/daily" =>   :timeline,
-    "entries/show" =>     :timeline,
-    "entries/new" =>      :timeline,
-    "entries/edit" =>     :timeline,
     "calendar/daily" =>  :this_day,
     "calendar/weekly" =>  :this_week,
     "calendar/monthly" => :this_month,
