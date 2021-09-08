@@ -1,5 +1,9 @@
-<%= render partial: "static_site/shared/sidebar" %>
-<div class="content-container">
+<%= render partial: "static_site/shared/header" %>
+
+<entries>
+  <div class="pt-2 mb-2">
+    <h2>Archive of every entry</h2>
+  </div>
   <div>
     <% @all_entries&.each do |entry| %>
 
@@ -14,9 +18,8 @@
           <p><%= entry.summary.html_safe %></p>
         <% end %>
       </div>
-
     <% end %>
 
   </div>
   <%= will_paginate @all_entries, class: "pagination mt-4 mb-4"%>
-</div>
+</entries>

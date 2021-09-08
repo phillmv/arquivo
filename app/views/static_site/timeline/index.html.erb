@@ -1,11 +1,6 @@
-<%# <%= render partial: "static_site/shared/sidebar" %>
+<%= render partial: "static_site/shared/header" %>
 
-<%= render partial: "shared/nav_header" %>
-<div class="sidebar-container">
-  &nbsp;
-</div>
-
-<div class="content-container">
+<entries>
   <% if @colophon %>
     <%= render body: EntryRenderer.new(@colophon).to_html %>
   <% end %>
@@ -46,4 +41,4 @@
 
   </div>
   <%= will_paginate @all_entries, class: "pagination mt-4 mb-4"%>
-</div>
+</entries>

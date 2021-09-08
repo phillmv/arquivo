@@ -1,22 +1,6 @@
-<%# <%= render partial: "static_site/shared/sidebar" %>
+<%= render partial: "static_site/shared/header" %>
 
-<%= render partial: "shared/nav_header" %>
-<div class="sidebar-container">
-  &nbsp;
-</div>
-
-<div class="content-container">
-  <% if false %>
-  <div class="pagehead pt-2 mb-2" style="border-bottom: 0">
-    <nav aria-label="Breadcrumb" class="mb-1">
-      <ol>
-        <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= timeline_path(@current_notebook) %>">Timeline</a></h3></li>
-        <li class="breadcrumb-item"><h3 class="d-inline"><a href="<%= calendar_daily_path(@current_date, @entry.parent_notebook) %>"><%= @current_date %></a></h3></li>
-        <li class="breadcrumb-item" aria-current="page"><h3 class="d-inline"><%= @entry.identifier %></h3></li>
-      </ol>
-    </nav>
-  </div>
-<% end %>
+<entry>
 
 <% if @show_thread && @entry.parent %>
   <div class="mt-3">
@@ -99,4 +83,4 @@
       <%= render partial: "static_site/entries/thread_list_reply_entries", locals: { entry: @entry } %>
     </div>
   <% end %>
-</div>
+</entry>

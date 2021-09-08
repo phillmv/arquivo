@@ -328,45 +328,70 @@ h1.arquivo {
 
 
 /////////
+entry, entries, content {
+  float: left;
 
-// largely mimics content-container
-.static_pls.nav-header-container {
-  @extend .float-left;
-  @extend .col-sm-11;
-  @extend .col-md-8;
-  // here we deviate & make it longer than the content-container to force the
-  // adjacent over sidebar-container to go on the next block
-  @extend .col-lg-9;
-  // @extend .mb-lg-2;
+  // tricky to think about so let's document it for now:
+  // first we set the default size (i.e. for smallest screens) and then
+  // we progressively override it for larger screen breakpoints
+  // so, in a mobile view it should take up all 12 cols
+  // and have a little bit of padding:
+  width: 100%;
+  padding-right: $spacer-3;
+  padding-left: $spacer-3;
 
+  // once the screen gets a bit bigger, we scale it back to 11 cols
   @include breakpoint(sm) {
-    margin-right: $spacer-4;
-    margin-left: $spacer-4;
+    // @extend .col-sm-11;
+    width: (11 / 12 * 100%);
+    padding-right: $spacer-4;
+    padding-left: $spacer-4;
   }
 
+  // mid size screens can include a sidebar if we wantd to
+  // so here we're just 8 cols
   @include breakpoint(md) {
-    margin-right: $spacer-0;
-    margin-left: $spacer-0;
+    // @extend .col-md-8;
+    width: (8 / 12 * 100%);
+    padding-right: $spacer-4;
+    padding-left: $spacer-4;
   }
 
-  // match padding in entry-box
+  // in the large screen size, give us a 25% margin-left
+  @extend .offset-lg-2;
+
+  // and in the largest screens we don't want to take up more than 50%
+  // (of our xl (1280px) defined container)
   @include breakpoint(lg) {
+    // @extend .col-lg-6;
+    width: (6 / 12 * 100%);
     padding-left: 0;
   }
 
-
-  // match padding in entry-box
-  padding-left: 16px;
   max-width: 100%;
+}
 
-  .nav-header {
+// largely mimics content-container
+header.static_pls{
+  @extend content;
+
+  // hack to get border to respect padding
+  // so i can avoid fucking with the margins, which disrupt the grid
+  .border-container {
+    // border-bottom: 1px solid #e1e4e8;
+    border-bottom: 1px solid black;
+    padding-bottom: $spacer-2;
+  }
+
+  nav {
     display: flex;
-    align-items: center;
+    align-items: baseline;
 
     ul {
+      list-style: none;
       display: flex;
       li {
-        @extend .mr-4;
+        margin-right: $spacer-4;
       }
     }
   }
@@ -391,9 +416,7 @@ h1.arquivo {
   .Box-body {
     // given we're no longer drawin the Box borders, having padding looks off
     // in the larger screen sizes.
-    @include breakpoint(lg) {
       padding: 0;
-    }
 
     // reduce whitespace between subject and brand header
     padding-top: 0;
@@ -406,7 +429,7 @@ h1.arquivo {
     @extend .text-gray-dark;
     // HAX
     // border-bottom: 1px solid #e1e4e8;
-    padding-bottom: 8px;
+    // padding-bottom: 8px;
 
   }
 }

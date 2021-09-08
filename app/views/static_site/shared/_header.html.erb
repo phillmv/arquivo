@@ -1,41 +1,28 @@
-<% # for now, the header-container has to line up perfectly with the content-container content
-   # and therefore, it's easier to just insert an empty sidebar-container so all
-  # the padding & margins line up just-right.
-  # TODO: uh fix this! %>
-<div class="sidebar-container">
-  &nbsp;
-</div>
-<div class="static_pls nav-header-container">
-
-  <% if title_entry = @current_notebook.entries.find_by(identifier: "_title") %>
+<header class="static_pls">
+  <div class="border-container">
+  <% if @current_notebook.title %>
     <div class="title">
-      <a href="<%= timeline_path(@current_notebook) %>" class="text-gray-dark"><%= EntryRenderer.new(title_entry).to_html("body", skip_toc: true) %></a>
+      <a href="<%= timeline_path(@current_notebook) %>" class="text-gray-dark"><%= EntryRenderer.new(@current_notebook.title).to_html("body", skip_toc: true) %></a>
     </div>
-    <% if subtitle_entry = @current_notebook.entries.find_by(identifier: "_subtitle") %>
-      <div class="subtitle markdown-body mb-1">
-        <%= EntryRenderer.new(subtitle_entry).to_html("body", skip_toc: true) %>
+
+    <% if @current_notebook.description %>
+      <div class="description markdown-body mb-2">
+        <%= EntryRenderer.new(@current_notebook.description).to_html("body", skip_toc: true) %>
       </div>
     <% end %>
-  <% else %>
   <% end %>
-  <div class="nav-header" style="display:flex; align-items: baseline">
-    <% if title_entry.nil? %>
+
+  <nav>
+    <% if @current_notebook.title.nil? %>
       <h1 class="arquivo mr-4" style="display: flex;"><a href="<%= timeline_path(@current_notebook) %>">Arquivo</a></u></h1>
     <% end %>
 
-    <ul style="list-style: none; display: flex;">
+    <ul>
       <li>
         <h4>
           <span class="<%= current_sidebar?(:timeline) %>"><%= octicon "zap" %> <a href="<%= timeline_path(@current_notebook) %>" class="<%= current_sidebar?(:timeline) %>">Timeline</a></span>
         </h4>
       </li>
-      <% if false #useless in static mode? / why browse day by day? %>
-      <li>
-        <h4>
-          <span class="<%= current_sidebar?(:this_day) %>"> <a href="<%= calendar_daily_path(nil, @current_notebook) %>">This Day</a></span>
-        </h4>
-      </li>
-    <% end %>
       <li>
         <h4>
           <span class="<%= current_sidebar?(:tags) %>"><%= octicon "tag"%> <a href="<%= tags_path %>" class="<%= current_sidebar?(:tags) %>">Tags</a></span>
@@ -60,5 +47,6 @@
         </h4>
       </li>
     </ul>
+  </nav>
   </div>
-</div>
+</header>
