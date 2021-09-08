@@ -1,5 +1,5 @@
 <div class="entry-list-header">
-  <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon permalink mr-1"><% if threaded %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at %><% else %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%H:%M:%S") %><% end %>
+  <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon permalink mr-1"><% if threaded %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at %><% else %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%Y-%m-%d @ %H:%M") %><% end %>
   </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-1 hide-on-fold trigger-fold">
     <%= octicon("fold") %> fold
   </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-0 show-on-fold trigger-fold" ><%= octicon("unfold") %> unfold
