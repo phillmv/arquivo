@@ -8,7 +8,14 @@
 <div class="static_pls nav-header-container">
 
   <% if title_entry = @current_notebook.entries.find_by(identifier: "_title") %>
-    <a href="<%= timeline_path(@current_notebook) %>" class="text-gray-dark"><%= EntryRenderer.new(title_entry).to_html("body", skip_toc: true) %></a>
+    <div class="title">
+      <a href="<%= timeline_path(@current_notebook) %>" class="text-gray-dark"><%= EntryRenderer.new(title_entry).to_html("body", skip_toc: true) %></a>
+    </div>
+    <% if subtitle_entry = @current_notebook.entries.find_by(identifier: "_subtitle") %>
+      <div class="subtitle markdown-body mb-1">
+        <%= EntryRenderer.new(subtitle_entry).to_html("body", skip_toc: true) %>
+      </div>
+    <% end %>
   <% else %>
   <% end %>
   <div class="nav-header" style="display:flex; align-items: baseline">
@@ -18,39 +25,39 @@
 
     <ul style="list-style: none; display: flex;">
       <li>
-        <h3>
-          <span class="<%= current_sidebar?(:timeline) %>"><%= octicon "zap", height: 20 %> <a href="<%= timeline_path(@current_notebook) %>" class="<%= current_sidebar?(:timeline) %>">Timeline</a></span>
-        </h3>
+        <h4>
+          <span class="<%= current_sidebar?(:timeline) %>"><%= octicon "zap" %> <a href="<%= timeline_path(@current_notebook) %>" class="<%= current_sidebar?(:timeline) %>">Timeline</a></span>
+        </h4>
       </li>
       <% if false #useless in static mode? / why browse day by day? %>
       <li>
-        <h3>
+        <h4>
           <span class="<%= current_sidebar?(:this_day) %>"> <a href="<%= calendar_daily_path(nil, @current_notebook) %>">This Day</a></span>
-        </h3>
+        </h4>
       </li>
     <% end %>
       <li>
-        <h3>
-          <span class="<%= current_sidebar?(:tags) %>"><%= octicon "tag", height: 20 %> <a href="<%= tags_path %>" class="<%= current_sidebar?(:tags) %>">Tags</a></span>
-        </h3>
+        <h4>
+          <span class="<%= current_sidebar?(:tags) %>"><%= octicon "tag"%> <a href="<%= tags_path %>" class="<%= current_sidebar?(:tags) %>">Tags</a></span>
+        </h4>
       </li>
       <li>
-        <h3>
-          <span class="<%= current_sidebar?(:contacts) %>"><%= octicon "mention", height: 20 %> <a href="<%= contacts_path %>" class="<%= current_sidebar?(:contacts) %>">Mentions</a></span>
-        </h3>
+        <h4>
+          <span class="<%= current_sidebar?(:contacts) %>"><%= octicon "mention"%> <a href="<%= contacts_path %>" class="<%= current_sidebar?(:contacts) %>">Mentions</a></span>
+        </h4>
       </li>
       <% if about_page = @current_notebook.entries.find_by(identifier: "about") || @current_notebook.entries.find_by(identifier: "about.html") %>
         <li>
-          <h3>
-            <span class="<%= current_sidebar?(:about) %>"><%= octicon "ellipsis", height: 20 %> <a href="<%= entry_path(about_page) %>" class="<%= current_sidebar?(:about) %>">About</a></span>
-          </h3>
+          <h4>
+            <span class="<%= current_sidebar?(:about) %>"><%= octicon "ellipsis"%> <a href="<%= entry_path(about_page) %>" class="<%= current_sidebar?(:about) %>">About</a></span>
+          </h4>
         </li>
       <% end %>
 
        <li>
-        <h3>
-          <span class="text-blue"><%= octicon "rss", height: 20 %> <a href="<%= timeline_feed_path %>">Feed</a></span>
-        </h3>
+        <h4>
+          <span class="text-blue"><%= octicon "rss"%> <a href="<%= timeline_feed_path %>">Feed</a></span>
+        </h4>
       </li>
     </ul>
   </div>
