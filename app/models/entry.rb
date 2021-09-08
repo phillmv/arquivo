@@ -174,6 +174,8 @@ class Entry < ApplicationRecord
     kind == "pinboard"
   end
 
+  # document type entries are treated as a kind of binary; we look up the first
+  # attached file, and blindly serve it down the pipe
   def document?
     kind == "document"
   end
