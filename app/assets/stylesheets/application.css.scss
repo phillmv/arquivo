@@ -406,6 +406,11 @@ header.static_pls{
   // let's drop the Box borders
   border: 0px;
 
+  // without any borders, the padding on the body feels off
+  .Box-body {
+    padding: 0;
+  }
+
   .entry-subject {
     h1, h2 {
       margin-top: $spacer-3;
@@ -413,23 +418,9 @@ header.static_pls{
     }
   }
 
-  .Box-body {
-    // given we're no longer drawin the Box borders, having padding looks off
-    // in the larger screen sizes.
-      padding: 0;
-
-    // reduce whitespace between subject and brand header
-    padding-top: 0;
-  }
-
   .action-bar {
+    @extend .text-gray-dark;
     @extend .text-small;
     @extend .mb-3;
-
-    @extend .text-gray-dark;
-    // HAX
-    // border-bottom: 1px solid #e1e4e8;
-    // padding-bottom: 8px;
-
   }
 }
