@@ -95,6 +95,14 @@ class Notebook < ApplicationRecord
     @owner ||= User.current
   end
 
+  def title
+    @title ||= self.entries.find_by(identifier: "_title")
+  end
+
+  def description
+    @description ||= self.entries.find_by(identifier: "_description")
+  end
+
   def settings
     @settings ||= NotebookSettings.new(self)
   end
