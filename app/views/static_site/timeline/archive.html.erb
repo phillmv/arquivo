@@ -9,9 +9,9 @@
 
       <div>
         <% if entry.subject %>
-          <h2><%= link_to entry.subject, entry %></h2>
+          <h3><%= link_to entry.subject, entry %></h3>
         <% else %>
-          <h2><%= link_to entry.identifier, entry %></h2>
+          <h3><%= link_to entry.identifier, entry %></h3>
         <% end %>
         <p><%= entry.occurred_at.strftime("%A, %Y-%m-%d") %></p>
         <% if entry.summary %>
