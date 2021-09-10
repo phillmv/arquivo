@@ -1,9 +1,9 @@
 <%= render partial: "static_site/shared/header" %>
 
 <entries>
-<div class="pt-2">
+<div class="">
 <% @all_entries.each do |entry| %>
-  <%= render partial: "static_site/entries/list_entry", locals: { entry: entry } %>
+  <%= render partial: "static_site/entries/list_entry", locals: { entry: entry, static_klass: "timeline-entry" } %>
 <% end %>
 </div>
 

@@ -1,11 +1,27 @@
 <% if @has_todo %>
   <% entry_body = EntryRenderer.new(entry).todo_to_html %>
 <% else %>
-  <% entry_body = EntryRenderer.new(entry).to_html %>
+  <% if static_klass %>
+    <% entry_body = EntryRenderer.new(entry).render_body(remove_subject: true) %>
+  <% else %>
+    <% entry_body = EntryRenderer.new(entry).render_body %>
+  <% end %>
 <% end %>
 
-<div class="entry-box <%= "entry-threaded" if threaded %>">
-  <div class="Box-body markdown-body <%= truncate_class(entry_body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
+<div class="<%= if static_klass; static_klass; else "entry-box"; end %> <%= "entry-threaded" if threaded %>">
+    <div class="Box-body markdown-body <%= truncate_class(entry_body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
+      <% if static_klass %>
+        <div class="entry-subject">
+          <% if entry.subject %>
+            <a href="<%= entry_path(entry) %>" class="text-gray-dark">
+              <%= EntryRenderer.new(entry).subject_html %>
+            </a>
+          <% else %>
+            <a href="<%= entry_path(entry) %>" class="text-gray-light"><h2>(untitled note)</h2></a>
+          <% end %>
+        </div>
+      <% end %>
+
     <%= render partial: "static_site/entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
       <% if @search_tokens %>

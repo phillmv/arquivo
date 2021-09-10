@@ -1,9 +1,10 @@
 <% threaded = if defined?(threaded); threaded; else false; end %>
+<% static_klass = if defined?(static_klass); static_klass; else false; end %>
 
 <% if entry.calendar? %>
   <%= render "static_site/entries/kinds/calendar", entry: entry %>
 <% elsif entry.bookmark? %>
   <%= render "static_site/entries/kinds/pinboard", entry: entry %>
 <% else %>
-  <%= render "static_site/entries/kinds/default", entry: entry, threaded: threaded %>
+  <%= render "static_site/entries/kinds/default", entry: entry, threaded: threaded, static_klass: static_klass %>
 <% end %>

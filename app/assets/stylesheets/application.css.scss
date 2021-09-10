@@ -328,7 +328,7 @@ h1.arquivo {
 
 
 /////////
-entry, entries, content {
+entries, content {
   float: left;
 
   // tricky to think about so let's document it for now:
@@ -340,6 +340,11 @@ entry, entries, content {
   padding-right: $spacer-3;
   padding-left: $spacer-3;
 
+  // space at bottom of the screen
+  padding-bottom: $spacer-8;
+
+
+  // handling columns:
   // once the screen gets a bit bigger, we scale it back to 11 cols
   @include breakpoint(sm) {
     // @extend .col-sm-11;
@@ -374,12 +379,13 @@ entry, entries, content {
 // largely mimics content-container
 header.static_pls{
   @extend content;
+  // reset padding from content
+  padding-bottom: 0px;
 
   // hack to get border to respect padding
   // so i can avoid fucking with the margins, which disrupt the grid
   .border-container {
-    // border-bottom: 1px solid #e1e4e8;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid $border-gray-darker;
     padding-bottom: $spacer-2;
   }
 
@@ -409,6 +415,7 @@ header.static_pls{
   // without any borders, the padding on the body feels off
   .Box-body {
     padding: 0;
+    border: 0px;
   }
 
   .entry-subject {
@@ -423,4 +430,26 @@ header.static_pls{
     @extend .text-small;
     @extend .mb-3;
   }
+}
+
+.timeline-entry {
+  // border reset
+  border: 0px;
+  border-bottom: 1px solid $border-gray-dark;
+
+  // without any borders, the padding on the body feels off
+  .Box-body {
+    padding: 0;
+    border: 0px;
+  }
+
+  .entry-list-header {
+    border: 0;
+    margin-bottom: 0 !important;
+  }
+
+  // when an entry is truncated, the 'keep reading' CTA will obscure the
+  // border-bottom unless we had a little bit of padding:
+  padding-bottom: $spacer-2;
+  margin-bottom: $spacer-6;
 }
