@@ -217,6 +217,7 @@ summary::-webkit-details-marker {
       width: fit-content;
       cursor: pointer;
       margin-top: 0.5em;
+      font-size: 16px;
     }
   }
 }
@@ -408,6 +409,7 @@ header.static_pls{
   }
 }
 
+// show entry
 .static_pls.entry-box {
   // let's drop the Box borders
   border: 0px;
@@ -420,15 +422,15 @@ header.static_pls{
 
   .entry-subject {
     h1, h2 {
-      margin-top: $spacer-3;
-      margin-bottom: $spacer-1;
+      margin-top: 0;
+      margin-bottom: $spacer-4;
     }
   }
 
   .action-bar {
     @extend .text-gray-dark;
     @extend .text-small;
-    @extend .mb-3;
+    margin-top: $spacer-3 !important;
   }
 }
 
@@ -445,11 +447,67 @@ header.static_pls{
 
   .entry-list-header {
     border: 0;
+    margin-top: $spacer-3 !important;
     margin-bottom: 0 !important;
+    padding-bottom: 0;
   }
+
+    .entry-subject {
+    h1, h2 {
+      margin-top: 0;
+      margin-bottom: $spacer-4;
+    }
+  }
+
 
   // when an entry is truncated, the 'keep reading' CTA will obscure the
   // border-bottom unless we had a little bit of padding:
   padding-bottom: $spacer-2;
   margin-bottom: $spacer-6;
+}
+// NEW ENTRY tag
+entry {
+  display: block;
+
+  // space at the end of the entry, before the bottom border
+  padding-bottom: $spacer-5;
+
+  // space at the end of the entry, between entries
+  margin-bottom: $spacer-8;
+
+  &.timeline {
+    border-bottom: 1px solid $border-gray-dark;
+  }
+
+  // used for being a target of the '.truncate' class & being positioned relative
+  // so the 'show-all-toggle' may work positioned absolutely
+  entry-container {
+    display: block;
+  }
+
+  action-bar {
+    display: block;
+    padding-top: $spacer-3;
+
+    font-size: $font-size-small;
+    color: $text-gray-dark;
+  }
+
+  entry-subject {
+    display: block;
+    line-height: $lh-condensed;
+    // if the entry-subject is empty, apply spacer-2
+    margin-bottom: $spacer-2;
+    // but if there's a title present, apply spacer-4
+    h1, h2 {
+      margin-bottom: $spacer-4;
+    }
+  }
+
+  // temp hack before the show-all-toggle gets refactored, to adjust for the empty between the show-all toggle and the entry's bottom border
+  .show-all-toggle p {
+    margin-top: 1.2em !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

@@ -2,14 +2,16 @@ document.addEventListener("turbolinks:load", function(){
   document.querySelectorAll('.show-on-fold').forEach(function(elem) {
     elem.addEventListener("click", function(e) {
       e.preventDefault();
-      this.closest(".Box-body").classList.remove("truncate");
+      this.closest(".Box-body") && this.closest(".Box-body").classList.remove("truncate");
+      this.closest("entry-container") && this.closest("entry-container").classList.remove("truncate");
     })
   });
 
   document.querySelectorAll('.hide-on-fold').forEach(function(elem) {
     elem.addEventListener("click", function(e) {
       e.preventDefault();
-      this.closest(".Box-body").classList.add("truncate");
+      this.closest(".Box-body") && this.closest(".Box-body").classList.add("truncate");
+      this.closest("entry-container") && this.closest("entry-container").classList.add("truncate");
     })
   });
 
@@ -21,9 +23,14 @@ document.addEventListener("turbolinks:load", function(){
       entry_body.classList.remove("truncate");
     }
 
+    if(!elem.matches(".hide-on-fold") && (entry_body = elem.closest("entry-container"))) {
+      entry_body.classList.remove("truncate");
+    }
+
+
     // TODO: .collapsed is probably deprecated?
     if(elem.closest(".collapsed")){
-      elem.closest(".Box-body").classList.remove("collapsed");
+      elem.closest(".Box-body") && elem.closest(".Box-body").classList.remove("collapsed");
     }
   });
 });

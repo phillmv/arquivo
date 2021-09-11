@@ -10,20 +10,9 @@
 
   <div class="entry-box entry-show static_pls">
     <div class="Box-body border-0 markdown-body js-task-list-container">
-        <div class="entry-subject">
-        <% if @entry.subject %>
-          <a href="<%= entry_path(@entry) %>" class="text-gray-dark">
-            <%= @renderer.subject_html %>
-          </a>
-        <% else %>
-          <a href="<%= entry_path(@entry) %>" class="text-gray-light"><h2>(untitled note)</h2></a>
-        <% end %>
-      </div>
-
-
       <div class="action-bar">
         <a href="<%= entry_path(@entry, notebook: @entry.notebook)%>" class="Box-btn-octicon btn-octicon">
-          <%= octicon "link", class: "mr-1 v-visible " %><%= @entry.occurred_at.strftime("%Y-%m-%d @ %H:%M") %>
+          <%= octicon "link", class: "mr-1 v-visible " %><%= @entry.occurred_at.strftime("%Y-%m-%d @ %H:%M %Z") %>
         </a>
 
         <% if !@show_thread && (@entry.reply? || @entry.replies.any?) %><a href="<%= threaded_entry_path(@entry, notebook: @entry.notebook) %>" class="Box-btn-octicon btn-octicon unselectable mr-1 float-right">
@@ -31,6 +20,16 @@
       <%end%>
 
       </div>
+
+       <div class="entry-subject">
+        <% if @entry.subject %>
+          <a href="<%= entry_path(@entry) %>" class="text-gray-dark">
+            <%= @renderer.subject_html %>
+          </a>
+        <% else %>
+        <% end %>
+      </div>
+
 
         <div class="entry-body">
     <% if @entry.calendar? %>
