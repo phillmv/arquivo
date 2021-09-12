@@ -1,5 +1,97 @@
 require 'task_list/filter'
 class EntryRenderer
+  attr_accessor :entry, :output, :html
+  
+  # avail options:
+  # todo_only: true
+  # smart_punctuation: true
+  # remove_subject: true
+  def initialize(entry, opt = {})
+    @entry = entry
+    @options = {
+      sanitize: true
+    }.merge(entry.parent_notebook.settings.render_options).merge(opt)
+    @output = {}
+    @html = {}
+  end
+
+  ## what is the api i want for this? it should cache the output.
+  def pipeline(opt = {})
+    if (opt[:sanitize] || @options[:sanitize]) == true
+      SAFE_PIPELINE
+    else
+      UNSAFE_PIPELINE
+    end
+  end
+
+  # do we take an attribute? we're rendering an entry when was the last fucking time i rendered something other than a body?
+
+  def render(opt = {})
+    @output[opt] ||= pipeline.call(entry.body, @options.merge(opt).merge(entry: entry))
+  end
+
+  def to_html2(opt = {})
+    @html[opt] ||= render(opt)[:output].to_html.html_safe
+  end
+
+  
+
+  # TODO: to_html should accept… a string, maybe?
+  # not clear how this api should work.
+  # should it accept: an attribute, a method, a full string?, a flag (i.e. :todo)
+  # or just make everything a named keyword.
+
+  def to_html(attribute_name = "body", opt = {})
+    attribute = entry.attributes[attribute_name]
+    if !attribute
+      ""
+    else
+      render_html(attribute, opt)
+    end
+  end
+
+  def render_html(str, opt = {})
+    pipeline_opt = { entry: entry }
+    if opt[:smart_punctuation] || @options[:smart_punctuation]
+      pipeline_opt[:commonmarker_render_options] = SMART_CMARK_RENDER_OPT
+    end
+    pipeline_opt = pipeline_opt.merge(opt)
+
+    # if we've explicitly set sanitize to false, ie not just nil,
+    # then & only then we can use the UNSAFE pipeline.
+    if (opt[:sanitize] == false || @options[:sanitize] == false)
+      UNSAFE_PIPELINE.to_html(str, pipeline_opt).html_safe
+    else
+      SAFE_PIPELINE.to_html(str, pipeline_opt).html_safe
+    end
+  end
+
+  # i don't love this - maybe this should be folded into #to_html
+  # but for now this is easy to cache
+  def todo_to_html
+    @todo_to_html ||= render_html(entry.body, todo_only: true)
+  end
+
+  def task_list_items
+    SAFE_PIPELINE.call(entry.body, entry: entry)[:task_list_items]
+  end
+
+  def subject
+    render[:entry_subject]
+  end
+
+  def subject_html
+    render[:entry_subject_html]&.html_safe
+  end
+
+  def gimme_html(str)
+    SAFE_PIPELINE.to_html(str, entry: entry).html_safe
+  end
+
+  def render_body(opt = {})
+    render_html(entry.body, opt)
+  end
+
   # we just want to tweak the default whitelist a little bit
   # and allow the data-sourcepos attribute to go thru
   # without this change the data-sourcepos gets stripped
@@ -17,7 +109,7 @@ class EntryRenderer
   # ESW[:attributes]['section'] = ['class'] # not strictly necessary?
   ESW[:attributes]['a'] = ESW[:attributes]['a'].dup
   ESW[:attributes]['a'].push("id")
-  # ESW[:attributes]['a'].push("class")  # not strictly necessary?
+  # ESW[:attributes]['a'].push("class")  # used for making certain links red if not yet made / not strictly necessary?
   # ESW[:attributes]['sup'] = ['class']  # not strictly necessary?
   ESW[:attributes]['li'] = ['id']
   # end footnotes
@@ -69,69 +161,4 @@ class EntryRenderer
        commonmarker_render_options: DEFAULT_CMARK_RENDER_OPT,
        # now redundant: whitelist: ENTRY_SANITIZATION_WHITELIST
   }
-
-
-  attr_accessor :entry
-  def initialize(entry, opt = {})
-    @entry = entry
-    @options = {
-      sanitize: true
-    }.merge(entry.parent_notebook.settings.render_options).merge(opt)
-  end
-
-  # TODO: to_html should accept… a string, maybe?
-  # not clear how this api should work.
-  # should it accept: an attribute, a method, a full string?, a flag (i.e. :todo)
-  # or just make everything a named keyword.
-
-  def to_html(attribute_name = "body", opt = {})
-    attribute = entry.attributes[attribute_name]
-    if !attribute
-      ""
-    else
-      render_html(attribute, opt)
-    end
-  end
-
-  def render_html(str, opt = {})
-    pipeline_opt = { entry: entry }
-    if opt[:smart_punctuation] || @options[:smart_punctuation]
-      pipeline_opt[:commonmarker_render_options] = SMART_CMARK_RENDER_OPT
-    end
-    pipeline_opt = pipeline_opt.merge(opt)
-
-    # if we've explicitly set sanitize to false, ie not just nil,
-    # then & only then we can use the UNSAFE pipeline.
-    if (opt[:sanitize] == false || @options[:sanitize] == false)
-      UNSAFE_PIPELINE.to_html(str, pipeline_opt).html_safe
-    else
-      SAFE_PIPELINE.to_html(str, pipeline_opt).html_safe
-    end
-  end
-
-  # i don't love this - maybe this should be folded into #to_html
-  # but for now this is easy to cache
-  def todo_to_html
-    @todo_to_html ||= render_html(entry.body, todo_only: true)
-  end
-
-  def task_list_items
-    SAFE_PIPELINE.call(entry.body, entry: entry)[:task_list_items]
-  end
-
-  def subject
-    SAFE_PIPELINE.call(entry.body, entry: entry)[:entry_subject]
-  end
-
-  def subject_html
-    SAFE_PIPELINE.call(entry.body, entry: entry)[:entry_subject_html]&.html_safe
-  end
-
-  def gimme_html(str)
-    SAFE_PIPELINE.to_html(str, entry: entry).html_safe
-  end
-
-  def render_body(opt = {})
-    render_html(entry.body, opt)
-  end
 end
