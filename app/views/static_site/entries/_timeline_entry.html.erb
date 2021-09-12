@@ -6,7 +6,7 @@
 
 <% renderer = EntryRenderer.new(entry, remove_subject: true) %>
 
-<entry class="timeline">
+<entry class="style-open">
   <entry-container class="<%= truncate_class(renderer.to_html2, threaded)%>">
     <action-bar>
       <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon permalink mr-1"><% if threaded %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at %><% else %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%Y-%m-%d @ %H:%M") %><% end %>

@@ -469,16 +469,6 @@ header.static_pls{
 entry {
   display: block;
 
-  // space at the end of the entry, before the bottom border
-  padding-bottom: $spacer-5;
-
-  // space at the end of the entry, between entries
-  margin-bottom: $spacer-8;
-
-  &.timeline {
-    border-bottom: 1px solid $border-gray-dark;
-  }
-
   // used for being a target of the '.truncate' class & being positioned relative
   // so the 'show-all-toggle' may work positioned absolutely
   entry-container {
@@ -487,7 +477,6 @@ entry {
 
   action-bar {
     display: block;
-    padding-top: $spacer-3;
 
     font-size: $font-size-small;
     color: $text-gray-dark;
@@ -509,5 +498,45 @@ entry {
     margin-top: 1.2em !important;
     margin-left: auto;
     margin-right: auto;
+  }
+
+
+  // different types of entry styles:
+  &.style-open {
+    border-bottom: 1px solid $border-gray-dark;
+    // space at the end of the entry, before the bottom border
+    padding-bottom: $spacer-5;
+
+    // space at the end of the entry, between entries
+    margin-bottom: $spacer-8;
+
+    action-bar {
+      padding-top: $spacer-3;
+    }
+  }
+
+  &.style-boxed {
+    $entry-box-padding: $spacer-3;
+
+    border: 1px solid $border-gray;
+    border-radius: 3px;
+    // space between entries
+    margin-top: $spacer-3;
+
+    entry-container {
+      padding: $entry-box-padding;
+
+      action-bar {
+        padding-top: 0;
+        // maintain symmetry with parent container's padding
+        padding-bottom: $entry-box-padding;
+        border-bottom: 1px solid $border-gray;
+      }
+
+      entry-subject {
+        // maintain symmetry with action-bar's padding
+        margin-bottom: $entry-box-padding;
+      }
+    }
   }
 }
