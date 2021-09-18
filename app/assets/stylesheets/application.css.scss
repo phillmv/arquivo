@@ -194,7 +194,7 @@ summary::-webkit-details-marker {
 .truncate {
   overflow: hidden;
   position: relative;
-  max-height: 300px;
+  max-height: 400px; // was 300
 
   // used for action bar
   .show-on-fold {
@@ -328,7 +328,7 @@ h1.arquivo {
 
 
 
-/////////
+///////// NEW refactor of the views.
 entries, content {
   float: left;
 
@@ -530,12 +530,28 @@ entry {
         padding-top: 0;
         // maintain symmetry with parent container's padding
         padding-bottom: $entry-box-padding;
+        margin-bottom: $entry-box-padding;
         border-bottom: 1px solid $border-gray;
       }
 
       entry-subject {
         // maintain symmetry with action-bar's padding
         margin-bottom: $entry-box-padding;
+      }
+
+
+      // todo: figure out why this is misbehaving in the (folded) boxed style
+      // but not elsewhere.
+      .show-all-toggle {
+        height: 5em;
+        p {
+          // for w/e reason, the show-all-toggle p's box in chrome
+          // renders at a 16px offset from the left, afaict due to padding on entry-container
+          // but then extends 16px past the border
+          // so in order for the Keep reading chevron to be centered, we need to
+          // add TWICE the padding
+          padding-right: $entry-box-padding * 2;
+        }
       }
     }
   }
