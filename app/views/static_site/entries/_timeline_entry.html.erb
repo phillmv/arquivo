@@ -3,22 +3,12 @@
 <%# <% else %>
   <%# <% entry_body = EntryRenderer.new(entry, remove_subject: true).render_body(remove_subject: true) %>
 <%# <% end %>
-
+<% entry_style = (defined?(entry_style) && entry_style.present?) ? entry_style : "style-open" %>
 <% renderer = EntryRenderer.new(entry, remove_subject: true) %>
 
-<entry class="style-open">
-  <entry-container class="<%= truncate_class(renderer.to_html2, threaded)%>">
-    <action-bar>
-      <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon permalink mr-1"><% if threaded %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at %><% else %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%Y-%m-%d @ %H:%M") %><% end %>
-      </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-1 hide-on-fold trigger-fold">
-        <%= octicon("fold") %> fold
-      </a><a href="" class="Box-btn-octicon btn-octicon unselectable mr-0 show-on-fold trigger-fold" ><%= octicon("unfold") %> unfold
-      </a><span class="float-right">
-        <% if entry.reply? && !threaded %><a href="<%= threaded_entry_path(entry, thread: true) %>" class="Box-btn-octicon btn-octicon unselectable mr-1">
-            <%= octicon("comment-discussion") %> thread</a><%end%>
-    </span>
-    </action-bar>
-
+<entry class="<%= entry_style %> <%= "threaded" if threaded %>">
+<entry-container class="<%= truncate_class(renderer.to_html2, threaded)%>">
+    <%= render partial: "static_site/entries/action_bar2", locals: { entry: entry, threaded: threaded }%>
     <entry-subject>
       <a href="<%= entry_path(entry) %>" class="text-gray-dark">
         <%= renderer.subject_html %>

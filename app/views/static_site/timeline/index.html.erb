@@ -3,8 +3,8 @@
 <entries>
 <div class="">
   <% @all_entries.each do |entry| %>
-  <%= render "entries/timeline_entry", entry: entry, threaded: false, static_klass: "timeline-entry" %>
-    
+  <%= render "entries/timeline_entry", entry: entry, threaded: false %>
+
   <%# <%= render partial: "static_site/entries/list_entry", locals: { entry: entry, static_klass: "timeline-entry" } %>
 <% end %>
 </div>

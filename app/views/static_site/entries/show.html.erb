@@ -1,5 +1,30 @@
 <%= render partial: "static_site/shared/header" %>
 
+<%# TODO: handle calendar view, handle bookmark view %>
+<%# TODO: thread icon showing properly %>
+<%# TODO: show attached files? %>
+<content>
+  <% if @show_thread && @entry.parent %>
+    <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent, entry_style: "style-boxed" } %>
+  <% end %>
+  <entry class="style-open border-0 js-entry-show">
+  <entry-container>
+    <%= render partial: "static_site/entries/action_bar2", locals: { entry: @entry, threaded: !(!@show_thread && (@entry.reply? || @entry.replies.any?)), no_folding: true}%>
+    <entry-subject>
+      <a href="<%= entry_path(@entry) %>" class="text-gray-dark">
+        <%= @renderer.subject_html %>
+      </a>
+    </entry-subject>
+    <entry-body class="markdown-body">
+      <%= @renderer.to_html2 %>
+    </entry-body>
+    </entry-container>
+  </entry>
+</content>
+
+
+<%# TODO: obviously, clean this up %>
+<% if false %>
 <content>
 
 <% if @show_thread && @entry.parent %>
@@ -83,3 +108,4 @@
     </div>
   <% end %>
 </content>
+  <% end %>

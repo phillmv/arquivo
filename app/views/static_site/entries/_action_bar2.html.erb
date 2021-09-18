@@ -1,0 +1,10 @@
+<action-bar>
+  <a href="<%= entry_path(entry)%>" class="Box-btn-octicon btn-octicon permalink mr-1"><% if threaded %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at %><% else %><%= octicon "link", class: "mr-1" %><%= entry.occurred_at.strftime("%Y-%m-%d @ %H:%M %Z") %><% end %>
+  </a><% unless defined?(no_folding) %><a href="" class="Box-btn-octicon btn-octicon unselectable mr-1 hide-on-fold trigger-fold">
+    <%= octicon("fold") %> fold
+  </a><% end %><a href="" class="Box-btn-octicon btn-octicon unselectable mr-0 show-on-fold trigger-fold" ><%= octicon("unfold") %> unfold
+  </a><span class="float-right">
+  <% if entry.reply? && !threaded %><a href="<%= threaded_entry_path(entry, thread: true) %>" class="Box-btn-octicon btn-octicon unselectable mr-1">
+      <%= octicon("comment-discussion") %> thread</a><%end%>
+  </span>
+</action-bar>

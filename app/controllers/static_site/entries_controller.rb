@@ -19,7 +19,7 @@ module StaticSite
 
       elsif @entry.note? || @entry.bookmark?
         @show_thread = params[:thread].present?
-        @renderer = EntryRenderer.new(@entry)
+        @renderer = EntryRenderer.new(@entry, remove_subject: true)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
       else
         render plain: "", status: 404
