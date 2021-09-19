@@ -114,17 +114,6 @@
   .markdown-body img {
     width: 100%;
   }
-  // experimenting with removing the box borders begin HAX
-  // border-right: 0px;
-  // border-left: 0px;
-  // border-bottom: 0px;
-  // border-bottom-left-radius: 0px;
-  // border-top-right-radius: 0px;
-  // border-top-left-radius: 0px;
-  // .Box-body {
-  //   border-bottom: unset;
-  // }
-  // end HAX
 }
 
 // unused
@@ -329,7 +318,7 @@ h1.arquivo {
 
 
 ///////// NEW refactor of the views.
-entries, content {
+content {
   float: left;
 
   // tricky to think about so let's document it for now:
@@ -348,8 +337,7 @@ entries, content {
   // handling columns:
   // once the screen gets a bit bigger, we scale it back to 11 cols
   @include breakpoint(sm) {
-    // @extend .col-sm-11;
-    width: (11 / 12 * 100%);
+    width: (11 / 12 * 100%); // @extend .col-sm-11;
     padding-right: $spacer-4;
     padding-left: $spacer-4;
   }
@@ -357,8 +345,7 @@ entries, content {
   // mid size screens can include a sidebar if we wantd to
   // so here we're just 8 cols
   @include breakpoint(md) {
-    // @extend .col-md-8;
-    width: (8 / 12 * 100%);
+    width: (8 / 12 * 100%); // @extend .col-md-8;
     padding-right: $spacer-4;
     padding-left: $spacer-4;
   }
@@ -369,8 +356,7 @@ entries, content {
   // and in the largest screens we don't want to take up more than 50%
   // (of our xl (1280px) defined container)
   @include breakpoint(lg) {
-    // @extend .col-lg-6;
-    width: (6 / 12 * 100%);
+    width: (6 / 12 * 100%); // @extend .col-lg-6;
     padding-left: 0;
   }
 
@@ -409,62 +395,6 @@ header.static_pls{
   }
 }
 
-// show entry
-.static_pls.entry-box {
-  // let's drop the Box borders
-  border: 0px;
-
-  // without any borders, the padding on the body feels off
-  .Box-body {
-    padding: 0;
-    border: 0px;
-  }
-
-  .entry-subject {
-    h1, h2 {
-      margin-top: 0;
-      margin-bottom: $spacer-4;
-    }
-  }
-
-  .action-bar {
-    @extend .text-gray-dark;
-    @extend .text-small;
-    margin-top: $spacer-3 !important;
-  }
-}
-
-.timeline-entry {
-  // border reset
-  border: 0px;
-  border-bottom: 1px solid $border-gray-dark;
-
-  // without any borders, the padding on the body feels off
-  .Box-body {
-    padding: 0;
-    border: 0px;
-  }
-
-  .entry-list-header {
-    border: 0;
-    margin-top: $spacer-3 !important;
-    margin-bottom: 0 !important;
-    padding-bottom: 0;
-  }
-
-    .entry-subject {
-    h1, h2 {
-      margin-top: 0;
-      margin-bottom: $spacer-4;
-    }
-  }
-
-
-  // when an entry is truncated, the 'keep reading' CTA will obscure the
-  // border-bottom unless we had a little bit of padding:
-  padding-bottom: $spacer-2;
-  margin-bottom: $spacer-6;
-}
 // NEW ENTRY tag
 entry {
   display: block;
@@ -502,6 +432,7 @@ entry {
 
 
   // different types of entry styles:
+  // borderless represents the now-default view in the timeline
   &.borderless {
     border-bottom: 1px solid $border-gray-dark;
     // space at the end of the entry, before the bottom border
@@ -515,6 +446,7 @@ entry {
     }
   }
 
+  // threaded style adds in the .Box borders we had before.
   &.threaded {
     $entry-box-padding: $spacer-3;
 
