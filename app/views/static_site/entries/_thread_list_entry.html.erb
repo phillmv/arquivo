@@ -1,4 +1,4 @@
 <% if entry.parent %>
-  <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: entry.parent, threaded: true, entry_style: entry_style } %>
+  <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: entry.parent, threaded: true } %>
 <% end %>
-<%= render partial: "static_site/entries/list_entry", locals: { entry: entry, threaded: true, entry_style: entry_style } %>
+<%= render partial: "static_site/entries/list_entry", locals: { entry: entry, threaded: true } %>

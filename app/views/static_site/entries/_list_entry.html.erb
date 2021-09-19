@@ -1,11 +1,13 @@
 <% threaded = if defined?(threaded); threaded; else false; end %>
-<% static_klass = if defined?(static_klass); static_klass; else false; end %>
-<% entry_style = if defined?(entry_style); entry_style; else nil; end %>
 
-<% if entry.calendar? %>
-  <%= render "static_site/entries/kinds/calendar", entry: entry %>
-<% elsif entry.bookmark? %>
-  <%= render "static_site/entries/kinds/pinboard", entry: entry %>
-<% else %>
-  <%= render "static_site/entries/timeline_entry", entry: entry, threaded: threaded, entry_style: entry_style %>
+<%= render "static_site/entries/kinds/default", entry: entry, threaded: threaded %>
+
+<% if false #TODO: handle calendar, bookmark views %>
+  <% if entry.calendar? %>
+    <%= render "static_site/entries/kinds/calendar", entry: entry %>
+  <% elsif entry.bookmark? %>
+    <%= render "static_site/entries/kinds/pinboard", entry: entry %>
+  <% else %>
+    <%= render "static_site/entries/kinds/default", entry: entry, threaded: threaded %>
+  <% end %>
 <% end %>

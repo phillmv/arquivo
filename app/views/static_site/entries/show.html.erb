@@ -4,11 +4,11 @@
 <%# TODO: show attached files? %>
 <content>
   <% if @show_thread && @entry.parent %>
-    <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent, entry_style: "style-threaded" } %>
+    <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent } %>
   <% end %>
   <entry class="borderless border-0 js-entry-show">
   <entry-container>
-    <%= render partial: "static_site/entries/action_bar2", locals: { entry: @entry, threaded: !(!@show_thread && (@entry.reply? || @entry.replies.any?)), no_folding: true}%>
+    <%= render partial: "static_site/entries/action_bar", locals: { entry: @entry, threaded: !(!@show_thread && (@entry.reply? || @entry.replies.any?)), no_folding: true}%>
     <entry-subject>
       <a href="<%= entry_path(@entry) %>" class="text-gray-dark">
         <%= @renderer.subject_html %>
@@ -113,4 +113,4 @@
     </div>
   <% end %>
 </content>
-  <% end %>
+<% end %>
