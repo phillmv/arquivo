@@ -103,6 +103,16 @@ document.addEventListener("turbolinks:load", function(){
       inline: "nearest"
     });
   }
+
+  if (document.querySelector('entry.threaded')) {
+    entry = document.querySelector('.js-entry-show')
+    entry.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest"
+    });
+  }
+
 });
 
 

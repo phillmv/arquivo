@@ -12,22 +12,21 @@
   <% end %>
   <%= week_calendar events: @entries, attribute: :occurred_at do |date, entries, calendar| %>
     <% if entries.any? %>
-        <% entries.each do |entry| %>
-          <div class="weekly-entry">
-            <a href="<%= entry_path(entry)%>" class="link-gray-dark f5"  style="width: 100%; display: block">
-              <span class="f6 text-gray"><%= entry.occurred_at.strftime("@%H:%M") %></span><br/>
-           <% if entry.calendar? %>
-             <%= octicon("person", class: "text-gray-dark") %>
-             <%= entry.truncated_description(18) %>
-           <% elsif entry.bookmark? %>
-
-             <%= octicon("bookmark", class: "text-gray-dark") %>
-             <%= entry.truncated_description(52) %>
-           <% else %>
-             <%= entry.truncated_description(100) %>
-          <% end %>
-          </div>
-        <% end %>
+      <% entries.each do |entry| %>
+        <div class="weekly-entry">
+          <a href="<%= entry_path(entry)%>" class="link-gray-dark f5"  style="width: 100%; display: block">
+            <span class="f6 text-gray"><%= entry.occurred_at.strftime("@%H:%M") %></span><%if entry.bookmark? %><span class="float-right text-gray"><%= octicon("bookmark") %></span><% end %><br>
+            <% if entry.calendar? %>
+              <%= octicon("person", class: "text-gray-dark") %>
+              <%= entry.truncated_description(18) %>
+            <% elsif entry.bookmark? %>
+              <%= entry.truncated_description(52) %>
+            <% else %>
+              <%= entry.truncated_description(100) %>
+            <% end %>
+          </a>
+        </div>
+      <% end %>
     <% else %>
     <% end %>
   <% end %>

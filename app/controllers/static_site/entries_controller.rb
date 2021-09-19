@@ -17,9 +17,9 @@ module StaticSite
         # don't love it but fix later, lol do not deploy this to untrusted user contexts???
         # render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
 
-      elsif @entry.note?
+      elsif @entry.note? || @entry.bookmark?
         @show_thread = params[:thread].present?
-        @renderer = EntryRenderer.new(@entry)
+        @renderer = EntryRenderer.new(@entry, remove_subject: true)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
       else
         render plain: "", status: 404

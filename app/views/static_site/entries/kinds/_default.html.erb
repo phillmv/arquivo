@@ -1,21 +1,28 @@
-<% if @has_todo %>
-  <% entry_body = EntryRenderer.new(entry).todo_to_html %>
-<% else %>
-  <% entry_body = EntryRenderer.new(entry).to_html %>
-<% end %>
+<%# <% if @has_todo  #TODO: handle this case%>
+  <%# <% entry_body = EntryRenderer.new(entry).todo_to_html %>
+<%# <% else %>
+  <%# <% entry_body = EntryRenderer.new(entry, remove_subject: true).render_body(remove_subject: true) %>
+<%# <% end %>
+<% renderer = EntryRenderer.new(entry, remove_subject: true) %>
 
-<div class="entry-box <%= "entry-threaded" if threaded %>">
-  <div class="Box-body markdown-body <%= truncate_class(entry_body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
-    <%= render partial: "static_site/entries/action_bar", locals: { entry: entry, threaded: threaded } %>
-    <div class="entry-body">
+<entry class="<%= if threaded; "threaded"; else "borderless"; end %>">
+<entry-container class="<%= truncate_class(renderer.to_html2, threaded)%>">
+    <%= render partial: "static_site/entries/action_bar", locals: { entry: entry, threaded: threaded }%>
+    <entry-subject>
+      <a href="<%= entry_path(entry) %>" class="text-gray-dark">
+        <%= renderer.subject_html %>
+      </a>
+    </entry-subject>
+
+    <entry-body class="markdown-body">
       <% if @search_tokens %>
-        <%= highlight entry_body, @search_tokens, sanitize: false%>
+        <%= highlight renderer.to_html2, @search_tokens, sanitize: false%>
       <% else %>
-        <%= entry_body %>
+        <%= renderer.to_html2 %>
       <% end %>
-    </div>
+    </entry-body>
     <div class="show-all-toggle">
-      <p class="text-blue"><%= octicon "chevron-down" %> Show all content</p>
+      <p class="text-blue"><%= octicon "chevron-down" %> Keep reading</p>
     </div>
-  </div>
-</div>
+  </entry-container>
+</entry>

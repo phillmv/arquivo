@@ -1,8 +1,15 @@
-<%= render partial: "static_site/shared/sidebar" %>
-<div class="content-container">
-  <% if @colophon %>
-    <%= render body: EntryRenderer.new(@colophon).to_html %>
-  <% end %>
+<%= render partial: "static_site/shared/header" %>
+
+<content>
+  <div class="pt-2 mb-2">
+    <h2>Entries tagged with <%= @search_query %></h2>
+  </div>
+
+<% @all_entries.each do |entry| %>
+  <%= render partial: "static_site/entries/list_entry", locals: { entry: entry } %>
+<% end %>
+
+<% if false %>
 
   <div>
     <div class="TimelineItem-start"></div>
@@ -39,5 +46,6 @@
     <% end %>
 
   </div>
+<% end %>
   <%= will_paginate @all_entries, class: "pagination mt-4 mb-4"%>
-</div>
+</content>

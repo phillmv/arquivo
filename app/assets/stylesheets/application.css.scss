@@ -111,17 +111,9 @@
 // used for rendering entry bodies
 .entry-box {
   @extend .Box;
-  // experimenting with removing the box borders begin HAX
-  border-right: 0px;
-  border-left: 0px;
-  border-bottom: 0px;
-  border-bottom-left-radius: 0px;
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
-  .Box-body {
-    border-bottom: unset;
+  .markdown-body img {
+    width: 100%;
   }
-  // end HAX
 }
 
 // unused
@@ -139,8 +131,9 @@
 }
 
 .entry-box + .entry-threaded, .entry-threaded + .entry-box {
-  margin-top: 0px !important;
-  border-top: 0px;
+  // margin-top: 0px !important; // HAX turned off
+  border-top: 1px solid #e1e4e8 !important; // HAX added
+  // border-top: 0px; // HAX turned off
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
 }
@@ -169,6 +162,9 @@ summary::-webkit-details-marker {
   @extend .mb-3;
 
   @extend .text-gray-dark;
+  // HAX
+  border-bottom: 1px solid #e1e4e8;
+  padding-bottom: 16px;
 }
 
 // prevent controls (edit, fold, etc) from appearing when selecting text
@@ -187,7 +183,7 @@ summary::-webkit-details-marker {
 .truncate {
   overflow: hidden;
   position: relative;
-  max-height: 300px;
+  max-height: 400px; // was 300
 
   // used for action bar
   .show-on-fold {
@@ -210,6 +206,7 @@ summary::-webkit-details-marker {
       width: fit-content;
       cursor: pointer;
       margin-top: 0.5em;
+      font-size: 16px;
     }
   }
 }
@@ -266,8 +263,9 @@ summary::-webkit-details-marker {
 table.weekly {
   table-layout: fixed;
   .next-month, .prev-month {
+    background-color: #F2F2F2;
     &.today {
-      background-color: #FFFFC0
+      background-color: #FFFFC0 // commented out for now.
     }
   }
 
@@ -284,6 +282,13 @@ table.weekly {
   }
 }
 
+table.monthly {
+  table-layout: fixed;
+  background-color: #F2F2F2;
+  td.has-events {
+    background-color: white;
+  }
+}
 
 // brand
 h1.arquivo {
@@ -300,5 +305,172 @@ h1.arquivo {
   text-decoration: underline black;
   &:hover {
     text-decoration: underline $blue-500;
+  }
+}
+
+// HAX
+// the h1, h2 has a border bottom that is a bit excessive
+.markdown-body h1, .markdown-body h2 {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+
+
+///////// NEW refactor of the views.
+content {
+  float: left;
+
+  // tricky to think about so let's document it for now:
+  // first we set the default size (i.e. for smallest screens) and then
+  // we progressively override it for larger screen breakpoints
+  // so, in a mobile view it should take up all 12 cols
+  // and have a little bit of padding:
+  width: 100%;
+  padding-right: $spacer-3;
+  padding-left: $spacer-3;
+
+  // space at bottom of the screen
+  padding-bottom: $spacer-8;
+
+
+  // handling columns:
+  // once the screen gets a bit bigger, we scale it back to 11 cols
+  @include breakpoint(sm) {
+    width: (11 / 12 * 100%); // @extend .col-sm-11;
+    padding-right: $spacer-4;
+    padding-left: $spacer-4;
+  }
+
+  // mid size screens can include a sidebar if we wantd to
+  // so here we're just 8 cols
+  @include breakpoint(md) {
+    width: (8 / 12 * 100%); // @extend .col-md-8;
+    padding-right: $spacer-4;
+    padding-left: $spacer-4;
+  }
+
+  // in the large screen size, give us a 25% margin-left
+  @extend .offset-lg-2;
+
+  // and in the largest screens we don't want to take up more than 50%
+  // (of our xl (1280px) defined container)
+  @include breakpoint(lg) {
+    width: (6 / 12 * 100%); // @extend .col-lg-6;
+    padding-left: 0;
+  }
+
+  max-width: 100%;
+}
+
+// largely mimics content-container
+header.static_pls{
+  @extend content;
+  // reset padding from content
+  padding-bottom: 0px;
+
+  // hack to get border to respect padding
+  // so i can avoid fucking with the margins, which disrupt the grid
+  .border-container {
+    border-bottom: 1px solid $border-gray-darker;
+    padding-bottom: $spacer-2;
+  }
+
+  nav {
+    display: flex;
+    align-items: baseline;
+
+    ul {
+      list-style: none;
+      display: flex;
+      li {
+        margin-right: $spacer-4;
+      }
+    }
+  }
+
+  // scale down brand
+  h1.arquivo {
+    font-size: 30px;
+  }
+}
+
+// NEW ENTRY tag
+entry {
+  display: block;
+
+  // used for being a target of the '.truncate' class & being positioned relative
+  // so the 'show-all-toggle' may work positioned absolutely
+  entry-container {
+    display: block;
+  }
+
+  action-bar {
+    display: block;
+
+    font-size: $font-size-small;
+    color: $text-gray-dark;
+  }
+
+  entry-subject {
+    display: block;
+    line-height: $lh-condensed;
+    // if the entry-subject is empty, apply spacer-2
+    margin-bottom: $spacer-2;
+    // but if there's a title present, apply spacer-4
+    h1, h2 {
+      margin-bottom: $spacer-4;
+    }
+  }
+
+  // temp hack before the show-all-toggle gets refactored, to adjust for the empty between the show-all toggle and the entry's bottom border
+  .show-all-toggle p {
+    margin-top: 1.2em !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+
+  // different types of entry styles:
+  // borderless represents the now-default view in the timeline
+  &.borderless {
+    border-bottom: 1px solid $border-gray-dark;
+    // space at the end of the entry, before the bottom border
+    padding-bottom: $spacer-5;
+
+    // space at the end of the entry, between entries
+    margin-bottom: $spacer-8;
+
+    action-bar {
+      padding-top: $spacer-3;
+    }
+  }
+
+  // threaded style adds in the .Box borders we had before.
+  &.threaded {
+    $entry-box-padding: $spacer-3;
+
+    border: 1px solid $border-gray;
+    border-radius: 3px;
+    // space between entries
+    margin-top: $spacer-3;
+
+    entry-container {
+      padding: $entry-box-padding;
+
+      // todo: figure out why this is misbehaving in the (folded) boxed style
+      // but not elsewhere.
+      .show-all-toggle {
+        height: 5em;
+        p {
+          // for w/e reason, the show-all-toggle p's box in chrome
+          // renders at a 16px offset from the left, afaict due to padding on entry-container
+          // but then extends 16px past the border
+          // so in order for the Keep reading chevron to be centered, we need to
+          // add TWICE the padding
+          padding-right: $entry-box-padding * 2;
+        }
+      }
+    }
   }
 }

@@ -11,6 +11,7 @@ class PipelineFilter::TableOfContentsFilter < HTML::Pipeline::Filter
   end
 
   def call
+    return doc if context[:skip_toc]
     result[:toc] = String.new('')
 
     headers = Hash.new(0)
@@ -47,12 +48,6 @@ class PipelineFilter::TableOfContentsFilter < HTML::Pipeline::Filter
           toc_node.inner_html = "<h2>Contents</h2>\n#{result[:toc]}"
         end
       end
-    end
-
-    subject = doc.children[0..3].css("h1, h2").first
-
-    if subject
-      result[:entry_subject] = subject.text
     end
 
     doc
