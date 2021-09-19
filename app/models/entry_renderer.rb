@@ -30,12 +30,15 @@ class EntryRenderer
     @output[opt] ||= pipeline.call(entry.body, @options.merge(opt).merge(entry: entry))
   end
 
+  # as the name itself indicates, to_html2 is a transitional method while I
+  # hammer out how the renderer itself should work. i'm pretty convinced the
+  # renderer should have a built-in cache, but at the time of writing (TODO)
+  # i have yet to extend this refactor to the rest of the views
   def to_html2(opt = {})
     @html[opt] ||= render(opt)[:output].to_html.html_safe
   end
 
-  
-
+  # -- as we used to do it follows:
   # TODO: to_html should accept… a string, maybe?
   # not clear how this api should work.
   # should it accept: an attribute, a method, a full string?, a flag (i.e. :todo)
