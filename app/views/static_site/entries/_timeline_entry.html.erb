@@ -6,7 +6,7 @@
 <% entry_style = (defined?(entry_style) && entry_style.present?) ? entry_style : "style-open" %>
 <% renderer = EntryRenderer.new(entry, remove_subject: true) %>
 
-<entry class="<%= entry_style %> <%= "threaded" if threaded %>">
+<entry class="<%= if threaded; "threaded"; else "borderless"; end %>">
 <entry-container class="<%= truncate_class(renderer.to_html2, threaded)%>">
     <%= render partial: "static_site/entries/action_bar2", locals: { entry: entry, threaded: threaded }%>
     <entry-subject>

@@ -502,7 +502,7 @@ entry {
 
 
   // different types of entry styles:
-  &.style-open {
+  &.borderless {
     border-bottom: 1px solid $border-gray-dark;
     // space at the end of the entry, before the bottom border
     padding-bottom: $spacer-5;
@@ -515,7 +515,7 @@ entry {
     }
   }
 
-  &.style-boxed {
+  &.threaded {
     $entry-box-padding: $spacer-3;
 
     border: 1px solid $border-gray;
@@ -525,20 +525,6 @@ entry {
 
     entry-container {
       padding: $entry-box-padding;
-
-      action-bar {
-        padding-top: 0;
-        // maintain symmetry with parent container's padding
-        padding-bottom: $entry-box-padding;
-        margin-bottom: $entry-box-padding;
-        border-bottom: 1px solid $border-gray;
-      }
-
-      entry-subject {
-        // maintain symmetry with action-bar's padding
-        margin-bottom: $entry-box-padding;
-      }
-
 
       // todo: figure out why this is misbehaving in the (folded) boxed style
       // but not elsewhere.

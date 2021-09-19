@@ -1,13 +1,12 @@
 <%= render partial: "static_site/shared/header" %>
 
 <%# TODO: handle calendar view, handle bookmark view %>
-<%# TODO: thread icon showing properly %>
 <%# TODO: show attached files? %>
 <content>
   <% if @show_thread && @entry.parent %>
-    <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent, entry_style: "style-boxed" } %>
+    <%= render partial: "static_site/entries/thread_list_entry", locals: { entry: @entry.parent, entry_style: "style-threaded" } %>
   <% end %>
-  <entry class="style-open border-0 js-entry-show">
+  <entry class="borderless border-0 js-entry-show">
   <entry-container>
     <%= render partial: "static_site/entries/action_bar2", locals: { entry: @entry, threaded: !(!@show_thread && (@entry.reply? || @entry.replies.any?)), no_folding: true}%>
     <entry-subject>
@@ -20,6 +19,12 @@
     </entry-body>
     </entry-container>
   </entry>
+
+  <% if @show_thread && @entry.replies.any? %>
+    <div class="mt-3">
+      <%= render partial: "static_site/entries/thread_list_reply_entries", locals: { entry: @entry } %>
+    </div>
+  <% end %>
 </content>
 
 
