@@ -7,6 +7,7 @@ namespace :static do
   task :generate do
     Dir.mkdir 'out' unless File.exist? 'out'
     Dir.chdir 'out' do
+      puts `wget --version`
       `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH`
       `wget localhost:3000/hidden_entries --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension -nH`
       `rm -rf hidden_entries*`
