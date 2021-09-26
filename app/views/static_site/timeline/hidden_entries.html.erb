@@ -3,7 +3,7 @@
   <% @entries.each do |entry| %>
     <%= link_to entry.identifier, entry_path(entry) %>
   <% end %>
-
+  <%= link_to "archive", archive_path %>
 </div>
 <div>
 <%= will_paginate @entries, class: "pagination mt-4 mb-4"%>
