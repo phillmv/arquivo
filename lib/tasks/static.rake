@@ -8,8 +8,8 @@ namespace :static do
     Dir.mkdir 'out' unless File.exist? 'out'
     Dir.chdir 'out' do
       puts `wget --version`
-      `wget localhost:3000 --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH`
-      `wget localhost:3000/hidden_entries --domains localhost  --recursive  --page-requisites  --no-clobber  --html-extension -nH`
+      puts "######\nwget --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH localhost:3000 localhost:3000/hidden_entries"
+      `wget --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH localhost:3000 localhost:3000/hidden_entries`
       `rm -rf hidden_entries*`
 
       # i thought this was necessary but it turns out that in GH Pages it auto forwards /foo to /foo.html
