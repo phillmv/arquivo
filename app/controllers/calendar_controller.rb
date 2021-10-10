@@ -7,6 +7,10 @@ class CalendarController < ApplicationController
 
     @entries = Entry.where(notebook: @current_notebook.name).order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
 
+    @grouped_entries = @entries.group_by do |e|
+      e.occurred_date
+    end
+
     @tags = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:tags).group("tags.name").count.sort_by { |k,v| -v }
     @contacts = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:contacts).group("contacts.name").count.sort_by { |k,v| -v }
 
@@ -33,7 +37,11 @@ class CalendarController < ApplicationController
 
     @entries = Entry.where(notebook: @current_notebook.name).visible.order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
 
-        @tags = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:tags).group("tags.name").count.sort_by { |k,v| -v }
+    @grouped_entries = @entries.group_by do |e|
+      e.occurred_date
+    end
+
+    @tags = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:tags).group("tags.name").count.sort_by { |k,v| -v }
     @contacts = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:contacts).group("contacts.name").count.sort_by { |k,v| -v }
 
   end
