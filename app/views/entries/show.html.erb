@@ -45,6 +45,9 @@
       <h5>Description:</h5>
       <%= @renderer.to_html %>
 
+    <% elsif @entry.bookmark? %>
+      <h2><a href="<%= @entry.url %>" target="_blank" class="text-gray-dark"><%= @entry.subject%></a></h2>
+      <%= @renderer.to_html %>
     <% else %>
       <%= @renderer.to_html %>
     <% end %>
