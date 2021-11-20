@@ -121,4 +121,28 @@ class EntryTest < ActiveSupport::TestCase
     assert entry.destroy
     assert_equal 0, Entry.count
   end
+
+  test "metdata is a hash" do
+    e = @notebook.entries.new
+    assert_equal Hash.new, e.metadata
+
+    e.save!
+
+    assert_equal 1, @notebook.entries.count
+    e = @notebook.entries.last
+    assert_equal Hash.new, e.metadata
+
+    # random keys can be set, no problemo
+    e.metadata[:foo] = "blah"
+    e.metadata["foo"] = "meh"
+    e.metadata[:integer] = 1234
+    e.metadata[:date] = "1989-11-09".to_date
+    e.save!
+    e = @notebook.entries.last
+
+    assert_equal e.metadata[:foo], "blah"
+    assert_equal e.metadata["foo"], "meh"
+    assert_equal e.metadata[:integer], 1234
+    assert_equal e.metadata[:date], "1989-11-09".to_date
+  end
 end

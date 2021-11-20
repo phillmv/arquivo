@@ -5,12 +5,12 @@ class EntryTagger
     @entry = entry
   end
 
-  def extract_tags(body)
-    body&.scan(PipelineFilter::HashtagFilter::HASHTAG_REGEX)&.flatten || []
+  def extract_tags(entry)
+    (entry.body&.scan(PipelineFilter::HashtagFilter::HASHTAG_REGEX)&.flatten || []) + metadata_tags(entry)
   end
 
   def process!
-    tag_list = extract_tags(entry.body).map do |name|
+    tag_list = extract_tags(entry).map do |name|
       Tag.transaction do
         tag = Tag.find_by(notebook: entry.notebook,
                           name: name)
@@ -35,5 +35,29 @@ class EntryTagger
     old_tags.each(&:apoptosis!)
 
     tag_list
+  end
+
+  def metadata_tags(entry)
+    tags = (entry.metadata["tags"] || entry.metadata[:tags])
+    tags = case tags
+    when Array
+      tags
+    when String
+      tags.split(",")
+    else
+      []
+    end
+
+    # tags may not contain spaces
+    tags = tags.map { |s| s.split(" ") }.flatten
+
+    # force every tag to start with a #
+    tags.map do |s|
+      if s[0] != "#"
+        "##{s}"
+      else
+        s
+      end
+    end
   end
 end

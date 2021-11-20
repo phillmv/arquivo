@@ -43,5 +43,26 @@ class EntryTaggerTest < ActiveSupport::TestCase
     # #bar is no more
     assert_equal 4, @notebook.tags.count
   end
+
+  test "tags are also created from metadata" do
+    assert_equal 0, @notebook.tags.count
+
+    # the entry tagger will look up the tags key in the metadata
+     entry = @notebook.entries.create(body: "#foo #bar #baz\r\nsome more text #anothertag", metadata: {tags: ["#faketag1", "#faketag2", "#foo"]})
+
+     assert_equal 6, entry.tags.uniq.count
+
+     # but "tags" will get precendence over :tags
+
+     entry2 = @notebook.entries.create(body: "#foo", metadata: {"tags" => ["#mytag"], tags: ["#faketag1", "#faketag2", "#foo"]})
+
+     assert_equal ["#foo", "#mytag"].to_set, entry2.tags.pluck(:name).to_set
+
+     # also for shits and giggles we support a flat string
+     # cos it might be annoying to type an array in the yaml frontmatter
+     entry3 = @notebook.entries.create(body: "#foo", metadata: {"tags" => "#tag1, #tag2 , #tag3 tag4", tags: ["#meh"]})
+
+     assert_equal ["#foo", "#tag1", "#tag2", "#tag3", "#tag4"].to_set, entry3.tags.pluck(:name).to_set
+  end
 end
 
