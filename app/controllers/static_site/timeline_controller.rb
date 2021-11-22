@@ -21,7 +21,7 @@ module StaticSite
     def feed
       @all_entries = current_notebook.entries.visible.order(occurred_at: :desc).limit(10)
 
-      @feed_root_url = timeline_url
+      @feed_root_url = timeline_url(format: :html)
       @feed_id = timeline_feed_url
       @feed_title = current_notebook.settings.get(:title)
       @feed_updated_at = @all_entries.first&.occurred_at
@@ -37,15 +37,16 @@ module StaticSite
     def tag
       @search_query = params[:query]
       @search_query = "##{@search_query}"
-      compile_search(@search_query)
+      find_tagged_entries(@search_query)
     end
 
+    # TODO: test that these feeds originate .html suffixes
     def tag_feed
       @search_query = params[:query]
       @search_query = "##{@search_query}"
-      compile_search(@search_query)
+      find_tagged_entries(@search_query)
 
-      @feed_root_url = tag_url(params[:query])
+      @feed_root_url = tag_url(params[:query], format: :html)
       @feed_id = tag_feed_url(params[:query])
       @feed_title = current_notebook.settings.get(:title) + " (feed for #{@search_query})"
       @feed_updated_at = @all_entries.first&.occurred_at
@@ -58,6 +59,7 @@ module StaticSite
       @contacts = current_notebook.contacts.order(:name)
     end
 
+    # TODO: convert contact search into same deal as tag search above
     def contact
       @search_query = params[:query]
       @search_query = "@#{@search_query}"
@@ -100,6 +102,22 @@ module StaticSite
     end
 
     private
+
+    # in static mode we're only looking at one tag at a time as opposed to a
+    # broad search, so treating the query as a single tag is fine.
+    # we could extend the search to the metadata{tags:} key but at present we
+    # are not enforcing the '#tag-name' format, so can't just full-text lookups
+    # in the `metadata` key. instead, let's rely on our association:
+    def find_tagged_entries(tag)
+      @all_entries = current_notebook.entries.joins(:tags).where("tags.name" => tag).paginate(page: params[:page])
+
+      @entries = @all_entries.group_by do |e|
+        e.occurred_date
+      end
+
+      @has_todo = false
+    end
+
     def compile_search(query)
       search = Search.new(current_notebook)
       @all_entries = search.find(query: query).paginate(page: params[:page])
