@@ -122,7 +122,7 @@ module StaticSite
     # are not enforcing the '#tag-name' format, so can't just full-text lookups
     # in the `metadata` key. instead, let's rely on our association:
     def find_tagged_entries(tag)
-      @all_entries = current_notebook.entries.joins(:tags).where("tags.name" => tag).paginate(page: params[:page])
+      @all_entries = current_notebook.entries.joins(:tags).where("tags.name" => tag).order(occurred_at: :desc).paginate(page: params[:page])
 
       @entries = @all_entries.group_by do |e|
         e.occurred_date
