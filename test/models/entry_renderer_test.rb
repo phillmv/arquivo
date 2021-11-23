@@ -217,4 +217,18 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     assert_equal "<table-of-contents>\n<h1 data-sourcepos=\"3:1-3:22\">tabela de conteúdos</h1>\n<ol class=\"table-of-contents\">\n<li><a href=\"#entry-one\">entry one</a></li>\n<li><a href=\"#entry-two\">entry two</a></li>\n</ol></table-of-contents>\n<h1 data-sourcepos=\"7:1-7:11\">\n<a id=\"entry-one\" class=\"anchor\" href=\"#entry-one\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry one</h1>\n<h1 data-sourcepos=\"8:1-8:11\">\n<a id=\"entry-two\" class=\"anchor\" href=\"#entry-two\" aria-hidden=\"true\"><span aria-hidden=\"true\" class=\"octicon octicon-link\"></span></a>entry two</h1>", custom_header_toc_html
   end
+
+  test "if mentions are disabled, we don't parse @mentions" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+    @notebook.settings.set("disable_mentions", true)
+    renderer = EntryRenderer.new(@entry)
+
+    assert_equal "<p data-sourcepos=\"1:1-1:4\">@foo</p>", renderer.render_html("@foo")
+    @notebook.settings.set("disable_mentions", false)
+
+    assert_equal "<p data-sourcepos=\"1:1-1:4\"><a href=\"/contacts/foo\" class=\"user-mention\">@foo</a></p>", renderer.render_html("@foo")
+  end
 end

@@ -38,7 +38,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # - yet-another-static-site
     # - 2021/should-just-work.html
 
-    about_html = notebook.entries.notes.find_by!(identifier: "about.html")
+    about_html = notebook.entries.notes.find_by!(identifier: "about")
     # even tho it is an html file, we can set attributes thru its frontmatter
     # yaml, in this case the hide attribute. additional keys get dumped into
     # the metadata attribute.
@@ -54,7 +54,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_equal DateTime.parse("Tue, 06 Jul 2021 00:00:00 UTC +00:00"), convention_over_conf.occurred_at
 
     # we lop off .markdown extensions, so we should have a musings.html
-    musings = notebook.entries.notes.find_by!(identifier: "musings.html")
+    musings = notebook.entries.notes.find_by!(identifier: "musings")
 
     # we lop off .md extensions, so we should have a yet-another-static-site
     # also, the date was defined in its front matter
@@ -63,7 +63,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
 
     # finally, the full folder path name becomes the identifier, so we should
     # also have a 2021/should-just-work.html
-    should_just_work = notebook.entries.notes.find_by!(identifier: "2021/should-just-work.html")
+    should_just_work = notebook.entries.notes.find_by!(identifier: "2021/should-just-work")
 
     # ---
     # marvelous! let's go and test the properties of the default site that
@@ -94,9 +94,10 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     assert_response 200
 
     # i expect exactly two links:
-    assert_equal 2, css_select("a").count
+    assert_equal 3, css_select("a").count
     assert_select "a[href='/youvechanged.jpg']"
-    assert_select "a[href='/about.html']"
+    assert_select "a[href='/about']"
+    assert_select "a[href='/archive']"
 
     # try getting individual pages:
     get "/2021/should-just-work.html"
@@ -290,7 +291,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     get "/tags/convention/atom.xml"
     assert_response 200
     assert response.body.index("<id>http://example.com/tags/convention/atom.xml</id>"), "should have the default id"
-    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/tags/convention\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/tags/convention/atom.xml\"/>"), "should have the right tag links"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/tags/convention.html\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/tags/convention/atom.xml\"/>"), "should have the right tag links"
     assert response.body.index("<title>This is a default title. (feed for #convention)</title>"), "should have the tag title"
     assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts with the tag 1"
     assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts with the tag 2"
@@ -300,12 +301,12 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     get "/contacts/phillmv/atom.xml"
     assert_response 200
     assert response.body.index("<id>http://example.com/contacts/phillmv/atom.xml</id>"), "should have the default id"
-    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/contacts/phillmv\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/contacts/phillmv/atom.xml\"/>"), "should have the right contact links"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.com/contacts/phillmv.html\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.com/contacts/phillmv/atom.xml\"/>"), "should have the right contact links"
     assert response.body.index("<title>This is a default title. (feed for @phillmv)</title>"), "should have the contact title"
     assert response.body.index("<title>Sample About Page</title>"), "should contain blog post with the contact name"
   end
 
-   test "btw, feeds work (with config)" do
+  test "btw, feeds work (with config)" do
     notebook = load_and_assert_notebook("simple_site_with_stylesheets_and_config")
 
     get "/atom.xml"
@@ -329,7 +330,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     get "/tags/convention/atom.xml"
     assert_response 200
     assert response.body.index("<id>http://example.okayfail.com/tags/convention/atom.xml</id>"), "should have the default id"
-    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/tags/convention\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/tags/convention/atom.xml\"/>"), "should have the right tag links"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/tags/convention.html\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/tags/convention/atom.xml\"/>"), "should have the right tag links"
     assert response.body.index("<title>My amazing website! (feed for #convention)</title>"), "should have the tag title"
     assert response.body.index("<title>Convention over configuration.</title>"), "should contain the blog posts with the tag 1"
     assert response.body.index("<title>Yet Another Static Site Generator</title>"), "should contain the blog posts with the tag 2"
@@ -339,10 +340,28 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     get "/contacts/phillmv/atom.xml"
     assert_response 200
     assert response.body.index("<id>http://example.okayfail.com/contacts/phillmv/atom.xml</id>"), "should have the default id"
-    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/contacts/phillmv\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/contacts/phillmv/atom.xml\"/>"), "should have the right contact links"
+    assert response.body.index("<link rel=\"alternate\" type=\"text/html\" href=\"http://example.okayfail.com/contacts/phillmv.html\"/>\n  <link rel=\"self\" type=\"application/atom+xml\" href=\"http://example.okayfail.com/contacts/phillmv/atom.xml\"/>"), "should have the right contact links"
     assert response.body.index("<title>My amazing website! (feed for @phillmv)</title>"), "should have the contact title"
     assert response.body.index("<title>Sample About Page</title>"), "should contain blog post with the contact name"
-   end
+  end
+
+  test "we can disable the contacts page" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
+    notebook = load_and_assert_notebook("simple_site_with_contacts_and_tags")
+    notebook.settings.set("disable_mentions", true)
+    get "/contacts"
+    assert_response 404
+
+    get "/contacts/phillmv"
+    assert_response 404
+
+    get "/contacts/phillmv/atom.xml"
+    assert_response 404
+  end
 
   def load_and_assert_notebook(name)
     # let's establish that the system is empty

@@ -130,12 +130,9 @@ class AdHocMarkdownImporter
     # with collisions etc, too confusing, the ad hoc markdown is for ad hoc
     # files, loosely slapped together!
     #
-    # here, we lop off `.md` and `.markdown` from the end – but keep .html
-    # (why keep .html? no reason in particular. maybe a mild assumption that
-    # .html is the 'terminal' format the content will be delivered in. i may
-    # revisit this in the future.)
+    # then, we lop off `.md`, `.markdown` and `html` from the suffix
     entry_source = identifier # store the unmodified identifier as the "source"
-    identifier = identifier.gsub(/\.(md|markdown)/, "")
+    identifier = identifier.gsub(/\.(md|markdown|html)/, "")
 
     entry_attributes = parsed_file.front_matter.merge({
       "identifier" => identifier,
