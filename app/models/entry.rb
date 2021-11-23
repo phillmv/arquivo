@@ -113,16 +113,26 @@ class Entry < ApplicationRecord
   end
 
   # -- after_save
+  def should_be_processed?
+    !(document? || manifest? || template?)
+  end
+
   def process_todo_list
-    TodoListMaker.new(self).make!
+    if should_be_processed?
+      TodoListMaker.new(self).make!
+    end
   end
 
   def process_contacts
-    EntryContactMaker.new(self).make!
+    if should_be_processed?
+      EntryContactMaker.new(self).make!
+    end
   end
 
   def process_tags
-    EntryTagger.new(self).process!
+    if should_be_processed?
+      EntryTagger.new(self).process!
+    end
   end
 
   def set_subject
@@ -151,7 +161,9 @@ class Entry < ApplicationRecord
   end
 
   def process_link_entries
-    EntryLinker.new(self).link!
+    if should_be_processed?
+      EntryLinker.new(self).link!
+    end
   end
 
   # clear this cache! this table/cache is only checked in between commits to
