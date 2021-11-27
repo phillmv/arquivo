@@ -7,7 +7,8 @@ class CalendarController < ApplicationController
 
     @entries = Entry.where(notebook: @current_notebook.name).order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
 
-    @grouped_entries = @entries.group_by do |e|
+    @timeline_entries = @entries.paginate(page: params[:page])
+    @grouped_entries = @timeline_entries.group_by do |e|
       e.occurred_date
     end
 
@@ -37,7 +38,8 @@ class CalendarController < ApplicationController
 
     @entries = Entry.where(notebook: @current_notebook.name).visible.order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
 
-    @grouped_entries = @entries.group_by do |e|
+    @timeline_entries = @entries.paginate(page: params[:page])
+    @grouped_entries = @timeline_entries.group_by do |e|
       e.occurred_date
     end
 
