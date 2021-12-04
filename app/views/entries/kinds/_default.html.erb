@@ -5,7 +5,7 @@
 <% end %>
 
 <div class="entry-box <%= "entry-threaded" if threaded %>">
-  <div class="Box-body markdown-body <%= truncate_class(entry_body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
+  <div class="Box-body markdown-body <%= truncate_class(entry.body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
     <%= render partial: "entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
       <% if @search_tokens %>
