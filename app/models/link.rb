@@ -1,4 +1,5 @@
 class Link < ApplicationRecord
+  belongs_to :notebook
   has_many :link_entries
   has_many :entries, through: :link_entries
 
