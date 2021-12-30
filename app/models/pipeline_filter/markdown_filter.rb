@@ -1,16 +1,3 @@
-# For reasons I do not comprehend, CommonMarker distinguishes between render
-# and parse options, throwing an error should you pass in a flag enabling a
-# parse bitmask that is not defined as a render option.
-#
-# Also confusingly, it's not obvious how to pass along parse vs render options.
-module CommonMarker
-  module Config
-    OPTS = OPTS.dup
-    OPTS[:render] = OPTS[:render].dup
-    OPTS[:render][:SMART] = (1 << 10)
-  end
-end
-
 # extended from the original solely in order to add the ability to pass in
 # render options via the `commonmarker_render` context flag
 
