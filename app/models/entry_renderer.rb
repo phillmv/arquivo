@@ -112,6 +112,10 @@ class EntryRenderer
   # ESW[:attributes]['section'] = ['class'] # not strictly necessary?
   ESW[:attributes]['a'] = ESW[:attributes]['a'].dup
   ESW[:attributes]['a'].push("id")
+
+  # used for keeping track of which links come from [[]] wiki syntax
+  # in order to facilitate the EntryLinker's job:
+  ESW[:attributes]['a'].push("data-wikify")
   # ESW[:attributes]['a'].push("class")  # used for making certain links red if not yet made / not strictly necessary?
   # ESW[:attributes]['sup'] = ['class']  # not strictly necessary?
   ESW[:attributes]['li'] = ['id']

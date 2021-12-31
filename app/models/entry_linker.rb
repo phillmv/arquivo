@@ -7,6 +7,8 @@ class EntryLinker
     @notebook = entry.parent_notebook
   end
 
+  # TODO: why not add this as an optional pipeline filter? that way could avoid
+  # hacks like the data-wikify attribute.
   DocumentFragment = Nokogiri::HTML::DocumentFragment
   def extract_urls
     html = EntryRenderer.new(entry).to_html2
@@ -14,7 +16,13 @@ class EntryLinker
 
     doc.css("a[href]").reduce([]) do |arr, a|
       unless reject_url?(a["href"])
-        arr << a["href"]
+        # if we have a wikify attribute, use that value instead since
+        # that's what got inserted into the [[]]s
+        if a["data-wikify"]
+          arr << a["data-wikify"]
+        else
+          arr << a["href"]
+        end
       end
 
       arr

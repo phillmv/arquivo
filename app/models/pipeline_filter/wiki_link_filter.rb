@@ -43,7 +43,7 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
           entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry, owner: notebook.owner, notebook: notebook)
         end
 
-        "<a href=\"#{entry_path}\">#{to_description(desc || linked_entry.subject || link)}</a>"
+        "<a href=\"#{entry_path}\" data-wikify=\"#{linked_entry.identifier}\">#{to_description(desc || linked_entry.subject || link)}</a>"
       else
         # TODO: test color-red / usage of #s in links / link generates well
         "<a href=\"#{to_link link}\" class='color-red-5'>#{to_description(desc || link)}</a>"

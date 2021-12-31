@@ -19,6 +19,11 @@ class EntriesController < ApplicationController
       @show_thread = params[:thread].present?
       @renderer = EntryRenderer.new(@entry)
       @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
+
+      # TODO: test this in a controller kthnx
+      links_rel = @entry.parent_notebook.links
+      @links = links_rel.where(identifier: @entry.identifier).or(links_rel.where(url: @entry.identifier))
+      @linking_entries = @entry.parent_notebook.entries.where(id: LinkEntry.where(link_id: @links).select(:entry_id)).order(:occurred_at).limit(100)
     end
   end
 

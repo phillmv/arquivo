@@ -107,24 +107,23 @@
     <a href=""><%= rev %></a> <%= date %>
   <% end %>
 
-  <% link = Link.find_by(notebook: @entry.parent_notebook, url: @entry.url) %>
-  <% if link %>
+  <% if @links.any? %>
     <hr>
     <h4>Trackback</h4>
-    <% link.entries.order(:occurred_at).limit(100).each do |linked_entry| %>
-      <% renderer = EntryRenderer.new(linked_entry) %>
+      <% @linking_entries.order(:occurred_at).limit(100).each do |linked_entry| %>
+        <% renderer = EntryRenderer.new(linked_entry) %>
 
-      <div class="py-2">
-        <%= link_to linked_entry.occurred_at.strftime("%Y-%m-%d @ %H:%M %Z"), entry_path(linked_entry) %> <br>
-        <% if renderer.subject.present? %>
-          <%= renderer.subject %> <br>
-        <% end %>
-        <% if linked_entry.tags.any? %>
-          <%= linked_entry.tags.to_a.join(" ") %> <br>
-        <% end %>
-      </div>
+        <div class="py-2">
+          <%= link_to linked_entry.occurred_at.strftime("%Y-%m-%d @ %H:%M %Z"), entry_path(linked_entry) %> <br>
+          <% if renderer.subject.present? %>
+            <%= renderer.subject %> <br>
+          <% end %>
+          <% if linked_entry.tags.any? %>
+            <%= linked_entry.tags.to_a.join(" ") %> <br>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
-  <% end %>
 
   <% @entry.links.each do |link| %>
     <% link.entries do |linked_entry| %>
