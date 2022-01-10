@@ -17,9 +17,11 @@
           <%= entries.count %> entries
         </div>
 
-        <%= entries.select(&:note?).reduce(Set.new) do |set, e| %>
+        <% entries.select(&:note?).reduce(Set.new) do |set, e| %>
           <% set.merge(e.tags) %>
-        <% end.to_a.join(" ") %>
+          <% end.each do |t| %>
+            <span class="dot" style="background-color: <%= tag_colour(t) %>"> </span><span><%= t %></span><br/>
+          <% end %>
 
       </a>
     <% else %>

@@ -12,9 +12,8 @@ class CalendarController < ApplicationController
       e.occurred_date
     end
 
-    @tags = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:tags).group("tags.name").count.sort_by { |k,v| -v }
-    @contacts = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:contacts).group("contacts.name").count.sort_by { |k,v| -v }
-
+    @tags = tags_by_count(@start_date, @end_date)
+    @contacts = contacts_by_count(@start_date, @end_date)
   end
 
   def daily
@@ -43,8 +42,19 @@ class CalendarController < ApplicationController
       e.occurred_date
     end
 
-    @tags = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:tags).group("tags.name").count.sort_by { |k,v| -v }
-    @contacts = current_notebook.entries.notes.after(@start_date).before(@end_date).joins(:contacts).group("contacts.name").count.sort_by { |k,v| -v }
+    @tags = tags_by_count(@start_date, @end_date)
+    @contacts = contacts_by_count(@start_date, @end_date)
+  end
 
+  def tags_by_count(start_date, end_date)
+    entries_between(start_date, end_date).joins(:tags).group("tags.name").count.sort_by { |k,v| -v }
+  end
+
+  def contacts_by_count(start_date, end_date)
+    entries_between(start_date, end_date).joins(:contacts).group("contacts.name").count.sort_by { |k,v| -v }
+  end
+
+  def entries_between(start_date, end_date)
+    current_notebook.entries.after(start_date).before(end_date)
   end
 end

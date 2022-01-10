@@ -68,4 +68,31 @@ module ApplicationHelper
   def current_action
     @current_action ||= "#{controller_name}/#{action_name}"
   end
+
+  # https://coolors.co/f94144-f3722c-f8961e-f9844a-f9c74f-90be6d-43aa8b-4d908e-577590-277da1
+  COLOURS1 = [
+    "#f94144ff",
+    "#f3722cff",
+    "#f8961eff",
+    "#f9844aff",
+    "#f9c74fff",
+    "#90be6dff",
+    "#43aa8bff",
+    "#4d908eff",
+    "#577590ff",
+    "#277da1ff",
+  ]
+  #
+  # https://coolors.co/ff595e-ffca3a-8ac926-1982c4-6a4c93
+  COLOURS2 = [
+    "#ff595eff",
+    "#ffca3aff",
+    "#8ac926ff",
+    "#1982c4ff",
+    "#6a4c93ff",
+  ]
+
+  def tag_colour(tag)
+    COLOURS1[tag.to_s.hash % COLOURS1.size]
+  end
 end

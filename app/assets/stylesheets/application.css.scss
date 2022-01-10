@@ -474,3 +474,23 @@ entry {
     }
   }
 }
+
+$red-salsa: #f94144ff;
+$orange-red: #f3722cff;
+$yellow-orange-color-wheel: #f8961eff;
+$mango-tango: #f9844aff;
+$maize-crayola: #f9c74fff;
+$pistachio: #90be6dff;
+$zomp: #43aa8bff;
+$cadet-blue: #4d908eff;
+$queen-blue: #577590ff;
+$cg-blue: #277da1ff;
+
+.dot {
+  height: 9px;
+  width: 9px;
+  // background-color: $red-salsa;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 2px;
+}
