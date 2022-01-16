@@ -89,6 +89,7 @@ class EntriesController < ApplicationController
 
   # GET /entries/1/edit
   def edit
+    @parent_entry = @entry.parent
   end
 
   # POST /entries

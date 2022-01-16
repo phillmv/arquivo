@@ -6,7 +6,7 @@
   </div>
 
   <% if @parent_entry %>
-    <%= render partial: "entries/list_entry", locals: { entry: @parent_entry } %>
+    <%= render partial: "entries/thread_list_entry", locals: { entry: @parent_entry } %>
     <br/>
   <% end %>
 

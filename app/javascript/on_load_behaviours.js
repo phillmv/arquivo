@@ -97,11 +97,16 @@ document.addEventListener("turbolinks:load", function(){
   var entry;
   if (document.querySelector('.entry-threaded')) {
     entry = document.querySelector('.entry-show')
-    entry.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest"
-    });
+    if (entry) {
+      // but don't scroll if a textarea is loaded i.e. we're editing
+      if(!window.entry_body) {
+        entry.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest"
+        });
+      }
+    }
   }
 
   if (document.querySelector('entry.threaded')) {
