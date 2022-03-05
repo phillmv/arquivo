@@ -28,7 +28,16 @@ class NotebooksController < ApplicationController
       query = query.where("subject is not null")
     end
 
-    render json: query.select(:identifier, :subject)
+    # TODO TEST THIS PLEASE, including change in wiki link
+    response = query.select(:identifier, :url, :subject, :kind).map do |entry|
+      if entry.bookmark?
+        { identifier: entry.url, subject: entry.subject }
+      else
+        { identifier: entry.identifier, subject: entry.subject }
+      end
+    end
+
+    render json: response
   end
 
   def update

@@ -36,7 +36,9 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
 
       notebook = context[:entry].parent_notebook
 
-      if linked_entry = notebook.entries.find_by(identifier: link.strip.gsub(/\s+/, @space_replacement))
+      link_identifier = link.strip.gsub(/\s+/, @space_replacement)
+
+      if linked_entry = notebook.entries.where(identifier: link_identifier).or(notebook.entries.where(url: link)).first
         if Arquivo.static?
           entry_path = Rails.application.routes.url_helpers.entry_path(linked_entry)
         else
