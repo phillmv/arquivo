@@ -16,7 +16,7 @@ module UrlHelper
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |entry, opts = {}|
       if Arquivo.static?
-        RailsUrlHelpers.send(name_with_path, entry, opts.except(:notebook))
+        RailsUrlHelpers.send(name_with_path, entry, opts.except(:notebook).merge(format: "html"))
       else
         RailsUrlHelpers.send(name_with_path, entry, opts.merge(UrlHelper.entry_params(entry)))
       end
@@ -27,7 +27,7 @@ module UrlHelper
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |notebook, opts = {}|
       if Arquivo.static?
-        RailsUrlHelpers.send(name_with_path, opts.except(:notebook))
+        RailsUrlHelpers.send(name_with_path, opts.except(:notebook).merge(format: "html"))
       else
         RailsUrlHelpers.send(name_with_path, opts.merge(UrlHelper.notebook_params(notebook)))
       end
@@ -40,7 +40,7 @@ module UrlHelper
 
   def calendar_daily_path(date, notebook, opts = {})
     if Arquivo.static?
-      RailsUrlHelpers.calendar_daily_path(date, opts)
+      RailsUrlHelpers.calendar_daily_path(date, opts.merge(format: "html"))
     else
       RailsUrlHelpers.calendar_daily_path(date, opts.merge(UrlHelper.notebook_params(notebook)))
     end
