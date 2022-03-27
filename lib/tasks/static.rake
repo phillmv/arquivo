@@ -5,8 +5,14 @@ namespace :static do
   end
 
   task :generate do
-    Dir.mkdir 'out' unless File.exist? 'out'
-    Dir.chdir 'out' do
+    if ENV["MAWB_OUTPUT"]
+      folder = ENV["MAWB_OUTPUT"]
+    else
+      folder = "out"
+    end
+
+    Dir.mkdir folder unless File.exist? folder
+    Dir.chdir folder do
       puts `wget --version`
       puts "######\nwget --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH localhost:3000 localhost:3000/hidden_entries"
       `wget --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH localhost:3000 localhost:3000/hidden_entries`
