@@ -30,6 +30,19 @@ class Entry < ApplicationRecord
   scope :manifests, -> { where(kind: "manifest") }
   scope :templates, -> { where(kind: "templates") }
 
+  # threaded todos hack
+  WITH_THREAD_FROM = "(WITH RECURSIVE
+           ancestor_of(id, in_reply_to) AS (
+           VALUES(?, ?)
+           UNION
+           select entries.id, entries.in_reply_to from entries JOIN ancestor_of ON entries.identifier = ancestor_of.in_reply_to
+           )
+           select * from entries where entries.id IN (select id from ancestor_of)) entries"
+  scope :with_thread, -> (entry) {
+    sanitized_str = sanitize_sql([WITH_THREAD_FROM, entry.id, entry.in_reply_to])
+    from(sanitized_str)
+  }
+
   scope :with_todos, -> { joins(:todo_list).where("todo_lists.completed_at": nil) }
   scope :with_completed_todos, -> { joins(:todo_list).where("todo_lists.completed_at is not null") }
 
@@ -356,6 +369,17 @@ class Entry < ApplicationRecord
 
   def truncated_description(n = 30)
     (subject || body || "").truncate(n)
+  end
+
+  # for threaded_todos hack, and seeing if my CTE works
+  def whole_thread
+    arr = [self]
+    cur = self.parent
+    while cur
+      arr << cur
+      cur = cur.parent
+    end
+    arr
   end
 
   def self.accepted_attributes

@@ -24,6 +24,10 @@ class EntriesController < ApplicationController
       links_rel = @entry.parent_notebook.links
       @links = links_rel.where(identifier: @entry.identifier).or(links_rel.where(url: @entry.identifier))
       @linking_entries = @entry.parent_notebook.entries.where(id: LinkEntry.where(link_id: @links).select(:entry_id)).order(:occurred_at).limit(100)
+
+      # hack hack hack for threaded_todos
+      @threaded_entries = Entry.with_thread(@entry)
+      @todo_list_items = TodoListItem.where(entry_id: @threaded_entries.pluck(:id), checked: false)
     end
   end
 
