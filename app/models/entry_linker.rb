@@ -45,6 +45,10 @@ class EntryLinker
       return @blacklisted_paths
     end
 
+    if Arquivo.static?
+      return []
+    end
+
     # don't want to consider autogen tag and contact urls to be a "link"
     # since we keep track of those references separately ¯\_(ツ)_/¯
     # TODO: rewrite this to handle Arquivo.static urls
