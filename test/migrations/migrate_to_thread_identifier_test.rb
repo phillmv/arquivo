@@ -5,6 +5,10 @@ require File.join(Rails.root, "db/migrate/20220801211909_migrate_to_thread_ident
 class MigrateToThreadIdentifierTest < ActiveSupport::TestCase
   test "the migration behaves correctly" do
     enable_local_sync do
+      # the thread_identifier now gets set in a before save, so for this test
+      # let's just kill it
+      Entry.skip_callback(:save, :set_thread_identifier)
+
       @notebook = Notebook.create(name: "mctesttest")
       e1 = @notebook.entries.create(body: "test 1")
       e2 = @notebook.entries.create(body: "test 2", in_reply_to: e1.identifier)
