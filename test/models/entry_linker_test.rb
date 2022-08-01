@@ -38,7 +38,7 @@ class EntryLinkerTest < ActiveSupport::TestCase
     # are not included as "links", and neither is the anchor #foo
     expected_links = ["https://example.com",
                       "http://okayfail.com",
-                      "/#{@notebook.owner}/#{@notebook}/#{@linked_entry.identifier}",
+                      @linked_entry.identifier,
                       "https://example.com/example"]
 
     assert_equal entry.links.map(&:url).to_set, expected_links.to_set
