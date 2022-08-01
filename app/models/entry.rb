@@ -57,6 +57,15 @@ class Entry < ApplicationRecord
     self.parent_notebook.entries.find_by(identifier: self.in_reply_to)
   end
 
+  def thread_ancestors
+    thread_root = self.parent_notebook.entries.where(identifier: self.thread_identifier)
+    self.parent_notebook.entries.where("thread_identifier = ? and occurred_at <= ? and identifier != ?", self.thread_identifier, self.occurred_at, self.identifier).or(thread_root).order(occurred_at: :desc)
+  end
+
+  def thread_descendants
+    self.parent_notebook.entries.where("thread_identifier = ? and occurred_at >= ? and identifier != ?", self.thread_identifier, self.occurred_at, self.identifier).order(occurred_at: :desc)
+  end
+
   # TODO: assert dependent destroys clean up through models if relevant
 
   has_many :tag_entries, dependent: :destroy
@@ -79,7 +88,7 @@ class Entry < ApplicationRecord
 
   attr_accessor :skip_local_sync # skip sync to git
   after_save :sync_to_disk_and_git, :process_tags, :process_contacts, :process_todo_list, :process_link_entries, :clear_cached_blob_filenames
-  before_save :set_subject
+  before_save :set_subject, :set_thread_identifier
 
   after_destroy :sync_to_disk_and_git
 
@@ -161,6 +170,12 @@ class Entry < ApplicationRecord
         # within the body
         self.subject = EntryRenderer.new(self).subject
       end
+    end
+  end
+
+  def set_thread_identifier
+    if self.in_reply_to.present? && self.thread_identifier.nil?
+      self.thread_identifier = self.parent.thread_identifier || self.parent.identifier
     end
   end
 

@@ -122,7 +122,7 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal 0, Entry.count
   end
 
-  test "metdata is a hash" do
+  test "metadata is a hash" do
     e = @notebook.entries.new
     assert_equal Hash.new, e.metadata
 
@@ -144,5 +144,20 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal e.metadata["foo"], "meh"
     assert_equal e.metadata[:integer], 1234
     assert_equal e.metadata[:date], "1989-11-09".to_date
+  end
+
+  test "basic threading" do
+    e1 = @notebook.entries.create(body: "test 1")
+    e2 = @notebook.entries.create(body: "test 2", in_reply_to: e1.identifier)
+    e3 = @notebook.entries.create(body: "test 3", in_reply_to: e2.identifier)
+    e31 = @notebook.entries.create(body: "test 3.1", in_reply_to: e2.identifier)
+    e4 = @notebook.entries.create(body: "test 4", in_reply_to: e3.identifier)
+
+    assert_equal e31.thread_ancestors.to_set, [e1, e2, e3].to_set
+    assert_equal e4.thread_ancestors.to_set, [e1, e2, e3, e31].to_set
+
+    assert_equal e2.thread_descendants.to_set, [e3, e31, e4].to_set
+    assert_equal e3.thread_descendants.to_set, [e31, e4].to_set
+    assert_equal e4.thread_descendants.to_set, [].to_set
   end
 end

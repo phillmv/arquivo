@@ -50,4 +50,22 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
 
     assert 2, Entry.count
   end
+
+  test "create a threaded entry" do
+    entry1 = @current_notebook.entries.create(body: "test 1")
+    post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test", in_reply_to: entry1.identifier } }
+
+    entry2 = Entry.last
+
+    assert_equal entry1.identifier, entry2.in_reply_to
+    assert_equal entry1.identifier, entry2.thread_identifier
+
+    post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test", in_reply_to: entry2.identifier } }
+
+    entry3 = Entry.last
+    assert_equal entry2.identifier, entry3.in_reply_to
+    assert_equal entry1.identifier, entry3.thread_identifier
+
+
+  end
 end
