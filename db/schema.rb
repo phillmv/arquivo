@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_26_193531) do
+ActiveRecord::Schema.define(version: 2022_08_01_211909) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -46,9 +46,9 @@ ActiveRecord::Schema.define(version: 2021_12_26_193531) do
     t.string "notebook", null: false
     t.string "title"
     t.string "url", null: false
+    t.datetime "last_imported_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "last_imported_at"
     t.index ["notebook"], name: "index_calendar_imports_on_notebook"
   end
 
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 2021_12_26_193531) do
     t.string "in_reply_to"
     t.string "state"
     t.boolean "hide", default: false, null: false
+    t.string "thread_identifier"
     t.index ["notebook", "identifier"], name: "index_entries_on_notebook_and_identifier", unique: true
     t.index ["notebook"], name: "index_entries_notebook"
   end
