@@ -270,6 +270,11 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
   end
 
   test "btw, feeds work (without config)" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
     notebook = load_and_assert_notebook("simple_site_with_stylesheets")
 
     get "/atom.xml"
@@ -307,6 +312,11 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
   end
 
   test "btw, feeds work (with config)" do
+    if !Arquivo.static?
+      puts "Not in static mode. Try again, with STATIC_PLS=true"
+      return
+    end
+
     notebook = load_and_assert_notebook("simple_site_with_stylesheets_and_config")
 
     get "/atom.xml"
