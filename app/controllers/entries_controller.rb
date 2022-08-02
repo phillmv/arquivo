@@ -45,6 +45,7 @@ class EntriesController < ApplicationController
 
     if @parent_entry
       @entry.copy_parent(@parent_entry)
+      @todo_list_items = TodoListItem.where(entry_id: @parent_entry.whole_thread, checked: false).order(occurred_at: :desc)
     end
   end
 
