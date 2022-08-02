@@ -11,9 +11,14 @@
     </nav>
   </div>
 
-  <% if @show_thread && @entry.parent %>
-    <%= render partial: "entries/thread_list_entry", locals: { entry: @entry.parent } %>
+  <% if @show_thread && @entry.thread_descendants.any? %>
+    <div class="mb-4">
+      <% @entry.thread_descendants.each do |reply| %>
+        <%= render partial: "entries/list_entry", locals: { entry: reply, threaded: true } %>
+    <% end %>
+    </div>
   <% end %>
+
 
   <div class="entry-box entry-show">
   <div class="Box-body border-0 markdown-body js-task-list-container">
@@ -26,7 +31,6 @@
 
       <% if !@show_thread && (@entry.reply? || @entry.replies.any?) %><a href="<%= threaded_entry_path(@entry, notebook: @entry.notebook) %>" class="Box-btn-octicon btn-octicon unselectable mr-1 float-right">
           <%= octicon("comment-discussion") %> thread</a><%end%>
-
     </div>
 
     <div class="entry-body">
@@ -53,8 +57,7 @@
     <% end %>
     </div>
 
-    <%# by definition can't render show w/o an existing entry %>
-    <%# here we set up a for the purposes of updating task lists automagically. %>
+    <%# here we set up a form for the purposes of updating task lists automagically. %>
     <%# id is set to entry_body_tasklist to allow for reliably detecting when an entry textarea is present %>
     <div class="entry-edit d-none">
       <%= form_with(model: @entry, url: entry_path(@entry, notebook: @entry.notebook)) do |form| %>
@@ -74,7 +77,7 @@
   <% end %>
   </div>
 
-  <div class="form-actions pt-3">
+  <div class="form-actions pt-3 pb-6">
     <a href="<%= edit_entry_path(@entry, notebook: @entry.notebook)%>" class="btn"> <%= octicon("pencil") %> Edit </a>
     <a href="<%= new_entry_path(@entry.parent_notebook, in_reply_to: @entry) %>" class="btn btn-primary"><%= octicon("reply") %> Reply</a>
     <%= link_to 'Back', request.referer.present? ? request.referer : timeline_path(@current_notebook), class: "btn float-left" %>
@@ -93,31 +96,16 @@
     </details>
   </div>
 
-  <% if @show_thread && @entry.replies.any? %>
-    <div class="mt-3">
-      <%= render partial: "entries/thread_list_reply_entries", locals: { entry: @entry } %>
-    </div>
+  <% if @show_thread %>
+    <% @entry.thread_ancestors.each do |thread_entry| %>
+      <%= render partial: "entries/list_entry", locals: { entry: thread_entry, threaded: true } %>
+    <% end %>
   <% end %>
 </div>
 
 <div class="context-container mt-8">
-  <h2>Tasks</h2>
-  <div class="recent-todos pt-2">
-    <% @todo_list_items.each do |tli| %>
-      <div class="pb-2">
-        <a href="<%= entry_path(tli.entry)%>">
-          <%= EntryRenderer.new(tli.entry).gimme_html("- #{tli.source}") %>
-          <span class="muted-link"><%= tli.tags.map(&:name).join(" ") %> <%= time_ago_in_words(tli.occurred_at, include_seconds: true) %> ago</span>
-        </a>
-      </div>
-    <% end %>
-  </div>
-
   <h4>Revisions</h4>
   <%= @entry.revisions.size %> revisions
-  <% if false # @entry.revisions.each do |rev, date| %>
-    <a href=""><%= rev %></a> <%= date %>
-  <% end %>
 
   <% if @links.any? %>
     <hr>
@@ -142,4 +130,21 @@
       <%= link_to linked_entry.identifier, entry_path(linked_entry) %>
     <% end %>
   <% end %>
+
+
+  <% if @todo_list_items.any? %>
+    <hr>
+    <h4>Tasks</h4>
+    <div class="recent-todos pt-2">
+      <% @todo_list_items.each do |tli| %>
+        <div class="pb-2">
+          <a href="<%= entry_path(tli.entry)%>">
+            <%= EntryRenderer.new(tli.entry).gimme_html("- #{tli.source}") %>
+            <span class="muted-link"><%= tli.tags.map(&:name).join(" ") %> <%= time_ago_in_words(tli.occurred_at, include_seconds: true) %> ago</span>
+          </a>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
 </div>

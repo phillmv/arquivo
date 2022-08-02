@@ -9,12 +9,31 @@
     <% end %>
   </div>
 
-  <% if @parent_entry %>
-    <%= render partial: "entries/thread_list_entry", locals: { entry: @parent_entry } %>
-    <br/>
-  <% end %>
-
-
   <%= render 'form', entry: @entry, bookmark: @entry.bookmark?, skip_metadata: @entry.bookmark?, outside_of_bookmarklet: true %>
 
+  <div class="pt-6">
+    <% @entry.thread_ancestors.each do |thread_entry| %>
+      <%= render partial: "entries/list_entry", locals: { entry: thread_entry, threaded: true } %>
+    <% end %>
+  </div>
+</div>
+
+<div class="context-container mt-8">
+  <h4>Revisions</h4>
+  <%= @entry.revisions.size %> revisions
+
+  <% if @todo_list_items.any? %>
+    <hr>
+    <h4>Tasks</h4>
+    <div class="recent-todos pt-2">
+      <% @todo_list_items.each do |tli| %>
+        <div class="pb-2">
+          <a href="<%= entry_path(tli.entry)%>">
+            <%= EntryRenderer.new(tli.entry).gimme_html("- #{tli.source}") %>
+            <span class="muted-link"><%= tli.tags.map(&:name).join(" ") %> <%= time_ago_in_words(tli.occurred_at, include_seconds: true) %> ago</span>
+          </a>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>

@@ -53,6 +53,11 @@ class Entry < ApplicationRecord
     self.parent_notebook.entries.where("thread_identifier = ? and occurred_at >= ? and identifier != ?", self.thread_identifier, self.occurred_at, self.identifier).order(occurred_at: :desc)
   end
 
+  def whole_thread
+    thread_root = self.parent_notebook.entries.where(identifier: self.thread_identifier)
+    self.parent_notebook.entries.where("thread_identifier = ?", self.thread_identifier).or(thread_root).order(occurred_at: :desc)
+  end
+
   # TODO: assert dependent destroys clean up through models if relevant
 
   has_many :tag_entries, dependent: :destroy

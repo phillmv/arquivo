@@ -25,9 +25,7 @@ class EntriesController < ApplicationController
       @links = links_rel.where(identifier: @entry.identifier).or(links_rel.where(url: @entry.identifier))
       @linking_entries = @entry.parent_notebook.entries.where(id: LinkEntry.where(link_id: @links).select(:entry_id)).order(:occurred_at).limit(100)
 
-      # hack hack hack for threaded_todos
-      @threaded_entries = @entry.thread_ancestors
-      @todo_list_items = TodoListItem.where(entry_id: @threaded_entries.pluck(:id), checked: false).order(occurred_at: :desc)
+      @todo_list_items = TodoListItem.where(entry_id: @entry.whole_thread.pluck(:id), checked: false).order(occurred_at: :desc)
     end
   end
 
@@ -95,8 +93,7 @@ class EntriesController < ApplicationController
   def edit
     @parent_entry = @entry.parent
     # hack hack hack for threaded_todos
-    @threaded_entries = @entry.thread_ancestors
-    @todo_list_items = TodoListItem.where(entry_id: @threaded_entries.pluck(:id), checked: false).order(occurred_at: :desc)
+    @todo_list_items = TodoListItem.where(entry_id: @entry.whole_thread, checked: false).order(occurred_at: :desc)
   end
 
   # POST /entries

@@ -1,0 +1,36 @@
+<table>
+  <thead>
+    <th>tags</th>
+    <th>contacts</th>
+    <th>bookmarks</th>
+  </thead>
+  <% rows = [@contacts.size, @tags.size, @bookmark_tags.size].max %>
+  <% rows.times do |i| %>
+    <tr>
+      <td>
+        <% if (tag, tag_count = @tags[i]) %>
+          <p>
+          <a href="<%= search_path(@current_notebook, query: "#{tag} after:#{@start_date.to_date} before:#{@end_date.to_date}") %> sort:asc"><%= tag %></a> <%= tag_count %>
+          </p>
+        <% end %>
+      </td>
+      <td>
+        <% if (contact, contact_count = @contacts[i]) %>
+          <p>
+          <a href="<%= search_path(@current_notebook, query: "@#{contact} after:#{@start_date.to_date} before:#{@end_date.to_date} sort:asc") %>">@<%= contact %></a> <%= contact_count %>
+          </p>
+        <% end %>
+      </td>
+
+      <td>
+        <% if (bookmark, bookmark_count = @bookmark_tags[i]) %>
+          <p>
+          <a href="<%= search_path(@current_notebook, query: "#{bookmark} after:#{@start_date.to_date} before:#{@end_date.to_date} sort:asc") %>"><%= bookmark %></a> <%= bookmark_count %>
+          </p>
+        <% end %>
+      </td>
+
+    </tr>
+  <% end %>
+</table>
+

@@ -20,6 +20,7 @@
     </entry-container>
   </entry>
 
+  <%# TODO: convert over to using thread_descendants etc %>
   <% if @show_thread && @entry.replies.any? %>
     <div class="mt-3">
       <%= render partial: "static_site/entries/thread_list_reply_entries", locals: { entry: @entry } %>
