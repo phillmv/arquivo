@@ -232,7 +232,17 @@ class Entry < ApplicationRecord
     if entry.calendar?
       self.body = entry.from_calendar_to_body_headline
     elsif entry.note?
-      self.body = entry.body&.lines&.first
+      # TODO: test behaviour
+      first_line = entry.body&.lines&.first
+      if first_line
+        begin
+          date = Date.parse(first_line)
+          first_line = first_line.gsub(date.to_s, Date.today.to_s)
+        rescue ArgumentError
+        end
+
+        self.body = first_line
+      end
     end
   end
 
