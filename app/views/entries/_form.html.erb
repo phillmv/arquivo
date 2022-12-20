@@ -58,8 +58,12 @@
 
   <div class="form-group" style="position: relative;">
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
-      <text-expander keys="# @ [[" multiword="[[">
+    <text-expander keys="# @ [[" multiword="[[">
+      <% if bookmark %>
+        <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
+      <% else %>
         <%= form.text_area :body, class: "form-control input-block", autofocus: true, style: "min-height: 500px"%>
+      <% end %>
       </text-expander>
       <% unless bookmark %>
       <%= form.file_field :files, multiple: true, "data-direct-upload-url" => direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook, owner: @current_notebook.owner) %>
