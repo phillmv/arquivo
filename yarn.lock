@@ -709,6 +709,11 @@
   resolved "https://registry.yarnpkg.com/@github/file-attachment-element/-/file-attachment-element-1.0.2.tgz#7cfeefb62eb2053df9734d4b964eac653968ae0a"
   integrity sha512-5YBPGQEkZ6t4uosF3KCnFfQT/XZcBLiAw6sFvXINjyytzyacj7B2alzeQmTDO3Au/n4MubQLQMtNrQgIOj/SbQ==
 
+"@github/paste-markdown@^1.4.2":
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/@github/paste-markdown/-/paste-markdown-1.4.2.tgz#aedba0972536c2fc7944931b6e62bd43dc130592"
+  integrity sha512-ZwSgPyo9nA6TRngXV0QnFT4e5ujeOGxRDWN2aa6qfimz2o2VOsJ9bFGuGvB723nvzq5z9zKr6JWGtvK7MSJj3w==
+
 "@github/text-expander-element@github:phillmv/text-expander-element#use_key_length_in_query":
   version "2.2.0"
   resolved "https://codeload.github.com/phillmv/text-expander-element/tar.gz/129c7f7b211e126649b16d870b87ae59eff9c505"

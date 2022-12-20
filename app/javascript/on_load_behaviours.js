@@ -4,6 +4,7 @@ import 'file_uploading' ;
 import 'text_expanding';
 import 'textarea_sizing';
 import 'task_list_handler';
+import 'markdown_pasting';
 
 function safe_to_navigate_away_from_entry() {
   if (window.entry_body) {
@@ -100,6 +101,7 @@ document.addEventListener("turbolinks:load", function(){
     if (entry) {
       // but don't scroll if a textarea is loaded i.e. we're editing
       if(!window.entry_body) {
+        console.log("this fired");
         entry.scrollIntoView({
           behavior: "smooth",
           block: "start",

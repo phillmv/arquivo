@@ -60,9 +60,9 @@
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
     <text-expander keys="# @ [[" multiword="[[">
       <% if bookmark %>
-        <%= form.text_area :body, class: "form-control input-block", autofocus: true %>
+        <%= form.text_area :body, class: "form-control input-block", autofocus: true, "data-paste-markdown" => true %>
       <% else %>
-        <%= form.text_area :body, class: "form-control input-block", autofocus: true, style: "min-height: 500px"%>
+        <%= form.text_area :body, class: "form-control input-block", autofocus: true, style: "min-height: 500px", "data-paste-markdown" => true %>
       <% end %>
       </text-expander>
       <% unless bookmark %>
