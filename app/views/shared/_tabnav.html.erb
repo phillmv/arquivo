@@ -1,14 +1,8 @@
-<% if true #FeatureFlag[:redesign] %>
-  <div class="tabnav mt-2">
-    <nav class="tabnav-tabs" aria-label="Foo bar">
-        <!-- <a href="<%= new_entry_path(notebook: @current_notebook) %>" class="btn btn&#45;sm float&#45;right"><%= octicon "pencil" %> New Entry</a> -->
-      
-      <!-- <a class="btn btn&#45;sm float&#45;right" href="#url" role="button">New Entry</a> -->
-
-      <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= current_tabnav(:timeline) %> accesskey="1"><h5><%= octicon "note" %> Everything <span class="Counter">1</span></h5></a>
-      <a class="tabnav-tab" href="<%= agenda_path(notebook: @current_notebook) %>" <%= current_tabnav(:this_day) %> accesskey="2"><%= octicon "watch" %> This Day <span class="Counter">2</span></a>
-      <a class="tabnav-tab" href="<%= calendar_weekly_path(notebook: @current_notebook) %>"  <%= current_tabnav(:this_week) %>><%= octicon "list-unordered" %> This Week <span class="Counter">3</span></a>
-      <a class="tabnav-tab" href="<%= calendar_path(notebook: @current_notebook) %>" <%= current_tabnav(:this_month) %>><%= octicon "calendar" %> This Month <span class="Counter">4</span></a>
-    </nav>
-  </div>
-<% end %>
+<div class="tabnav mt-2">
+  <nav class="tabnav-tabs" aria-label="Foo bar">
+    <a class="tabnav-tab" href="<%= timeline_path(notebook: @current_notebook) %>" <%= current_tabnav(:timeline) %> accesskey="1"><h5><%= octicon "note" %> Everything <span class="Counter">1</span></h5></a>
+    <a class="tabnav-tab" href="<%= agenda_path(notebook: @current_notebook) %>" <%= current_tabnav(:this_day) %> accesskey="2"><%= octicon "watch" %> This Day <span class="Counter">2</span></a>
+    <a class="tabnav-tab" href="<%= calendar_weekly_path(notebook: @current_notebook) %>"  <%= current_tabnav(:this_week) %>><%= octicon "list-unordered" %> This Week <span class="Counter">3</span></a>
+    <a class="tabnav-tab" href="<%= calendar_path(notebook: @current_notebook) %>" <%= current_tabnav(:this_month) %>><%= octicon "calendar" %> This Month <span class="Counter">4</span></a>
+  </nav>
+</div>
