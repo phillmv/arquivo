@@ -1,5 +1,5 @@
 <% entry_renderer = EntryRenderer.new(entry) %>
-<% if @has_todo %>
+<% if local_assigns[:display_todos_only] %>
   <% entry_body = entry_renderer.todo_to_html %>
 <% else %>
   <% entry_body = entry_renderer.to_html %>
