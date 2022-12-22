@@ -30,7 +30,7 @@ class TimelineController < ApplicationController
         e.occurred_date
       end
 
-      @has_todo = !!@search_query.index("has:todo")
+      @display_todos_only = !!@search_query.index("only:todo")
 
       @search_tokens = search.tokens
 

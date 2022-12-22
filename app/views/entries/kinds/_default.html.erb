@@ -1,13 +1,24 @@
-<% if @has_todo %>
-  <% entry_body = EntryRenderer.new(entry).todo_to_html %>
+<% entry_renderer = EntryRenderer.new(entry) %>
+<% if local_assigns[:display_todos_only] %>
+  <% entry_body = entry_renderer.todo_to_html %>
 <% else %>
-  <% entry_body = EntryRenderer.new(entry).to_html %>
+  <% entry_body = entry_renderer.to_html %>
+<% end %>
+
+<% entry_css_classes = nil %>
+<% if local_assigns[:display_todos_only] %>
+  <% entry_css_classes = "display-todos-only" %>
+<% else %>
+  <% entry_css_classes = truncate_class(entry.body, threaded) %>
 <% end %>
 
 <div class="entry-box <%= "entry-threaded" if threaded %>">
-  <div class="Box-body markdown-body <%= truncate_class(entry.body, threaded)%> <%= "truncate-more" if threaded %> js-task-list-container pb-1 ">
+  <div class="Box-body markdown-body js-task-list-container pb-1 <%= entry_css_classes %> ">
     <%= render partial: "entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
+      <% if local_assigns[:display_todos_only] %>
+        <%= entry_renderer.subject_html %>
+      <% end %>
       <% if @search_tokens %>
         <%= highlight entry_body, @search_tokens, sanitize: false%>
       <% else %>

@@ -31,7 +31,7 @@
           <h3><a href="<%= calendar_daily_path(day, @current_notebook)%>"><%= day.strftime("%A, %Y-%m-%d") %></a></h3>
         </div>
         <% entries.each do |entry| %>
-          <%= render partial: "entries/list_entry", locals: { entry: entry } %>
+          <%= render partial: "entries/list_entry", locals: { entry: entry, display_todos_only: @display_todos_only } %>
         <% end %>
       </div>
 

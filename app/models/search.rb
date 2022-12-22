@@ -16,7 +16,8 @@ class Search
     "hide:true",
     "sort:asc",
     "sort:created",
-    "sort:created-asc"
+    "sort:created-asc",
+    "only:todo"
   ])
 
   OPERATORS = [
@@ -89,6 +90,8 @@ class Search
                     sql_query.where("kind is not null")
                   when "sort:asc"
                     sql_query.reorder(occurred_at: :asc)
+                  else
+                    sql_query
                   end
     end
 

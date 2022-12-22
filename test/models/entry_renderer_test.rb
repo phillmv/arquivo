@@ -151,17 +151,14 @@ class EntryRendererTest < ActiveSupport::TestCase
     FOO
     only_todo_html = @renderer.render_html(only_todo, todo_only: true)
 
-    # keeps first line, foo
-    # but discards second line, bar, and line after the task
-    # otherwise, renders a full ul[data-sourcepos].task-list etc
-
-    assert_equal "<p data-sourcepos=\"1:1-1:3\">foo</p>\n\n<ul data-sourcepos=\"5:1-6:0\" class=\"task-list\"><li data-sourcepos=\"5:1-6:0\" class=\"task-list-item\">\n<input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> test task</li></ul>\n", only_todo_html
+    # deletes everything except the todo list:
+    assert_equal "\n\n<ul data-sourcepos=\"5:1-6:0\" class=\"task-list\"><li data-sourcepos=\"5:1-6:0\" class=\"task-list-item\">\n<input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> test task</li></ul>\n", only_todo_html
 
 
     nested_list_example = <<~FOO
-    - this is a list, and should be kept because
+    - this is a list, but this item will be deleted
     - [ ] it has a nested task
-    - this item will also be kept cos its li is attached to the ul with the nested task
+    - this item will also deleted but the above nested task will be kept
 
 
     different text
@@ -170,7 +167,7 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     nested_list_html = @renderer.render_html(nested_list_example, todo_only: true)
 
-    assert_equal "<ul data-sourcepos=\"1:1-5:0\" class=\"task-list\">\n<li data-sourcepos=\"1:1-1:44\">this is a list, and should be kept because</li>\n<li data-sourcepos=\"2:1-2:26\" class=\"task-list-item\">\n<input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> it has a nested task</li>\n<li data-sourcepos=\"3:1-5:0\">this item will also be kept cos its li is attached to the ul with the nested task</li>\n</ul>\n\n", nested_list_html
+    assert_equal "<ul data-sourcepos=\"1:1-5:0\" class=\"task-list\"><li data-sourcepos=\"2:1-2:26\" class=\"task-list-item\">\n<input type=\"checkbox\" class=\"task-list-item-checkbox\" disabled> it has a nested task</li></ul>\n\n", nested_list_html
 
     # TODO: MyTaskListFilter has a lot of branching
     # for so little testing; need to follow up with more

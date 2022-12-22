@@ -5,5 +5,5 @@
 <% elsif entry.bookmark? %>
   <%= render "entries/kinds/pinboard", entry: entry %>
 <% else %>
-  <%= render "entries/kinds/default", entry: entry, threaded: threaded %>
+  <%= render "entries/kinds/default", entry: entry, threaded: threaded, display_todos_only: local_assigns[:display_todos_only] %>
 <% end %>
