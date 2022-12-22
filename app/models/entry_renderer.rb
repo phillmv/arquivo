@@ -137,12 +137,12 @@ class EntryRenderer
 
   SAFE_PIPELINE = HTML::Pipeline.new [
     PipelineFilter::MarkdownFilter, # convert to HTML
-    PipelineFilter::SubjectExtractorFilter,
     PipelineFilter::WikiLinkFilter,
     HTML::Pipeline::SanitizationFilter, # strip scary tags
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags
     PipelineFilter::MentionFilter, # link mentions
+    PipelineFilter::SubjectExtractorFilter, # TODO: does it matter if we extract the subject before or after the hash & mention filter? this could mess stuff up in static mode (i.e. the unsafe pipeline)
     PipelineFilter::TableOfContentsFilter, # ids to headers, toc tag
     HTML::Pipeline::ImageMaxWidthFilter, # max 100% for imgs
   ], { unsafe: true,
