@@ -46,6 +46,9 @@ class MigrateToThreadIdentifierTest < ActiveSupport::TestCase
 
       assert_equal e1.identifier, e4.thread_identifier
       assert_equal e3.identifier, e4.in_reply_to
+
+      # restore callback
+      Entry.set_callback(:save, :set_thread_identifier)
     end
   end
 end
