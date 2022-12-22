@@ -5,13 +5,15 @@
   <% entry_body = entry_renderer.to_html %>
 <% end %>
 
-<% entry_truncate_classes = nil %>
-<% if !local_assigns[:display_todos_only] %>
-  <% entry_truncate_classes = truncate_class(entry.body, threaded)%>
+<% entry_css_classes = nil %>
+<% if local_assigns[:display_todos_only] %>
+  <% entry_css_classes = "display-todos-only" %>
+<% else %>
+  <% entry_css_classes = truncate_class(entry.body, threaded) %>
 <% end %>
 
 <div class="entry-box <%= "entry-threaded" if threaded %>">
-  <div class="Box-body markdown-body <%= entry_truncate_classes %> js-task-list-container pb-1 ">
+  <div class="Box-body markdown-body js-task-list-container pb-1 <%= entry_css_classes %> ">
     <%= render partial: "entries/action_bar", locals: { entry: entry, threaded: threaded } %>
     <div class="entry-body">
       <% if local_assigns[:display_todos_only] %>

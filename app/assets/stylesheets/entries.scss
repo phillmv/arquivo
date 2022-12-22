@@ -2,6 +2,16 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: https://sass-lang.com/
 
+// when we display-todos-only we can end up with multiple uls next to each
+// other. normally, we want a margin between them, because they represent diff
+// lists. but in display-todos-only this distinction is eroded, and visually
+// they are presented as if they were all in the same list.
+// so for this special case we strip out the margin, unless it's the last child
+.entry-box .display-todos-only ul:not(:last-child) {
+  margin-bottom: 0px;
+}
+
+// TODO: this is unused, yeah?
 #entry_content {
   border: 1px grey solid;
   width: 100%;
