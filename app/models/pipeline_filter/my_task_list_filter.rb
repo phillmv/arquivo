@@ -43,13 +43,49 @@ class PipelineFilter::MyTaskListFilter < TaskList::Filter
     node.attributes["class"]&.value == "task-list-item"
   end
 
+  # newly overridden from original:
+  # here we patch the original filter! to skip over items that have not been
+  # completed yet.
+  # TODO: use the `#list_items` xpath to delete non list items as opposed
+  # to the hack that i performed in `#call`
+  def filter!
+    list_items(doc).reverse.each do |li|
+      next if list_items(li.parent).empty?
+
+      add_css_class(li.parent, 'task-list')
+
+      outer, inner =
+        if p = li.xpath(ItemParaSelector)[0]
+          [p, p.inner_html]
+        else
+          [li, li.inner_html]
+        end
+      if match = (inner.chomp =~ ItemPattern && $1)
+        item = TaskList::Item.new(match, inner)
+
+        # pmv's patch here:
+        if context[:todo_only]
+          if item.complete?
+            outer.inner_html = ""
+            next
+          end
+        end
+
+        # prepend because we're iterating in reverse
+        task_list_items.unshift item
+
+        add_css_class(li, 'task-list-item')
+        outer.inner_html = render_task_list_item(item)
+      end
+    end
+  end
+
 
   def call
     doc = super
 
     if context[:todo_only]
-      # skip over first node, no matter what it is
-      doc.children[1..-1].each do |node|
+      doc.children.each do |node|
         if is_a_list?(node)
           list = node
 
