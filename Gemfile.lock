@@ -74,7 +74,7 @@ GEM
     childprocess (3.0.0)
     chronic (0.10.2)
     coderay (1.1.2)
-    commonmarker (0.23.4)
+    commonmarker (0.23.6)
     concurrent-ruby (1.1.9)
     crass (1.0.6)
     deckar01-task_list (2.3.1)
@@ -255,7 +255,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
-  commonmarker (= 0.23.4)
+  commonmarker (= 0.23.6)
   deckar01-task_list
   dotenv-rails
   escape_utils (~> 1.0)
