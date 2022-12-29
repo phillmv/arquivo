@@ -28,17 +28,18 @@ gem 'jbuilder', '~> 2.7'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem "commonmarker", '0.23.4'
-gem "octicons"
-gem "octicons_helper"
-gem "html-pipeline"
-gem "sanitize", '~> 5.2'
-gem "escape_utils", '~> 1.0'
+gem 'commonmarker', '0.23.4'
+gem 'octicons'
+gem 'octicons_helper'
+gem 'gemoji'
+gem 'html-pipeline'
+gem 'sanitize', '~> 5.2'
+gem 'escape_utils', '~> 1.0'
 gem 'deckar01-task_list'
 
 gem 'whenever'
 
-gem "will_paginate"
+gem 'will_paginate'
 
 gem 'icalendar'
 gem 'icalendar-recurrence'

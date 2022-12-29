@@ -87,7 +87,8 @@ Rails.application.routes.draw do
       get "_tags/", to: "notebooks#tags"
       get "_subjects/", to: "notebooks#subjects"
       get "_subjects/:query", to: "notebooks#subjects"
-
+      get "_emoji/", to: "notebooks#emoji"
+      get "_emoji/:query", to: "notebooks#emoji"
       get "_contacts/:query", to: "notebooks#contacts"
       get "_contacts/", to: "notebooks#contacts"
 

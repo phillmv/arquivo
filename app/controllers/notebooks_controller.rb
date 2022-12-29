@@ -40,6 +40,24 @@ class NotebooksController < ApplicationController
     render json: response
   end
 
+  # TODO: test
+  def emoji
+    if params[:query]
+      query = Set.new
+
+      if lookup = Emoji.find_by_alias(params[:query])
+        query << lookup
+      end
+
+      query = query + Emoji.all.find_all { |e| e.name.index(params[:query]) }.take(8).to_set
+    else
+      query = Emoji.all.take(8)
+    end
+
+    render json: query.map { |e| {id: e.raw, name: "#{e.raw} #{e.name}"} }
+  end
+
+
   def update
     if params[:colours]
       colour = nil;
