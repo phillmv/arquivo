@@ -58,7 +58,7 @@
 
   <div class="form-group" style="position: relative;">
     <%# <%= form.text_field :subject, class: "form-control input-block mb-2 col-12" %>
-    <text-expander keys="# @ [[" multiword="[[">
+    <text-expander keys="# @ [[ :" multiword="[[">
       <% if bookmark %>
         <%= form.text_area :body, class: "form-control input-block", autofocus: true, "data-paste-markdown" => true %>
       <% else %>

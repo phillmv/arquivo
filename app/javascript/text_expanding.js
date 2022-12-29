@@ -14,6 +14,8 @@ function text_expand_pls(){
         fetch_textexpand_menu("_contacts", text, provide)
       } else if (key == "[[") {
         fetch_textexpand_menu("_subjects", text, provide);
+      } else if (key == ":") {
+        fetch_textexpand_menu("_emoji", text, provide);
       }
     });
 
@@ -25,6 +27,8 @@ function text_expand_pls(){
         event.detail.value = `@${item.textContent}`
       } else if (key == "[[") {
         event.detail.value = `[[${item.identifier}]]`
+      } else if (key == ":") {
+        event.detail.value = item.identifier
       }
     });
 
