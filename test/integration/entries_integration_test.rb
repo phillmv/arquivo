@@ -51,6 +51,14 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
     assert 2, Entry.count
   end
 
+  test "load a gdocs bookmark" do
+    get save_bookmark_path(notebook: @current_notebook), params: { url: "https://docs.google.com/document/d/1E-V2Qj2OhURTtHVo9ONDjteHS7fRr77lEBbttA6DbIo/edit#heading=h.wwc00h4un5en", subject: "foo" }
+    assert_response :success
+
+    assert_select('input[value="https://docs.google.com/document/d/1E-V2Qj2OhURTtHVo9ONDjteHS7fRr77lEBbttA6DbIo/edit"]')
+    assert_select('input[value="foo"]')
+  end
+
   test "create a threaded entry" do
     entry1 = @current_notebook.entries.create(body: "test 1")
     post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test", in_reply_to: entry1.identifier } }
@@ -65,7 +73,16 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
     entry3 = Entry.last
     assert_equal entry2.identifier, entry3.in_reply_to
     assert_equal entry1.identifier, entry3.thread_identifier
+  end
 
+  test "replying to an existing entry will increment the date" do
+    entry = @current_notebook.entries.create(body: "# #daily 2023-03-16", occurred_at: "2023-03-16".to_date)
 
+    get new_entry_path(@current_notebook), params: { in_reply_to: entry.identifier }
+    textarea_text = css_select("textarea[name='entry[body]']").first.text
+
+    # this is 100% going to lead to weird flaky tests but i can't be arsed to
+    # put in Timecop right now.
+    assert_equal textarea_text, "\n# #daily #{Date.today.to_s}"
   end
 end

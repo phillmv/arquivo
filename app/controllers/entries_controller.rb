@@ -50,8 +50,13 @@ class EntriesController < ApplicationController
   end
 
   def save_bookmark
-    entry_attributes = bookmark_params.slice(:url, :subject)
-    entry_attributes[:occurred_at] = Time.now
+    url, subject = bookmark_params.values_at(:url, :subject)
+    url = UrlNormalizer.new(url).to_s
+    entry_attributes = {
+      url: url,
+      subject: subject,
+      occurred_at: Time.now
+    }
 
     @entry = Entry.for_notebook(current_notebook).find_by_url(entry_attributes[:url])
     @entry ||= Entry.new(entry_attributes)
