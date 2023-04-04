@@ -33,7 +33,7 @@ gem 'octicons'
 gem 'octicons_helper'
 gem 'gemoji'
 gem 'html-pipeline'
-gem 'sanitize', '~> 5.2'
+gem 'sanitize', '~> 6.0'
 gem 'escape_utils', '~> 1.0'
 gem 'deckar01-task_list'
 
