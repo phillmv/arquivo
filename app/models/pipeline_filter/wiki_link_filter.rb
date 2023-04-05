@@ -70,6 +70,9 @@ class PipelineFilter::WikiLinkFilter < HTML::Pipeline::Filter
   # @param text Proposed link text.
   # @return Updated text to use as a link.
   def to_link(text)
-    URI::encode(@base_url + text.strip.gsub(/\s+/, @space_replacement))
+    # yolo https://stackoverflow.com/a/67618304
+    # URI::encode(@base_url + text.strip.gsub(/\s+/, @space_replacement))
+    p = URI::Parser.new
+    p.escape(@base_url + text.strip.gsub(/\s+/, @space_replacement))
   end
 end
