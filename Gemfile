@@ -32,7 +32,7 @@ gem 'rexml'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'commonmarker', '0.23.7'
+gem 'commonmarker', '0.23.9'
 gem 'octicons'
 gem 'octicons_helper'
 gem 'gemoji'
