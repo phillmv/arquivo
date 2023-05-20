@@ -10,6 +10,8 @@ class TimelineController < ApplicationController
   end
 
   def index
+    @title = "Timeline"
+
     @all_entries = Entry.for_notebook(current_notebook).notes.visible.hitherto.
       order(occurred_at: :desc).paginate(page: params[:page])
 
@@ -21,6 +23,8 @@ class TimelineController < ApplicationController
   def search
     @search_query = params[:query]
     search = Search.new(current_notebook)
+
+    @title = "Search for #{@search_query}"
 
     if @search_query.present?
       @all_entries = search.

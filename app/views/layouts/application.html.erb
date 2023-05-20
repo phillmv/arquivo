@@ -2,7 +2,11 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Arquivo</title>
+    <% if @title %>
+      <title>Arquivo – <%= @title %></title>
+    <% else %>
+      <title>Arquivo</title>
+    <% end %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="icon" href="/favicon.svg">

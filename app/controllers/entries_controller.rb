@@ -16,6 +16,7 @@ class EntriesController < ApplicationController
       expires_in ActiveStorage.service_urls_expire_in
       redirect_to rails_blob_path(blob, disposition: params[:disposition])
     else
+      @title = @entry.subject
       @show_thread = params[:thread].present?
       @renderer = EntryRenderer.new(@entry)
       @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
@@ -31,6 +32,7 @@ class EntriesController < ApplicationController
 
   # GET /entries/new
   def new
+    @title = "New entry"
     if parent_identifier = params["in_reply_to"]
       @parent_entry = Entry.find_by!(notebook: @current_notebook.name, identifier: parent_identifier)
     end
@@ -97,6 +99,7 @@ class EntriesController < ApplicationController
 
   # GET /entries/1/edit
   def edit
+    @title = "Editing #{@entry.subject}"
     @parent_entry = @entry.parent
     # hack hack hack for threaded_todos
     @todo_list_items = TodoListItem.where(entry_id: @entry.whole_thread, checked: false).order(occurred_at: :desc)

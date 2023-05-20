@@ -5,6 +5,8 @@ class CalendarController < ApplicationController
     @start_date = query_date.beginning_of_month.beginning_of_day
     @end_date = query_date.end_of_month.end_of_day
 
+    @title = query_date.strftime("%B %Y")
+
     @entries = Entry.where(notebook: @current_notebook.name).order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
 
     @timeline_entries = @entries.paginate(page: params[:page])
@@ -26,6 +28,9 @@ class CalendarController < ApplicationController
     @start_date = @date.beginning_of_day
     @end_date = @date.end_of_day
 
+
+    @title = @start_date.strftime("%B %d, %Y")
+
     @entries = Entry.where(notebook: @current_notebook.name).order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
   end
 
@@ -34,6 +39,9 @@ class CalendarController < ApplicationController
 
     @start_date = query_date.beginning_of_week.beginning_of_day
     @end_date = query_date.end_of_week.end_of_day
+
+
+    @title = "#{@start_date.strftime("%B %d")}-#{@end_date.strftime("%d, %Y")}"
 
     @entries = Entry.where(notebook: @current_notebook.name).visible.order(occurred_at: :asc).where("occurred_at >= ? and occurred_at <= ?", @start_date, @end_date)
 
