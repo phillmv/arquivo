@@ -6,14 +6,42 @@ class EntryTest < ActiveSupport::TestCase
     @file_path = File.join(Rails.root, "test", "fixtures", "test_image.jpg")
   end
 
-  test "the identifier gets set" do
+  # describe "subject & identifier are interrelated" do
+  test "an identifier gets set by default, and it resembles a date with some random letters" do
     entry = @notebook.entries.new(body: "body")
     refute entry.identifier
 
     assert entry.save
 
-    assert entry.identifier =~ /\d\d\d\d\d\d\d\d/
+    assert entry.identifier =~ /\d\d\d\d\d\d\d\d-[23456789cfghjmpqrvwx]{4}/
   end
+
+  # written 2023-05-20: is it truly possible that i began setting the subject
+  # automatically in august of 2021 but never tested it until now?
+  # really, a test of the SubjectExtractorFilter
+  test "the subject is set automatically based on the first 3 lines of the entry's body" do
+    # we only set a subject if the body has an h1 or an h2
+    no_subject = @notebook.entries.create(body: "body")
+
+    assert_nil no_subject.subject
+
+    # has an h2 set
+    h2_subject = @notebook.entries.create(body: "## my subject\nhi")
+
+    assert_equal "my subject", h2_subject.subject
+
+    # if more than one heading is set it picks the first one
+    
+    h2h1_subject = @notebook.entries.create(body: "## first line\n# second line\nhi")
+
+    assert_equal "first line", h2h1_subject.subject
+
+    # but only if its set in the first 3 lines, as defined by the markdown's output
+    # (hence \n\n's)
+    gasp_no_subject = @notebook.entries.create(body: "line1\n\nline2\b\nline3\n\n## this won't get read\n# neither will this\nhi")
+    assert_nil gasp_no_subject.subject
+  end
+  # end
 
   test "#copy_parent" do
     parent_cal_entry = @notebook.entries.calendars.create(to: "foo@example.com, bar@example.com", from: "qux@example.com", body: "#test #right @foobar\n\nhello!\n\ntest")
