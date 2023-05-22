@@ -85,4 +85,30 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
     # put in Timecop right now.
     assert_equal textarea_text, "\n# #daily #{Date.today.to_s}"
   end
+
+  test "when saved thru a controller, an entry's identifier will be set from its subject" do
+    assert_equal 0, @current_notebook.entries.count
+    post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test"} }
+
+    # ideally look this up from the redirect path or w/e
+    # here we can count on the most recent one having been just created
+    entry_with_no_subject = @current_notebook.entries.last
+
+    # no subject, no identifier tweak
+    assert_nil entry_with_no_subject.subject
+    # same as defined in entry_test.rb
+    assert entry_with_no_subject.identifier =~ /\d\d\d\d\d\d\d\d-[23456789cfghjmpqrvwx]{4}/
+
+    # with a subject it should set the identifier
+    post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "# has a subject\n\ntest mc test"} }
+
+    entry_with_subject = @current_notebook.entries.last
+
+    # TODO:
+    # - create with generated_identifier
+    # - it replaces it with the subject
+    # - but not if the identifier was modified
+    # - then it sets the identifier value
+    # - also if the post already exists it will increment the -1 on the identifier
+  end
 end

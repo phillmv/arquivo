@@ -19,6 +19,7 @@
 
 <%= form_with(model: entry, url: url, local: true) do |form| %>
   <%= form.hidden_field :identifier, value: @entry.set_identifier %>
+  <%= form.hidden_field :generated_identifier, value: @entry.identifier %>
   <% if @parent_entry %>
     <%= form.hidden_field :in_reply_to,  value: @parent_entry.identifier %>
   <% end %>

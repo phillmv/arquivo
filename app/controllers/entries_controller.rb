@@ -109,11 +109,11 @@ class EntriesController < ApplicationController
   # POST /entries.json
   # TODO: why do we support create or update in this method vs the method above?
   def create
-    @entry = @current_notebook.entries.find_by(identifier: entry_params[:identifier])
-    @entry ||= @current_notebook.entries.new(entry_params)
+    maker = EntryMaker.new(current_notebook)
+    @entry, err = maker.create(entry_params)
 
     respond_to do |format|
-      if (@entry.new_record? && @entry.save) || @entry.update(entry_params)
+      if !err
         format.html do
           if request.referer =~ /agenda/
             redirect_back(fallback_location: timeline_path(current_notebook))
@@ -221,7 +221,7 @@ class EntriesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def entry_params
-    params.require(:entry).permit(:identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, :occurred_date, :occurred_time, files: [])
+    params.require(:entry).permit(:identifier, :generated_identifier, :body, :url, :subject, :occurred_at, :in_reply_to, :hide, :occurred_date, :occurred_time, files: [])
   end
 
   def bookmark_params

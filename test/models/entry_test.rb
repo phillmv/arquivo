@@ -6,7 +6,6 @@ class EntryTest < ActiveSupport::TestCase
     @file_path = File.join(Rails.root, "test", "fixtures", "test_image.jpg")
   end
 
-  # describe "subject & identifier are interrelated" do
   test "an identifier gets set by default, and it resembles a date with some random letters" do
     entry = @notebook.entries.new(body: "body")
     refute entry.identifier
@@ -31,7 +30,6 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal "my subject", h2_subject.subject
 
     # if more than one heading is set it picks the first one
-    
     h2h1_subject = @notebook.entries.create(body: "## first line\n# second line\nhi")
 
     assert_equal "first line", h2h1_subject.subject
@@ -41,7 +39,6 @@ class EntryTest < ActiveSupport::TestCase
     gasp_no_subject = @notebook.entries.create(body: "line1\n\nline2\b\nline3\n\n## this won't get read\n# neither will this\nhi")
     assert_nil gasp_no_subject.subject
   end
-  # end
 
   test "#copy_parent" do
     parent_cal_entry = @notebook.entries.calendars.create(to: "foo@example.com, bar@example.com", from: "qux@example.com", body: "#test #right @foobar\n\nhello!\n\ntest")

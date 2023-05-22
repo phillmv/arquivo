@@ -306,6 +306,15 @@ class Entry < ApplicationRecord
     notebook.entries.find_by(identifier: copy.identifier)
   end
 
+  ## little hack for tracking whether the identifier value returned from the
+  # form was set by the user, or was just the default generated identifier.
+  # this allows me to decide whether to replace the identifier with the
+  # parameterized subject
+  attr_accessor :generated_identifier
+  def generated_identifier?
+    self.generated_identifier == self.identifier
+  end
+
   # this is actually pretty complicated to do properly?
   # https://github.com/middleman/middleman/blob/master/middleman-core/lib/middleman-core/util/data.rb
   # https://github.com/middleman/middleman/blob/master/middleman-core/lib/middleman-core/core_extensions/front_matter.rb
