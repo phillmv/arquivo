@@ -42,3 +42,10 @@ yarn-debug.log*
 
 # use this to customize your .env entries
 .env.development
+
+/public/packs
+/public/packs-test
+# /node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity

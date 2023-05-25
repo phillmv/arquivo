@@ -11,6 +11,11 @@ gem 'sqlite3', '~> 1.4'
 gem 'puma', '~> 4.3'
 # Use SCSS for stylesheets
 gem 'sass-rails', '>= 6'
+# worries that something shifted in how my stylesheets rendered, so for now
+# sticking to this old version of sassc
+gem 'sassc', '2.2.1'
+
+# TODO: webpacker is now deprecated. need to switch off
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -32,12 +37,18 @@ gem 'rexml'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'commonmarker', '0.23.7'
+# Octicons' have since shifted / removed some icons i use, so:
 gem 'octicons', '9.4.0'
 gem 'octicons_helper', '9.4.0'
 gem 'gemoji'
+
+# html-pipeline has radically changed, so we're stuck now:
 gem 'html-pipeline', '2.12.3'
 gem 'sanitize', '~> 6.0'
+
+# escape utils has deprecated some methods i use, so:
 gem 'escape_utils', '1.2.1'
+
 gem 'deckar01-task_list'
 
 gem 'whenever'
@@ -46,6 +57,8 @@ gem 'will_paginate'
 
 gem 'icalendar'
 gem 'icalendar-recurrence'
+
+# the git gem behaviour shifted after this version, so:
 gem 'git', '1.7.0'
 
 gem 'dotenv-rails'
