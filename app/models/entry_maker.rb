@@ -9,6 +9,8 @@ class EntryMaker
   end
 
   def create(entry_params)
+    @entry = nil
+    err = true
     Entry.transaction do
       @entry = @current_notebook.entries.find_by(identifier: entry_params[:identifier])
       @entry ||= @current_notebook.entries.new(entry_params)
@@ -33,7 +35,13 @@ class EntryMaker
         end
       end
 
-      return [@entry, !((@entry.new_record? && @entry.save) || @entry.update(entry_params))]
+      if @entry.new_record?
+        err = !@entry.save
+      else
+        err = !@entry.update(entry_params)
+      end
     end
+
+    return [@entry, err]
   end
 end
