@@ -95,7 +95,7 @@ GEM
       dotenv (= 2.8.1)
       railties (>= 3.2)
     erubi (1.12.0)
-    escape_utils (1.3.0)
+    escape_utils (1.2.1)
     factory_bot (6.2.1)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -106,12 +106,11 @@ GEM
     ffi (1.15.5)
     front_matter_parser (1.0.1)
     gemoji (4.1.0)
-    git (1.18.0)
-      addressable (~> 2.8)
+    git (1.7.0)
       rchardet (~> 1.8)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    html-pipeline (2.14.3)
+    html-pipeline (2.12.3)
       activesupport (>= 2)
       nokogiri (>= 1.4)
     i18n (1.13.0)
@@ -156,11 +155,11 @@ GEM
     nokogiri (1.15.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    octicons (19.1.0)
-    octicons_helper (19.1.0)
-      actionview
-      octicons (= 19.1.0)
-      railties
+    octicons (9.4.0)
+      nokogiri (>= 1.6.3.1)
+    octicons_helper (9.4.0)
+      octicons (= 9.4.0)
+      rails
     pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -285,19 +284,19 @@ DEPENDENCIES
   commonmarker (= 0.23.7)
   deckar01-task_list
   dotenv-rails
-  escape_utils (~> 1.0)
+  escape_utils (= 1.2.1)
   factory_bot_rails
   faker
   front_matter_parser
   gemoji
-  git
-  html-pipeline
+  git (= 1.7.0)
+  html-pipeline (= 2.12.3)
   icalendar
   icalendar-recurrence
   jbuilder (~> 2.7)
   listen (>= 3.0.5, < 3.2)
-  octicons
-  octicons_helper
+  octicons (= 9.4.0)
+  octicons_helper (= 9.4.0)
   pry-rails
   puma (~> 4.3)
   rails (~> 7.0.0, >= 6.1)

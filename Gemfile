@@ -32,12 +32,12 @@ gem 'rexml'
 gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'commonmarker', '0.23.7'
-gem 'octicons'
-gem 'octicons_helper'
+gem 'octicons', '9.4.0'
+gem 'octicons_helper', '9.4.0'
 gem 'gemoji'
-gem 'html-pipeline'
+gem 'html-pipeline', '2.12.3'
 gem 'sanitize', '~> 6.0'
-gem 'escape_utils', '~> 1.0'
+gem 'escape_utils', '1.2.1'
 gem 'deckar01-task_list'
 
 gem 'whenever'
@@ -46,7 +46,7 @@ gem 'will_paginate'
 
 gem 'icalendar'
 gem 'icalendar-recurrence'
-gem 'git'
+gem 'git', '1.7.0'
 
 gem 'dotenv-rails'
 
