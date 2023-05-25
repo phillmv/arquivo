@@ -7,13 +7,14 @@ require "rails/all"
 Bundler.require(*Rails.groups)
 
 module Arquivo
+  PERMITTED_YAML = [Symbol, Date, Time, ActiveSupport::HashWithIndifferentAccess, ActiveSupport::TimeWithZone]
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 6.0
 
     # Configuration for the application, engines, and railties goes here.
 
-    config.active_record.yaml_column_permitted_classes = [Symbol, Date]
+    config.active_record.yaml_column_permitted_classes = PERMITTED_YAML
 
     if hostname = ENV.fetch("HOSTNAME", nil)
       config.hosts << hostname
