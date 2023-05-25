@@ -10,14 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_05_014160) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_05_25_154700) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.integer "record_id", null: false
     t.integer "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -28,8 +27,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "content_type"
     t.text "metadata"
     t.integer "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.string "checksum"
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -44,8 +43,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "notebook", null: false
     t.string "entry_identifier", null: false
     t.string "filename", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["notebook", "entry_identifier", "filename"], name: "idx_temp_entry_blob"
   end
 
@@ -53,9 +52,9 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "notebook", null: false
     t.string "title"
     t.string "url", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "last_imported_at"
+    t.datetime "last_imported_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["notebook"], name: "index_calendar_imports_on_notebook"
   end
 
@@ -64,16 +63,16 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "handle"
     t.string "address"
     t.string "label"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["contact_id"], name: "index_contact_email_addresses_on_contact_id"
   end
 
   create_table "contact_entries", force: :cascade do |t|
     t.integer "entry_id", null: false
     t.integer "contact_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["contact_id"], name: "index_contact_entries_on_contact_id"
     t.index ["entry_id"], name: "index_contact_entries_on_entry_id"
   end
@@ -83,8 +82,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "first_name"
     t.string "last_name"
     t.text "notes"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "notebook", default: "", null: false
     t.index ["name"], name: "index_contacts_on_name"
     t.index ["notebook"], name: "index_contacts_on_notebook"
@@ -99,10 +98,10 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "url"
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
-    t.datetime "occurred_at"
-    t.datetime "ended_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "occurred_at", precision: nil
+    t.datetime "ended_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "summary"
     t.string "identifier"
     t.string "subject"
@@ -119,8 +118,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
   create_table "feature_flags", force: :cascade do |t|
     t.string "name"
     t.boolean "active", default: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["name"], name: "index_feature_flags_on_name"
   end
 
@@ -128,17 +127,17 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.integer "calendar_import_id", null: false
     t.string "name"
     t.string "uid"
-    t.datetime "recurrence_id"
+    t.datetime "recurrence_id", precision: nil
     t.string "sequence"
     t.date "start_date"
     t.date "end_date"
-    t.datetime "start_time"
-    t.datetime "end_time"
+    t.datetime "start_time", precision: nil
+    t.datetime "end_time", precision: nil
     t.boolean "recurs"
     t.text "body"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "last_imported_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "last_imported_at", precision: nil
     t.index ["calendar_import_id"], name: "index_i_calendar_entries_on_calendar_import_id"
   end
 
@@ -146,16 +145,16 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "namespace"
     t.string "key"
     t.string "value"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["namespace", "key"], name: "index_key_values_on_namespace_and_key"
   end
 
   create_table "link_entries", force: :cascade do |t|
     t.integer "entry_id", null: false
     t.integer "link_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["entry_id"], name: "index_link_entries_on_entry_id"
     t.index ["link_id"], name: "index_link_entries_on_link_id"
   end
@@ -164,8 +163,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.integer "notebook_id", null: false
     t.string "identifier", null: false
     t.string "url", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["identifier"], name: "index_links_on_identifier"
     t.index ["notebook_id"], name: "index_links_on_notebook_id"
     t.index ["url"], name: "index_links_on_url"
@@ -173,8 +172,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
 
   create_table "notebooks", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "colour", default: "#0366d6", null: false
     t.string "import_path"
   end
@@ -184,16 +183,16 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "octicon"
     t.string "name", null: false
     t.string "query", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["notebook"], name: "index_saved_searches_on_notebook"
   end
 
   create_table "sync_states", force: :cascade do |t|
     t.integer "notebook_id", null: false
     t.string "sha"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_sync_states_on_created_at"
     t.index ["notebook_id"], name: "index_sync_states_on_notebook_id"
   end
@@ -201,8 +200,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
   create_table "tag_entries", force: :cascade do |t|
     t.integer "tag_id"
     t.integer "entry_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["entry_id"], name: "index_tag_entries_on_entry_id"
     t.index ["tag_id"], name: "index_tag_entries_on_tag_id"
   end
@@ -210,8 +209,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
   create_table "tags", force: :cascade do |t|
     t.string "notebook", null: false
     t.string "name", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["notebook"], name: "index_tags_on_notebook"
   end
 
@@ -221,9 +220,9 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.integer "todo_list_id", null: false
     t.boolean "checked", default: false
     t.string "source"
-    t.datetime "occurred_at", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "occurred_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["checked"], name: "index_todo_list_items_on_checked"
     t.index ["entry_id"], name: "index_todo_list_items_on_entry_id"
     t.index ["notebook"], name: "index_todo_list_items_on_notebook"
@@ -234,9 +233,9 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
 
   create_table "todo_lists", force: :cascade do |t|
     t.integer "entry_id", null: false
-    t.datetime "completed_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "completed_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["entry_id"], name: "index_todo_lists_on_entry_id"
   end
 
@@ -245,8 +244,8 @@ ActiveRecord::Schema.define(version: 2023_04_05_014160) do
     t.string "identifier"
     t.string "key"
     t.string "value"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["identifier"], name: "index_view_preferences_on_identifier"
     t.index ["key"], name: "index_view_preferences_on_key"
     t.index ["notebook"], name: "index_view_preferences_on_notebook"
