@@ -181,6 +181,7 @@ class EntryTest < ActiveSupport::TestCase
     assert_equal e31.thread_ancestors.to_set, [e1, e2, e3].to_set
     assert_equal e4.thread_ancestors.to_set, [e1, e2, e3, e31].to_set
 
+    assert_equal e1.thread_descendants.to_set, [e2, e3, e31, e4].to_set
     assert_equal e2.thread_descendants.to_set, [e3, e31, e4].to_set
     assert_equal e3.thread_descendants.to_set, [e31, e4].to_set
     assert_equal e4.thread_descendants.to_set, [].to_set

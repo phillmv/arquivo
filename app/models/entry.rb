@@ -50,7 +50,15 @@ class Entry < ApplicationRecord
   end
 
   def thread_descendants
-    self.parent_notebook.entries.where("thread_identifier = ? and occurred_at >= ? and identifier != ?", self.thread_identifier, self.occurred_at, self.identifier).order(occurred_at: :desc)
+    # replies to this entry
+    query = self.parent_notebook.entries.where(thread_identifier: self.identifier)
+
+    if self.thread_identifier
+      # other replies in this thread
+      query = query.or(self.parent_notebook.entries.where(thread_identifier: self.thread_identifier))
+    end
+
+    query.where("occurred_at >= ? and identifier != ?", self.occurred_at, self.identifier).order(occurred_at: :desc)
   end
 
   def whole_thread
