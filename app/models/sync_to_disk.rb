@@ -25,7 +25,7 @@ class SyncToDisk
   def export!
     write_notebook_file
     notebook.entries.with_attached_files.find_each do |entry|
-      puts "handling #{entry.notebook}/#{entry.identifier}"
+      Arquivo.logger.debug "handling #{entry.notebook}/#{entry.identifier}"
 
       export_entry!(entry)
     end
@@ -67,7 +67,7 @@ class SyncToDisk
     File.write(entry_file_path, blob_attributes(entry, blob))
 
 
-    puts "entry blob #{blob.id}"
+    Arquivo.logger.debug "entry blob #{blob.id}"
     actual_file_path = File.join(entry_files_path,
                                  blob.filename.to_s)
 
