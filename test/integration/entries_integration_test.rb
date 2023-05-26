@@ -90,9 +90,11 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 0, @current_notebook.entries.count
     post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test"} }
 
-    # ideally look this up from the redirect path or w/e
-    # here we can count on the most recent one having been just created
-    entry_with_no_subject = @current_notebook.entries.last
+    # the post redirects to the new entry, and we can grab the identifier from the path
+    # hopefully this prevents some flaky tests I've been experiencing.
+    entry_identifier = response.location.split("/").last
+
+    entry_with_no_subject = @current_notebook.entries.find_by(identifier: entry_identifier)
 
     # no subject, no identifier tweak
     assert_nil entry_with_no_subject.subject
