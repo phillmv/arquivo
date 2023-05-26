@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1
         with:
-          bundle-cache: true
+          bundler-cache: true
       - uses: actions/setup-python@v4 # for building node-sass?
       - run: |
           git config --global user.name "github-actions"
