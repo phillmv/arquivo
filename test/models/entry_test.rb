@@ -12,7 +12,13 @@ class EntryTest < ActiveSupport::TestCase
 
     assert entry.save
 
-    assert entry.identifier =~ /\d\d\d\d\d\d\d\d-[23456789cfghjmpqrvwx]{4}/
+    match = entry.identifier =~ /\d\d\d\d\d\d\d\d-[23456789cfghjmpqrvwx]{4}/
+
+    # I've been suffering from some flaky tests, so let's try to get some debugging info
+    if match.nil?
+      puts "HELLO WHAT IS GOING ON with #{entry.identifier}"
+    end
+    assert match
   end
 
   # written 2023-05-20: is it truly possible that i began setting the subject

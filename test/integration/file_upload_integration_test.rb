@@ -11,7 +11,7 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal 0, @current_notebook.entries.count
     @entry = @current_notebook.entries.new
 
-    post direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook), params: { blob: { filename: "test_image.jpg", content_type: "image/jpg", byte_size: 1000, checksum: "123" } }
+    post direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook), params: { blob: { filename: "test_image.jpg", content_type: "image/jpeg", byte_size: 1000, checksum: "123" } }
 
     # entry didn't exist, so it got created
     assert_equal 1, @current_notebook.entries.count
@@ -27,7 +27,7 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
 
     # now we upload a new file w/same name
 
-    post direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook), params: { blob: { filename: "test_image.jpg", content_type: "image/jpg", byte_size: 1001, checksum: "124" } }
+    post direct_upload_entry_path(@entry.set_identifier, notebook: @current_notebook), params: { blob: { filename: "test_image.jpg", content_type: "image/jpeg", byte_size: 1001, checksum: "124" } }
 
     # no new entries are created once this identifier exists
     assert_equal 1, @current_notebook.entries.count

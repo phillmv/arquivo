@@ -1,3 +1,4 @@
+=begin #commented out during rails 7 upgrade
 PAUSE_JOBS = Concurrent::Atom.new(false)
 
 if ::ActiveRecord::Base.connection_config[:adapter] == 'sqlite3'
@@ -25,3 +26,4 @@ if ::ActiveRecord::Base.connection_config[:adapter] == 'sqlite3'
   #   raise "No DatabaseStatements to override!"
   # end
 end
+=end

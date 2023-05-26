@@ -15,6 +15,6 @@ class EntryHistory
 
   def get(sha)
     yaml = local_syncer.get_revision(entry, sha)
-    PastEntry.new(YAML.load(yaml))
+    PastEntry.new(YAML.load(yaml), permitted_classes: Arquivo::PERMITTED_YAML)
   end
 end

@@ -37,7 +37,7 @@ class ExportImportTest < ActiveSupport::TestCase
 
         hash = {}
         exported_yaml.each do |ey|
-          yaml = YAML.load_file(ey)
+          yaml = YAML.load_file(ey, permitted_classes: Arquivo::PERMITTED_YAML)
           hash[yaml["identifier"]] = yaml
 
           # path should have identifier in its name
