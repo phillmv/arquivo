@@ -111,7 +111,7 @@ class Entry < ApplicationRecord
       # the 7 base(20) chars it'll be converted to
       suffix = Digest::SHA256.hexdigest(hash_to_be).first(8).to_i(16).to_s(20)
     else
-      suffix = SecureRandom.random_number(20 ** 4).to_s(20)
+      suffix = SecureRandom.random_number(20 ** 4).to_s(20).rjust(4, "0")
     end
 
     # convert to OLC alphabet
