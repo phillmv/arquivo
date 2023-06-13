@@ -9,6 +9,9 @@
 # Ignore all default key files.
 /config/master.key
 /config/credentials/*.key
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/db/*.sqlite3-*
 
 # Ignore all environment files.
 /.env*
