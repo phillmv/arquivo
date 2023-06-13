@@ -3,7 +3,7 @@ FactoryBot.define do
     notebook { "test" }
     subject { Faker::Lorem.sentence }
     body { Faker::Lorem.paragraphs.join("\n\n") }
-    occurred_at { (rand * 10).to_i.minutes.ago }
+    occurred_at { (rand * 10).to_i.minutes.ago.round(6) }
 
     trait :calendar do
       kind { "calendar" }
