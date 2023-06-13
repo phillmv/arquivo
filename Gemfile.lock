@@ -90,6 +90,8 @@ GEM
     date (3.3.3)
     deckar01-task_list (2.3.2)
       html-pipeline
+    dockerfile-rails (1.4.2)
+      rails
     dotenv (2.8.1)
     dotenv-rails (2.8.1)
       dotenv (= 2.8.1)
@@ -154,6 +156,8 @@ GEM
     nio4r (2.5.9)
     nokogiri (1.15.2)
       mini_portile2 (~> 2.8.2)
+      racc (~> 1.4)
+    nokogiri (1.15.2-x86_64-linux)
       racc (~> 1.4)
     octicons (9.4.0)
       nokogiri (>= 1.6.3.1)
@@ -241,6 +245,7 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (1.6.3)
       mini_portile2 (~> 2.8.0)
+    sqlite3 (1.6.3-x86_64-linux)
     thor (1.2.2)
     tilt (2.1.0)
     timeout (0.3.2)
@@ -276,6 +281,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   bootsnap (>= 1.4.2)
@@ -283,6 +289,7 @@ DEPENDENCIES
   capybara (>= 2.15)
   commonmarker (= 0.23.7)
   deckar01-task_list
+  dockerfile-rails (>= 1.4)
   dotenv-rails
   escape_utils (= 1.2.1)
   factory_bot_rails
