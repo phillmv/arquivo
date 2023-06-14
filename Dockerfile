@@ -5,7 +5,7 @@ ARG RUBY_VERSION=3.2.2
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
 # Rails app lives here
-WORKDIR /rails
+WORKDIR /arquivo
 
 # Set production environment
 ENV RAILS_ENV="production" \
@@ -39,8 +39,13 @@ RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz
     npm install -g yarn@$YARN_VERSION && \
     rm -rf /tmp/node-build-master
 
+# Copy application code
+## Contrary to the template, here we copy the app code *before* fetching the gems
+## and running yarn install because our repo vendors these dependencies; if we copy
+## the app code *after* installing deps we'll then overwrite these folders.
+COPY --link . .
+
 # Install node modules
-COPY --link package.json yarn.lock ./
 RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
     YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile
 
@@ -48,17 +53,9 @@ RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
 # FROM prebuild as build
 
 # Install application gems
-COPY --link Gemfile Gemfile.lock ./
-
-# Copy application code
-## Contrary to the template, here we copy the app code *before* fetching the gems,
-## because our repo vendors the gems; if we copy the app code *after* building the
-## gems, we'll overwrite the vendor folder.
-COPY --link . .
-
 ## Contrary to the template, we avoid setting up the run mount cached directory,
 ## because we already have a `vendor` folder we copied above, when we copied over
-## our application code
+## our application code.
 RUN bundle config set app_config .bundle && \
     bundle config set path vendor && \
     bundle install && \
@@ -82,9 +79,29 @@ RUN chmod +x bin/*
 # NODE_OPTIONS is a workaround for https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported/69476335#69476335
 RUN SECRET_KEY_BASE=DUMMY NODE_OPTIONS='--openssl-legacy-provider' ./bin/rails assets:precompile
 
+FROM build as development
+RUN useradd rails --create-home --shell /bin/bash && \
+    mkdir /data && \
+    chown -R rails:rails db log storage tmp public /data
+COPY --from=build --chown=rails:rails /arquivo /arquivo
+USER rails:rails
+
+ENV BUNDLE_WITHOUT=
+ENV BUNDLE_DEPLOYMENT=
+
+## install packages needed for development
+RUN bundle install
+
+# temporary hack to handle git config options during test run
+RUN git config --global user.email "you@example.com" && \
+    git config --global user.name "Your Name"
+
+RUN SECRET_KEY_BASE=DUMMY NODE_OPTIONS='--openssl-legacy-provider' ./bin/rails assets:precompile RAILS_ENV=test
+
+# ---------------
 
 # Final stage for app image
-FROM base
+FROM base as final
 
 # Install packages needed for deployment
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
@@ -94,12 +111,12 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
-COPY --from=build /rails /rails
+COPY --from=build /arquivo /arquivo
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     mkdir /data && \
-    chown -R rails:rails db log storage tmp /data
+    chown -R rails:rails db log storage tmp public /data
 USER rails:rails
 
 # Deployment options
@@ -112,7 +129,7 @@ RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name"
 
 # Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+ENTRYPOINT ["/arquivo/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
