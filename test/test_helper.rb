@@ -14,7 +14,6 @@ class ActiveSupport::TestCase
 
   # /dev/null to ensure we don't accidentally clobber ~/Documents/arquivo
   DEV_NULL_ARQUIVO_PATH = "/dev/null/arquivo"
-  Setting::DEFAULTS[:arquivo][:storage_path] = "/dev/null"
   Setting::DEFAULTS[:arquivo][:arquivo_path] = DEV_NULL_ARQUIVO_PATH
 
   # tests that use local sync must enable it specifically
