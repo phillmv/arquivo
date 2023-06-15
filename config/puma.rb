@@ -25,8 +25,8 @@ environment ENV.fetch("RAILS_ENV") { "development" }
 pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
 # used for setting bind address in docker container, i.e. "tcp://0.0.0.0:3000"
-if ENV.fetch("RAILS_BIND")
-  bind ENV.fetch("RAILS_BIND")
+if ENV["RAILS_BIND"]
+  bind ENV["RAILS_BIND"]
 end
 
 # Specifies the number of `workers` to boot in clustered mode.

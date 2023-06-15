@@ -4,9 +4,9 @@
 if [ "${*}" == "./bin/rails server" ]; then
   ./bin/rails db:prepare
 
-  if [ "${RAILS_ENV}" == "development" ]; then
-    ./bin/rails db:seed
-  fi
+  # if [ "${RAILS_ENV}" == "development" ]; then
+  #   ./bin/rails db:setup
+  # fi
 fi
 
 exec "${@}"

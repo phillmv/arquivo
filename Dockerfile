@@ -27,7 +27,7 @@ RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     apt-get install --no-install-recommends -y build-essential curl git node-gyp pkg-config python-is-python3
 
 
-FROM prebuild as build
+FROM prebuild as install-node
 # FROM prebuild as node
 
 # Install JavaScript dependencies
@@ -39,16 +39,20 @@ RUN curl -sL https://github.com/nodenv/node-build/archive/master.tar.gz | tar xz
     npm install -g yarn@$YARN_VERSION && \
     rm -rf /tmp/node-build-master
 
+
+FROM install-node as install-node-modules
 # Copy application code
 ## Contrary to the template, here we copy the app code *before* fetching the gems
 ## and running yarn install because our repo vendors these dependencies; if we copy
 ## the app code *after* installing deps we'll then overwrite these folders.
-COPY --link . .
+COPY --link package.json yarn.lock .
+COPY --link node_modules ./node_modules
 
 # Install node modules
 RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
     YARN_CACHE_FOLDER=/root/.yarn yarn install --frozen-lockfile
 
+FROM install-node-modules as install-gems
 ## Stage commented out to handle the need for npm when precompiling assets
 # FROM prebuild as build
 
@@ -56,10 +60,11 @@ RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
 ## Contrary to the template, we avoid setting up the run mount cached directory,
 ## because we already have a `vendor` folder we copied above, when we copied over
 ## our application code.
+
+COPY --link Gemfile Gemfile.lock vendor .
 RUN bundle config set app_config .bundle && \
     bundle config set path vendor && \
     bundle install && \
-    bundle exec bootsnap precompile --gemfile && \
     bundle clean
 
 # Copy node modules
@@ -68,8 +73,13 @@ RUN bundle config set app_config .bundle && \
 ## so you can just copy the node modules from the node build stage?
 # COPY --from=node /rails/node_modules /rails/node_modules
 
+FROM install-gems as build
+
+COPY --link . .
+COPY --from=install-gems /arquivo .
 
 # Precompile bootsnap code for faster boot times
+RUN bundle exec bootsnap precompile --gemfile
 RUN bundle exec bootsnap precompile app/ lib/
 
 # Adjust binfiles to be executable on Linux
@@ -79,10 +89,14 @@ RUN chmod +x bin/*
 # NODE_OPTIONS is a workaround for https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported/69476335#69476335
 RUN SECRET_KEY_BASE=DUMMY NODE_OPTIONS='--openssl-legacy-provider' ./bin/rails assets:precompile
 
+# ---- END STAGES -----
+
 FROM build as development
 RUN useradd rails --create-home --shell /bin/bash && \
     mkdir /data && \
     chown -R rails:rails db log storage tmp public /data
+
+# in development, we don't want half the files ot be owned by root, so we copy-chown it:
 COPY --from=build --chown=rails:rails /arquivo /arquivo
 USER rails:rails
 
@@ -97,6 +111,19 @@ RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name"
 
 RUN SECRET_KEY_BASE=DUMMY NODE_OPTIONS='--openssl-legacy-provider' ./bin/rails assets:precompile RAILS_ENV=test
+
+# Deployment options
+ENV DATABASE_URL="sqlite3:///data/database.sqlite3" \
+    RAILS_LOG_TO_STDOUT="1" \
+    RAILS_SERVE_STATIC_FILES="true"
+
+# Entrypoint prepares the database.
+ENTRYPOINT ["/arquivo/bin/docker-entrypoint"]
+
+# Start the server by default, this can be overwritten at runtime
+EXPOSE 3000
+VOLUME /data
+CMD ["./bin/rails", "server"]
 
 # ---------------
 
