@@ -24,7 +24,7 @@ FROM base as prebuild
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git node-gyp pkg-config python-is-python3
+    apt-get install --no-install-recommends -y build-essential curl git node-gyp pkg-config python-is-python3 openssh-client
 
 
 FROM prebuild as install-node
@@ -76,6 +76,8 @@ RUN bundle config set app_config .bundle && \
 FROM install-gems as build
 
 COPY --link . .
+# In install-gems my expectation is that it only has the vendor & node_modules folders
+# typing this out maybe i should mount the folder as cache.
 COPY --from=install-gems /arquivo .
 
 # Precompile bootsnap code for faster boot times
@@ -134,7 +136,7 @@ FROM base as final
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl git libsqlite3-0
+    apt-get install --no-install-recommends -y curl git openssh-client libsqlite3-0
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
