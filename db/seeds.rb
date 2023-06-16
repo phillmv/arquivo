@@ -1,1 +1,1 @@
-Notebook.create(name: "journal")
+# placeholder
