@@ -30,6 +30,7 @@ class SyncWithGit
     git_adapter.with_lock do
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
 
+
       FileUtils.cp(File.join(Rails.root, "lib", "assets", "git_defaults", ".gitattributes"), notebook_path)
       FileUtils.cp_r(File.join(Rails.root, "lib", "assets", "git_defaults", "script"), notebook_path)
       setup_git_config(repo)
@@ -61,9 +62,12 @@ class SyncWithGit
           FileUtils.mkdir_p(identities_path)
 
           private_key_path = File.join(identities_path, "notebook-#{notebook.id}.key")
-          File.write(private_key_path, notebook.private_key)
 
-          # TODO: ideally we fetch the github keys from the meta API?
+          # TODO: the encoding + universal_newline + inserting a new line is super weird, needs to be fixed
+          File.write(private_key_path, notebook.private_key.encode(notebook.private_key.encoding, universal_newline: true) + "\n")
+          File.chmod(0600, private_key_path)
+
+          # TODO: ideally we fetch the github keys from the meta API? instead of ignoring hosts
           repo.config("core.sshCommand", "ssh -o StrictHostKeyChecking=no -i #{private_key_path}")
         end
       end

@@ -95,6 +95,7 @@ class NotebooksController < ApplicationController
 
     if @notebook.update(notebook_params)
       if @notebook.saved_changes.values_at("remote", "private_key").compact.any?
+        @notebook.initialize_git
         @notebook.sync_git_settings!
       end
 
