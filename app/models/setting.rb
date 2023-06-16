@@ -1,6 +1,12 @@
 class Setting < KeyValue
+  # if there is a /data we're probably inside the docker image
+  if File.exist?("/data")
+    DATA_PATH = ENV["ARQUIVO_PATH"] || "/data"
+  else
+    DATA_PATH = ENV["ARQUIVO_PATH"] || File.join(ENV["HOME"], "Documents", "arquivo")
+  end
+
   # fyi, this gets overridden in test_helper
-  DATA_PATH = ENV["ARQUIVO_PATH"] || File.join(ENV["HOME"], "Documents", "arquivo")
   DEFAULTS = {
     :arquivo => {
       arquivo_path: DATA_PATH
