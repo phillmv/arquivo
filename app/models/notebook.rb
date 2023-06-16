@@ -58,7 +58,7 @@ class Notebook < ApplicationRecord
   end
 
   def export_attributes
-    self.attributes.except("id")
+    self.attributes.except("id", "remote", "private_key", "private_key_filename")
   end
 
   def to_yaml
