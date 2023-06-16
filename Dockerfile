@@ -61,10 +61,12 @@ FROM install-node-modules as install-gems
 ## because we already have a `vendor` folder we copied above, when we copied over
 ## our application code.
 
-COPY --link Gemfile Gemfile.lock vendor .
+COPY --link Gemfile Gemfile.lock .
+COPY --link vendor ./vendor
+
 RUN bundle config set app_config .bundle && \
     bundle config set path vendor && \
-    bundle install && \
+    bundle install --local && \
     bundle clean
 
 # Copy node modules
@@ -106,7 +108,7 @@ ENV BUNDLE_WITHOUT=
 ENV BUNDLE_DEPLOYMENT=
 
 ## install packages needed for development
-RUN bundle install
+RUN bundle install --local
 
 # temporary hack to handle git config options during test run
 RUN git config --global user.email "you@example.com" && \
