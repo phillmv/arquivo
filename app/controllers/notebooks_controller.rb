@@ -1,4 +1,19 @@
 class NotebooksController < ApplicationController
+  skip_before_action :current_notebook, :current_nwo, :check_imports, :resync_with_remotes, only: [:new, :create, :update]
+
+  def new
+    render :setup
+  end
+
+  # TODO: worry about notebook lifecycle
+  # def create
+  #   @notebook = Notebook.create(notebook_params)
+  #   if @notebook.valid?
+  #     redirect_to timeline_path(@notebook)
+  #   else
+  #     render :new
+  #   end
+  # end
 
   def tags
 

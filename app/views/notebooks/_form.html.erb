@@ -1,0 +1,26 @@
+<%= form_with(model: notebook, local: true) do |form| %>
+  <% if notebook.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@notebook.errors.count, "error") %> prohibited this notebook from being saved:</h2>
+
+      <ul>
+        <% notebook.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group" style="position: relative;">
+    <%= form.text_field :name, placeholder: "Notebook name", class: "form-control input-block" %>
+    <%= form.text_field :remote, placeholder: "Git remote", class: "form-control input-block" %>
+
+
+    <%= form.text_area :private_key, placeholder: "SSH private key", class: "form-control input-block" %>
+  </div>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+  </div>
+
+<% end %>
