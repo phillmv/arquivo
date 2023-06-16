@@ -91,6 +91,22 @@ class NotebooksController < ApplicationController
       end
     end
 
-    redirect_to settings_path(current_notebook)
+    @notebook = current_user.notebooks.find_by(name: params[:id])
+
+    if @notebook.update(notebook_params)
+      if @notebook.saved_changes.values_at("remote", "private_key").compact.any?
+        @notebook.sync_git_settings!
+      end
+
+      redirect_to settings_path(@notebook)
+    else
+      # TODO: flash, render the page, whatever. for now we swallow errors cos
+      # i don't have time to wrap this up.
+      redirect_to settings_path(@notebook)
+    end
+  end
+
+  def notebook_params
+    params.require(:notebook).permit(:name, :remote, :private_key)
   end
 end

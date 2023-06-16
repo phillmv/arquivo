@@ -33,6 +33,10 @@ class Notebook < ApplicationRecord
     SyncWithGit.new(self).pull! unless Arquivo.static?
   end
 
+  def sync_git_settings!
+    SyncWithGit.new(self).setup_git_remote_and_key! unless Arquivo.static?
+  end
+
   def to_s
     name
   end
@@ -57,8 +61,9 @@ class Notebook < ApplicationRecord
     end
   end
 
+  # TODO: TEST THAT WE DON'T EXPORT THIS OR BETTER YET MOVE THE KEYS TO A DIFFERENT TABLE
   def export_attributes
-    self.attributes.except("id", "remote", "private_key", "private_key_filename")
+    self.attributes.except("id", "remote", "private_key")
   end
 
   def to_yaml

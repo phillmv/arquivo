@@ -6,7 +6,27 @@
     <h1>Settings for <%= octicon "book", height: 32 %> <%= @current_notebook %></h1>
   </div>
 
+  <a name="bookmarklet"></a>
+   <div class="pb-4">
+     <div class="pagehead">
+       <h2>Bookmarklet</h2>
+     </div>
+     <div>
+       <p>
+       Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.io/<%= @current_nwo %>/save_bookmark?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));"><kbd>Bookmark (<%= @current_notebook %>)</kbd></a>
+      </p>
+    </div>
+  </div>
+
   <div class="pb-4">
+    <div class="pagehead">
+      <h2>Git Stuff</h2>
+    </div>
+
+    <%= render "notebooks/form", notebook: @current_notebook %>
+  </div>
+
+ <div class="pb-4">
     <div class="pagehead">
       <h2>Colour</h2>
     </div>
@@ -22,24 +42,12 @@
           <label class="radio-label" for="option-c">Purple</label>
         </div>
 
-        <% if false %>
-
-   <dl class="form-group">
-          <dt><%= form.label :colour %></dt>
-          <dd><%= form.color_field :colour, name: 'colour' %></dd>
-        </dl>
-        <div class="form-actions">
-          <%= form.submit "Save", class: "btn btn-primary" %>
-        </div>
-      <% end %>
-
         <div class="form-actions">
           <%= form.submit "Save", class: "btn btn-primary" %>
         </div>
 
       <% end %>
     </div>
-
   </div>
 
 
@@ -125,18 +133,7 @@
  <% end %>
 
 
-   <a name="bookmarklet"></a>
-   <div class="pb-4">
-     <div class="pagehead">
-       <h2>Bookmarklet</h2>
-     </div>
-     <div>
-       <p>
-       Drag this to your bookmark bar: <a href="javascript:q=location.href;if(document.getSelection){d=document.getSelection();}else{d='';};p=document.title;void(open('http://arquivo.io/<%= @current_nwo %>/save_bookmark?url='+encodeURIComponent(q)+'&body='+encodeURIComponent(d)+'&subject='+encodeURIComponent(p),'Save Bookmark', 'toolbar=no,width=700,height=600'));"><kbd>Bookmark (<%= @current_notebook %>)</kbd></a>
-      </p>
-    </div>
-  </div>
-
+ 
 
   <% if false %>
   <br>

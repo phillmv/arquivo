@@ -45,6 +45,31 @@ class SyncWithGit
     repo.config("pull.rebase", "false")
   end
 
+  def setup_git_remote_and_key!
+    git_adapter.with_lock do
+      if notebook.remote.present?
+        repo = git_adapter.open_repo(notebook_path)
+
+        if repo.remotes.map(&:name).include?("origin")
+          repo.remove_remote("origin")
+        end
+
+        repo.add_remote("origin", notebook.remote)
+
+        if notebook.private_key.present?
+          identities_path = File.join(arquivo_path, ".identities")
+          FileUtils.mkdir_p(identities_path)
+
+          private_key_path = File.join(identities_path, "notebook-#{notebook.id}.key")
+          File.write(private_key_path, notebook.private_key)
+
+          # TODO: ideally we fetch the github keys from the meta API?
+          repo.config("core.sshCommand", "ssh -o StrictHostKeyChecking=no -i #{private_key_path}")
+        end
+      end
+    end
+  end
+
   def sync_entry!(entry)
     raise "wtf" if notebook != entry.parent_notebook
 
