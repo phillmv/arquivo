@@ -64,3 +64,7 @@ yarn-debug.log*
 /.nix-node
 # /vendor/cache
 *.DS_Store
+
+# stop triggering rebuilds from scratch every time i touch the dockerfile!
+Dockerfile
+.dockerignore

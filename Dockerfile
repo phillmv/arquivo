@@ -99,14 +99,21 @@ RUN SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile
 FROM build as development
 RUN useradd rails --create-home --shell /bin/bash && \
     mkdir /data && \
-    ln -s /data/storage storage && \
     chown -R rails:rails db log storage tmp public /data
 
 
 # in development, we don't want half the files to be owned by root, so we copy-chown it:
 COPY --from=build --chown=rails:rails /arquivo /arquivo
-USER rails:rails
 
+# because in the development stage, the copying step happens after the useradd,
+# we have to recreate the symlink:
+# (for some reason, rails:rails doesn't the permission to rm storage, which is confusing
+# since we just chowned it.)
+RUN rm -rf /arquivo/storage && \
+    ln -s /data/storage /arquivo/storage && \
+    chown -R rails:rails /arquivo/storage
+
+USER rails:rails
 # in development, we want every gem
 ENV BUNDLE_WITHOUT=
 ENV BUNDLE_DEPLOYMENT=
@@ -151,7 +158,8 @@ COPY --from=build /arquivo /arquivo
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     mkdir /data && \
-    ln -s /data/storage storage && \
+    rm -rf /arquivo/storage && \
+    ln -s /data/storage /arquivo/storage && \
     chown -R rails:rails db log storage tmp public /data
 USER rails:rails
 
