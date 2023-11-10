@@ -79,7 +79,7 @@ class Notebook < ApplicationRecord
     else
       path ||= Setting.get(:arquivo, :arquivo_path)
 
-      File.join(path, self.to_s)
+      File.join(path, "notebooks", self.to_s)
     end
   end
 

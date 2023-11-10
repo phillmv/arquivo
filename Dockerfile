@@ -91,19 +91,23 @@ RUN chmod +x bin/*
 
 # Precompiling assets for production without requiring secret RAILS_MASTER_KEY
 # NODE_OPTIONS is a workaround for https://stackoverflow.com/questions/69394632/webpack-build-failing-with-err-ossl-evp-unsupported/69476335#69476335
-RUN SECRET_KEY_BASE=DUMMY NODE_OPTIONS='--openssl-legacy-provider' ./bin/rails assets:precompile
+ENV NODE_OPTIONS="--openssl-legacy-provider"
+RUN SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile
 
 # ---- END STAGES -----
 
 FROM build as development
 RUN useradd rails --create-home --shell /bin/bash && \
     mkdir /data && \
+    ln -s /data/storage storage && \
     chown -R rails:rails db log storage tmp public /data
 
-# in development, we don't want half the files ot be owned by root, so we copy-chown it:
+
+# in development, we don't want half the files to be owned by root, so we copy-chown it:
 COPY --from=build --chown=rails:rails /arquivo /arquivo
 USER rails:rails
 
+# in development, we want every gem
 ENV BUNDLE_WITHOUT=
 ENV BUNDLE_DEPLOYMENT=
 
@@ -114,7 +118,7 @@ RUN bundle install --local
 RUN git config --global user.email "you@example.com" && \
     git config --global user.name "Your Name"
 
-RUN SECRET_KEY_BASE=DUMMY NODE_OPTIONS='--openssl-legacy-provider' ./bin/rails assets:precompile RAILS_ENV=test
+RUN SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile RAILS_ENV=test
 
 # Deployment options
 ENV DATABASE_URL="sqlite3:///data/database.sqlite3" \
@@ -147,6 +151,7 @@ COPY --from=build /arquivo /arquivo
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
     mkdir /data && \
+    ln -s /data/storage storage && \
     chown -R rails:rails db log storage tmp public /data
 USER rails:rails
 

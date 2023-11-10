@@ -12,7 +12,7 @@ class SyncWithGit
   def initialize(notebook, arquivo_path = nil)
     @notebook = notebook
     @notebook_path = @notebook.to_folder_path(arquivo_path)
-    @arquivo_path = arquivo_path || File.dirname(@notebook_path)
+    @arquivo_path = arquivo_path || File.dirname(@notebook_path, 2)
 
     @git_adapter = GitAdapter.new(@arquivo_path)
   end

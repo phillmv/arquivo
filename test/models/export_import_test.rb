@@ -21,13 +21,13 @@ class ExportImportTest < ActiveSupport::TestCase
       end
 
       # confirm one folder per notebook
-      exported_notebooks = Dir[export_path + "/*"].
+      exported_notebooks = Dir[export_path + "/notebooks/*"].
         map { |s| File.basename(s) }.to_set
 
       assert_equal notebooks.map(&:name).to_set, exported_notebooks
 
       notebooks.each do |notebook|
-        exported_yaml = Dir[export_path + "/#{notebook}*/**/*yaml"].sort
+        exported_yaml = Dir[export_path + "/notebooks/#{notebook}*/**/*yaml"].sort
         notebook_yaml_file = exported_yaml.pop
 
         assert notebook_yaml_file.index("#{notebook}/notebook.yaml")

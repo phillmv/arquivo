@@ -2,7 +2,7 @@ class SyncFromDisk
   attr_accessor :notebook_path, :override_notebook
 
   # pattern is notebook/year/month/day/identifier
-  NOTEBOOK_GLOB = "/*" #notebook
+  NOTEBOOK_GLOB = "notebooks/*" #notebook
   DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
   def initialize(notebook_path, notebook = nil, override_notebook: false)
     @notebook_path = notebook_path
