@@ -31,7 +31,7 @@ class SyncFromDisk
     # but it won't handle _file deletions_. so:
 
     deleted.each do |entry_yaml|
-      entry_attributes = YAML.load(entry_yaml, permitted_classes: Arquivo::PERMITTED_YAML)
+      entry_attributes = YAML.load(entry_yaml, permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
       entry = notebook.entries.find_by(identifier: entry_attributes["identifier"])
       entry.destroy
     end
@@ -75,7 +75,7 @@ class SyncFromDisk
 
       # load in the attr
       begin
-        entry_attributes = YAML.load(File.read(entry_yaml_path), permitted_classes: Arquivo::PERMITTED_YAML)
+        entry_attributes = YAML.load(File.read(entry_yaml_path), permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
 
         # avoid writing to git until all the entries are done
         entry_attributes.merge!(skip_local_sync: true)
@@ -118,7 +118,7 @@ class SyncFromDisk
       return @notebook
     end
     notebook_yaml_file = File.join(notebook_path, "notebook.yaml")
-    notebook_yaml = YAML.load(File.read(notebook_yaml_file), permitted_classes: Arquivo::PERMITTED_YAML)
+    notebook_yaml = YAML.load(File.read(notebook_yaml_file), permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
 
     notebook = Notebook.find_by(name: notebook_yaml["name"])
     if notebook.nil?
@@ -134,7 +134,7 @@ class SyncFromDisk
     if File.directory?(entry_files_path)
       # list each yaml file, preserve the ordering they were uploaded in
       Dir[File.join(entry_files_path, "*yaml")].map do |f|
-        YAML.load_file(f, permitted_classes: Arquivo::PERMITTED_YAML)
+        YAML.load_file(f, permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
       end.sort_by do |h|
         h["created_at"]
       end.each do |file_attr|
@@ -190,7 +190,6 @@ class SyncFromDisk
     if entry
       if entry.updated_at < entry_attributes["updated_at"]
         entry.update!(entry_attributes)
-
         updated = true
       end
 

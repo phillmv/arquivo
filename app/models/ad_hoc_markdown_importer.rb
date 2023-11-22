@@ -39,7 +39,7 @@ class AdHocMarkdownImporter
 
   def load_notebook_settings(notebook)
     if File.exist?(File.join(notebook.import_path, ".site/config.yaml"))
-      config = YAML.load_file(File.join(notebook.import_path, ".site/config.yaml"), permitted_classes: Arquivo::PERMITTED_YAML)
+      config = YAML.load_file(File.join(notebook.import_path, ".site/config.yaml"), permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
       # ideally, keys match options in https://api.rubyonrails.org/v6.0.2.1/classes/ActionDispatch/Routing/UrlFor.html#method-i-url_for
       config.each do |k,v|
         notebook.settings.set(k, v)
