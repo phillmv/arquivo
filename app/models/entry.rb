@@ -179,7 +179,7 @@ class Entry < ApplicationRecord
       else
         # whereas in normal edit mode, the subject should always be defined
         # within the body
-        self.subject = EntryRenderer.new(self).subject
+        self.subject = EntryRenderer.new(self, skip_notebook_settings: true).subject
       end
     end
   end
