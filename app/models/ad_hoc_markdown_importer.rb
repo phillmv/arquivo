@@ -70,6 +70,7 @@ class AdHocMarkdownImporter
 
         filename = File.basename(identifier)
         if !entry.files.blobs.find_by(filename: filename)
+          # TODO 2023-11-23: mimic the same blob lifecycle handling from create_blob_and_file to avoid the async stuff noted below.
           blob = ActiveStorage::Blob.create_and_upload!(io: File.open(file_path),
                                                         filename: filename)
 
