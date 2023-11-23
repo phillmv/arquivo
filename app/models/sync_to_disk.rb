@@ -72,7 +72,7 @@ class SyncToDisk
                                  blob.filename.to_s)
 
     File.open(actual_file_path, "wb") do |io|
-      io.puts blob.download
+      io.print blob.download
     end
   end
 
