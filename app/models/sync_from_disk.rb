@@ -162,8 +162,15 @@ class SyncFromDisk
 
       new_attachment_filepath = File.join(entry_files_path, blob_attr["filename"])
 
+      # when a blob is added to an attachment, the ActiveStorage::AnalyzeJob
+      # is enqueued unless analyzed is set to true. let's skip that job!
+      if !blob_attr["metadata"].is_a?(Hash)
+        blob_attr["metadata"] = {}
+      end
+      blob_attr["metadata"]["analyzed"] = true
+
       blob = ActiveStorage::Blob.create(blob_attr)
-      blob.upload(File.open(new_attachment_filepath))
+      blob.upload_without_unfurling(File.open(new_attachment_filepath))
 
       entry.files.create(blob_id: blob.id, created_at: blob.created_at)
     end
