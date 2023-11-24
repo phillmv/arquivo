@@ -12,10 +12,29 @@ ENV RAILS_ENV="production" \
     BUNDLE_WITHOUT="development" \
     BUNDLE_DEPLOYMENT="1"
 
+ENV ARQUIVO_STORAGE_PATH=/data/storage
+RUN mkdir -p /data/storage
+
 # Update gems and bundler
 RUN gem update --system --no-document && \
     gem install -N bundler
 
+# Install packages needed for deployment
+RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
+    --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y curl git openssh-client libsqlite3-0
+
+
+RUN useradd rails --create-home --shell /bin/bash
+
+USER rails:rails
+
+RUN mkdir -p /home/rails/.ssh/ && \
+      chmod 0700 /home/rails/.ssh && \
+      ssh-keyscan github.com > /home/rails/.ssh/known_hosts
+
+USER root
 
 # Throw-away build stages to reduce size of final image
 FROM base as prebuild
@@ -24,7 +43,7 @@ FROM base as prebuild
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential curl git node-gyp pkg-config python-is-python3 openssh-client
+    apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 
 FROM prebuild as install-node
@@ -96,22 +115,13 @@ RUN SECRET_KEY_BASE=DUMMY ./bin/rails assets:precompile
 
 # ---- END STAGES -----
 
+# BEGIN development stage {
 FROM build as development
-RUN useradd rails --create-home --shell /bin/bash && \
-    mkdir /data && \
-    chown -R rails:rails db log storage tmp public /data
+RUN chown -R rails:rails db log storage tmp public /data
 
 
 # in development, we don't want half the files to be owned by root, so we copy-chown it:
 COPY --from=build --chown=rails:rails /arquivo /arquivo
-
-# because in the development stage, the copying step happens after the useradd,
-# we have to recreate the symlink:
-# (for some reason, rails:rails doesn't the permission to rm storage, which is confusing
-# since we just chowned it.)
-RUN rm -rf /arquivo/storage && \
-    ln -s /data/storage /arquivo/storage && \
-    chown -R rails:rails /arquivo/storage
 
 USER rails:rails
 # in development, we want every gem
@@ -140,27 +150,19 @@ EXPOSE 3000
 VOLUME /data
 CMD ["./bin/rails", "server"]
 
+# } END development stage
+
 # ---------------
 
 # Final stage for app image
 FROM base as final
-
-# Install packages needed for deployment
-RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \
-    --mount=type=cache,id=dev-apt-lib,sharing=locked,target=/var/lib/apt \
-    apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl git openssh-client libsqlite3-0
 
 # Copy built artifacts: gems, application
 COPY --from=build /usr/local/bundle /usr/local/bundle
 COPY --from=build /arquivo /arquivo
 
 # Run and own only the runtime files as a non-root user for security
-RUN useradd rails --create-home --shell /bin/bash && \
-    mkdir /data && \
-    rm -rf /arquivo/storage && \
-    ln -s /data/storage /arquivo/storage && \
-    chown -R rails:rails db log storage tmp public /data
+RUN chown -R rails:rails db log storage tmp public /data
 USER rails:rails
 
 # Deployment options

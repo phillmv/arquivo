@@ -9,4 +9,12 @@ if [ "${*}" == "./bin/rails server" ]; then
   # fi
 fi
 
+if [[ -n ${ARQUIVO_GIT_NAME} ]]; then
+  git config --global user.name "${ARQUIVO_GIT_NAME}"
+fi
+
+if [[ -n ${ARQUIVO_GIT_EMAIL} ]]; then
+  git config --global user.email "${ARQUIVO_GIT_EMAIL}"
+fi
+
 exec "${@}"
