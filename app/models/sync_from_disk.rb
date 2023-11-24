@@ -85,11 +85,6 @@ class SyncFromDisk
         next
       end
 
-      # yolo, avoid dealing with this dumb problem for now:
-      if faulty_calendar_entry?(entry_attributes)
-        next
-      end
-
       Entry.transaction do
         entry, updated = upsert_entry!(notebook, entry_attributes)
 
@@ -211,30 +206,5 @@ class SyncFromDisk
     end
 
     [entry, updated]
-  end
-
-  # Written 2023-11-22:
-  # There's a weird bug in some historical calendar entries where their
-  # metadata attribute got serialized as a YAML _string_, and the code now
-  # for some Inscrutable Reason seems to want it to be a raw YAML object.
-  # Importing these entries yielded an ActiveRecord::SerializationTypeMismatch.
-  # See 20200525100000-4f8r524 for an example.
-  #
-  # I started trying to fix this, and rationalize wtf is going on either thru a
-  # test or a migration, but then I realized: buddy I don't use any calendars
-  # at the moment! I put a ton of work into this feature but I stopped being
-  # able to easily sync my work calendar without implementing WebDAV and it
-  # wasn't ever really _that_ useful of a feature in the grand scheme of
-  # things, and so I stopped using them entirely in November 2020.
-  # Maybe one day in the future I'll start using it again but until then…
-  # this really is the cheapest solution: skip it!
-  def faulty_calendar_entry?(entry_attributes)
-    if entry_attributes["kind"] == "calendar"
-      if entry_attributes["metadata"].is_a?(String)
-        puts "Ignoring: #{entry_attributes["identifier"]} because of: #{entry_attributes["metadata"]}"
-        return true
-      end
-    end
-    return false
   end
 end
