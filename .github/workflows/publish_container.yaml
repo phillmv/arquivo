@@ -41,6 +41,7 @@ jobs:
           flavor: |
             latest=true
           tags: |
+            type=ref,event=branch
             type=sha,format=long
       - name: build image
         uses: docker/build-push-action@v5
@@ -67,12 +68,25 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+     - name: Extract metadata (tags, labels) for dev image
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-development
+          flavor: |
+            latest=true
+          tags: |
+            type=ref,event=branch
+            type=sha,format=long
       - name: Build and push dev image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           target: development
-          tags: ghcr.io/phillmv/arquivo-development:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+
           cache-from: type=gha
           cache-to: type=gha,mode=max
