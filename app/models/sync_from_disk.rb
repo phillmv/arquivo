@@ -122,7 +122,7 @@ class SyncFromDisk
 
     notebook = Notebook.find_by(name: notebook_yaml["name"])
     if notebook.nil?
-      notebook = Notebook.create(notebook_yaml)
+      notebook = Notebook.create(notebook_yaml.merge(skip_local_sync: true))
     end
 
     notebook
