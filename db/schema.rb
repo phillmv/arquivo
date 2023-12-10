@@ -176,7 +176,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_15_205741) do
     t.datetime "updated_at", null: false
     t.string "colour", default: "#0366d6", null: false
     t.string "import_path"
-    t.string "private_key_filename"
     t.string "remote"
     t.text "private_key"
   end
