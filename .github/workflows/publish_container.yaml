@@ -38,6 +38,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=true
+          tags: |
+            type=sha,format=long
       - name: build image
         uses: docker/build-push-action@v5
         with:
@@ -58,7 +62,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ steps.meta.outputs.tags }},ghcr.io:/phillmv/arquivo:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -69,6 +73,5 @@ jobs:
           push: true
           target: development
           tags: ghcr.io/phillmv/arquivo-development:latest
-          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
