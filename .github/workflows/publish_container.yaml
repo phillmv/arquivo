@@ -68,8 +68,8 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-     - name: Extract metadata (tags, labels) for dev image
-        id: meta
+      - name: Extract metadata (tags, labels) for dev image
+        id: meta2
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-development
