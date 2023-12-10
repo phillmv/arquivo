@@ -8,6 +8,7 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+    name: "rails test"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
