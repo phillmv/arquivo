@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_25_154700) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_15_205741) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -176,6 +176,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_25_154700) do
     t.datetime "updated_at", null: false
     t.string "colour", default: "#0366d6", null: false
     t.string "import_path"
+    t.string "remote"
+    t.text "private_key"
   end
 
   create_table "saved_searches", force: :cascade do |t|

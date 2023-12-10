@@ -6,11 +6,20 @@ class EntryRenderer
   # todo_only: true
   # smart_punctuation: true
   # remove_subject: true
+  # skip_notebook_settings: true
   def initialize(entry, opt = {})
     @entry = entry
+
     @options = {
       sanitize: true
-    }.merge(entry.parent_notebook.settings.render_options).merge(opt)
+    }
+
+    if opt.delete(:skip_notebook_settings)
+      @options = @options.merge(opt)
+    else
+      @options = @options.merge(entry.parent_notebook.settings.render_options).merge(opt)
+    end
+
     @output = {}
     @html = {}
   end

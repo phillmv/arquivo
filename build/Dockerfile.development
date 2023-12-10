@@ -1,0 +1,13 @@
+# syntax = docker/dockerfile:1
+
+# used to refresh the main image with a local copy
+# $ docker build -f build/Dockerfile.development -t arquivo-development:latest .
+# $ docker run -it -e RAILS_MASTER_KEY=$(cat config/master.key) --entrypoint '/bin/bash' arquivo-development:latest -c '/rails/bin/rails test'
+FROM arquivo-docker-rebuild:latest as test-base
+
+WORKDIR /rails
+USER root
+RUN apt-get update -qq && apt-get install --no-install-recommends -y vim
+
+USER rails:rails
+COPY --chown=rails:rails --link . .

@@ -1,4 +1,19 @@
 class NotebooksController < ApplicationController
+  skip_before_action :current_notebook, :current_nwo, :check_imports, :resync_with_remotes, only: [:new, :create, :update]
+
+  def new
+    render :setup
+  end
+
+  # TODO: worry about notebook lifecycle
+  # def create
+  #   @notebook = Notebook.create(notebook_params)
+  #   if @notebook.valid?
+  #     redirect_to timeline_path(@notebook)
+  #   else
+  #     render :new
+  #   end
+  # end
 
   def tags
 
@@ -76,6 +91,23 @@ class NotebooksController < ApplicationController
       end
     end
 
-    redirect_to settings_path(current_notebook)
+    @notebook = current_user.notebooks.find_by(name: params[:id])
+
+    if @notebook.update(notebook_params)
+      if @notebook.saved_changes.values_at("remote", "private_key").compact.any?
+        @notebook.initialize_git
+        @notebook.sync_git_settings!
+      end
+
+      redirect_to settings_path(@notebook)
+    else
+      # TODO: flash, render the page, whatever. for now we swallow errors cos
+      # i don't have time to wrap this up.
+      redirect_to settings_path(@notebook)
+    end
+  end
+
+  def notebook_params
+    params.require(:notebook).permit(:name, :remote, :private_key)
   end
 end

@@ -5,8 +5,8 @@ require 'yaml'
 require 'date'
 require 'fileutils'
 
-ours = YAML.load_file(ARGV[1], permitted_classes: [Symbol, Date, Time])["updated_at"]
-theirs = YAML.load_file(ARGV[2], permitted_classes: [Symbol, Date, Time])["updated_at"]
+ours = YAML.load_file(ARGV[1], permitted_classes: [Symbol, Date, Time], aliases: true)["updated_at"]
+theirs = YAML.load_file(ARGV[2], permitted_classes: [Symbol, Date, Time], aliases: true)["updated_at"]
 
 if ours < theirs
   FileUtils.cp(ARGV[2], ARGV[1])

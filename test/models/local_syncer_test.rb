@@ -60,7 +60,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
       assert File.exist?(arquivo_path)
 
       # a notebook folder
-      notebook_path = File.join(arquivo_path, notebook.name)
+      notebook_path = File.join(arquivo_path, "notebooks", notebook.name)
       assert File.exist?(notebook_path)
 
       # and this notebook is a git repo / has a .git folder
@@ -254,7 +254,7 @@ class LocalSyncerTest < ActiveSupport::TestCase
     test_arquivo_paths = temp_dirs.map {|d| File.join(d, "arquivo") }
     repo1_arquivo_path, repo2_arquivo_path, bare_arquivo_path = test_arquivo_paths
 
-    repo1_path, repo2_path, bare_repo_path = test_arquivo_paths.map { |d| File.join(d, "test-notebook") }
+    repo1_path, repo2_path, bare_repo_path = test_arquivo_paths.map { |d| File.join(d, "notebooks", "test-notebook") }
 
     begin
       bare_repo = Git.init(bare_repo_path, bare: true)

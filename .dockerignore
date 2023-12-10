@@ -1,0 +1,70 @@
+# See https://docs.docker.com/engine/reference/builder/#dockerignore-file for more about ignoring files.
+
+# Ignore git directory.
+/.git/
+
+# Ignore bundler config.
+/.bundle
+
+# Ignore the default SQLite database.
+/db/*.sqlite3
+/db/*.sqlite3-journal
+/db/*.sqlite3-*
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore storage (uploaded files in development and any SQLite databases).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
+
+
+/public/assets
+.byebug_history
+
+# Ignore all default key files.
+/config/master.key
+/config/credentials/*.key
+
+# Ignore all environment files.
+/.env*
+!/.env.example
+
+# Ignore all logfiles and tempfiles.
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+# Ignore assets.
+# /node_modules/
+/app/assets/builds/*
+!/app/assets/builds/.keep
+/public/assets
+
+/public/packs
+/public/packs-test
+# /node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+/.nix-gems
+/.nix-node
+# /vendor/cache
+*.DS_Store
+
+# stop triggering rebuilds from scratch every time i touch the dockerfile!
+Dockerfile
+.dockerignore

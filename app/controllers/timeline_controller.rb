@@ -5,7 +5,7 @@ class TimelineController < ApplicationController
     if notebook
       redirect_to timeline_path(notebook)
     else
-      render text: "i need to set this up! create a notebook pls"
+      redirect_to new_notebook_path(setup: true)
     end
   end
 

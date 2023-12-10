@@ -1,10 +1,11 @@
 require "active_support/core_ext/integer/time"
+require 'socket'
 
 Rails.application.configure do
   config.hosts << "arquivo.io"
 
   # until we figure out how to multitenant this,
-  config.active_storage.routes_prefix = "/phillmv/_"
+  config.active_storage.routes_prefix = ENV["ARQUIVO_USER"] || "/phillmv/_"
 
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -72,4 +73,7 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+
+  # for use within docker, thanks https://stackoverflow.com/a/58702345
+  config.web_console.permissions = Socket.getifaddrs.select { |ifa| ifa.addr.ipv4_private? }.map { |ifa| IPAddr.new(ifa.addr.ip_address + '/' + ifa.netmask.ip_address) }
 end

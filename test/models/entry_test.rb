@@ -92,7 +92,6 @@ class EntryTest < ActiveSupport::TestCase
       copy = entry.copy_to!(target_notebook)
       assert 1, target_notebook.entries.count
 
-      puts "WHY IS THIS DIFF IS IT COS OF OCCURRED AT #{entry.occurred_at.to_f} | #{copy.occurred_at.to_f}"
       assert_equal entry.attributes.except("id", "notebook", "created_at" ,"updated_at"), copy.attributes.except("id", "notebook", "created_at", "updated_at")
 
       # not literally the same blobs

@@ -1,0 +1,20 @@
+#!/bin/bash -e
+
+# If running the rails server then create or migrate existing database
+if [ "${*}" == "./bin/rails server" ]; then
+  ./bin/rails db:prepare
+
+  # if [ "${RAILS_ENV}" == "development" ]; then
+  #   ./bin/rails db:setup
+  # fi
+fi
+
+if [[ -n ${ARQUIVO_GIT_NAME} ]]; then
+  git config --global user.name "${ARQUIVO_GIT_NAME}"
+fi
+
+if [[ -n ${ARQUIVO_GIT_EMAIL} ]]; then
+  git config --global user.email "${ARQUIVO_GIT_EMAIL}"
+fi
+
+exec "${@}"

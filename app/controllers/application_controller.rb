@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   include UrlHelper
-  before_action :current_notebook, :current_nwo, :set_recent_entries, :check_imports, :resync_with_remotes
+  before_action :current_notebook, :current_nwo, :check_imports, :resync_with_remotes
   around_action :set_time_zone
 
   private
@@ -33,10 +33,6 @@ class ApplicationController < ActionController::Base
   #   end
   # end
 
-  def set_recent_entries
-    @recent_entries = Entry.for_notebook(current_notebook).hitherto.visible.except_calendars.order(occurred_at: :desc).limit(10)
-  end
-
   def set_time_zone(&block)
     Time.use_zone(User.tz, &block)
   end
@@ -56,6 +52,12 @@ class ApplicationController < ActionController::Base
       return @current_notebook
     end
 
+    # if this is a brand new system, then there are no notebooks to set.
+    # i don't like this but i think this will have to do for now.
+    if !Notebook.any?
+      return nil
+    end
+
     # remember the last notebook we were on, so we can redirect to it
     # if we're visiting the root route
     notebook_name = nil
@@ -66,9 +68,8 @@ class ApplicationController < ActionController::Base
     end
 
     if notebook_name
-      @current_notebook = current_user.notebooks.find_by!(name: notebook_name).tap do
-        session[:notebook_name] = notebook_name
-      end
+      @current_notebook = current_user.notebooks.find_by!(name: notebook_name)
+      session[:notebook_name] = notebook_name
     else
       @current_notebook = nil
     end

@@ -33,6 +33,10 @@ class Notebook < ApplicationRecord
     SyncWithGit.new(self).pull! unless Arquivo.static?
   end
 
+  def sync_git_settings!
+    SyncWithGit.new(self).setup_git_remote_and_key! unless Arquivo.static?
+  end
+
   def to_s
     name
   end
@@ -57,8 +61,9 @@ class Notebook < ApplicationRecord
     end
   end
 
+  # TODO: TEST THAT WE DON'T EXPORT THIS OR BETTER YET MOVE THE KEYS TO A DIFFERENT TABLE
   def export_attributes
-    self.attributes.except("id")
+    self.attributes.except("id", "remote", "private_key")
   end
 
   def to_yaml
@@ -74,7 +79,7 @@ class Notebook < ApplicationRecord
     else
       path ||= Setting.get(:arquivo, :arquivo_path)
 
-      File.join(path, self.to_s)
+      File.join(path, "notebooks", self.to_s)
     end
   end
 
@@ -84,7 +89,7 @@ class Notebook < ApplicationRecord
   end
 
   def initialize_git
-    unless Rails.application.config.skip_local_sync || Arquivo.static?
+    unless self.skip_local_sync || Rails.application.config.skip_local_sync || Arquivo.static?
       SyncToDisk.new(self).write_notebook_file
       syncer = SyncWithGit.new(self)
       syncer.init!

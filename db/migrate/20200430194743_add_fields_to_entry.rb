@@ -1,5 +1,6 @@
 class AddFieldsToEntry < ActiveRecord::Migration[6.0]
   def up
+    add_column :entries, :summary, :string
     add_column :entries, :identifier, :string, null: false, default: ""
     Entry.update_all("identifier = id")
     change_column :entries, :identifier, :string, default: nil
@@ -18,6 +19,7 @@ class AddFieldsToEntry < ActiveRecord::Migration[6.0]
 
   def down
     remove_index :entries, [:notebook, :identifier]
+    remove_column :entries, :summary, :string
     remove_column :entries, :identifier, :string
     remove_column :entries, :subject, :string
     remove_column :entries, :from, :string

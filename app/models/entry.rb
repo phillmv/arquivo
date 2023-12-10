@@ -93,7 +93,18 @@ class Entry < ApplicationRecord
   after_destroy :sync_to_disk_and_git
 
   def set_identifier
-    self.occurred_at ||= Time.current
+    # re: Time.current.round(6),
+    # On Linux systems, for reasons I haven't been able to fully investigate,
+    # Time values have resolution in nanoseconds. This exceeds the precision
+    # of the database column, which as of Rails 7 defaults to 6.
+    # cf https://github.com/rails/rails/blob/aed8feae3b7a3f7df59de69355cc3bda1d5479d6/activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb#L1322
+    #
+    # This causes import/export tests to fail on Linux, since the copy in
+    # memory will have a higher precision than the freshly rehydrated instance
+    # that came from disk. Since we can't use nanoseconds anyways, let's just
+    # round it down to microseconds.
+    self.occurred_at ||= Time.current.round(6)
+
     if self.bookmark?
       # TODO: pinboard uses MD5, do I have to use MD5??
       self.identifier = Digest::MD5.hexdigest(self.url)
@@ -168,7 +179,7 @@ class Entry < ApplicationRecord
       else
         # whereas in normal edit mode, the subject should always be defined
         # within the body
-        self.subject = EntryRenderer.new(self).subject
+        self.subject = EntryRenderer.new(self, skip_notebook_settings: true).subject
       end
     end
   end

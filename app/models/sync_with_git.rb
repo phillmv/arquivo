@@ -12,7 +12,7 @@ class SyncWithGit
   def initialize(notebook, arquivo_path = nil)
     @notebook = notebook
     @notebook_path = @notebook.to_folder_path(arquivo_path)
-    @arquivo_path = arquivo_path || File.dirname(@notebook_path)
+    @arquivo_path = arquivo_path || File.dirname(@notebook_path, 2)
 
     @git_adapter = GitAdapter.new(@arquivo_path)
   end
@@ -30,6 +30,7 @@ class SyncWithGit
     git_adapter.with_lock do
       repo = git_adapter.open_repo(notebook.to_folder_path(arquivo_path))
 
+
       FileUtils.cp(File.join(Rails.root, "lib", "assets", "git_defaults", ".gitattributes"), notebook_path)
       FileUtils.cp_r(File.join(Rails.root, "lib", "assets", "git_defaults", "script"), notebook_path)
       setup_git_config(repo)
@@ -43,6 +44,34 @@ class SyncWithGit
     repo.config("merge.newest-wins.driver", "script/newest-wins.rb %O %A %B")
     repo.config("merge.newest-wins.recursive", "text")
     repo.config("pull.rebase", "false")
+  end
+
+  def setup_git_remote_and_key!
+    git_adapter.with_lock do
+      if notebook.remote.present?
+        repo = git_adapter.open_repo(notebook_path)
+
+        if repo.remotes.map(&:name).include?("origin")
+          repo.remove_remote("origin")
+        end
+
+        repo.add_remote("origin", notebook.remote)
+
+        if notebook.private_key.present?
+          identities_path = File.join(arquivo_path, ".identities")
+          FileUtils.mkdir_p(identities_path)
+
+          private_key_path = File.join(identities_path, "notebook-#{notebook.id}.key")
+
+          # TODO: the encoding + universal_newline + inserting a new line is super weird, needs to be fixed
+          File.write(private_key_path, notebook.private_key.encode(notebook.private_key.encoding, universal_newline: true) + "\n")
+          File.chmod(0600, private_key_path)
+
+          # TODO: ideally we fetch the github keys from the meta API? instead of ignoring hosts
+          repo.config("core.sshCommand", "ssh -o StrictHostKeyChecking=no -i #{private_key_path}")
+        end
+      end
+    end
   end
 
   def sync_entry!(entry)

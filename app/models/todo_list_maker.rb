@@ -6,7 +6,7 @@ class TodoListMaker
   end
 
   def make!
-    task_list_items = EntryRenderer.new(entry).task_list_items
+    task_list_items = EntryRenderer.new(entry, skip_notebook_settings: true).task_list_items
 
 
     if task_list_items

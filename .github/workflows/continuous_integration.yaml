@@ -6,21 +6,43 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  run_rails_test:
+  build_and_test:
     runs-on: ubuntu-latest
-    name: "rails test"
+    name: "docker rails test"
     steps:
-      - uses: actions/checkout@v3
-      - uses: ruby/setup-ruby@v1
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: build image
+        uses: docker/build-push-action@v5
         with:
-          bundler-cache: true
-      - uses: actions/setup-python@v4 # for building node-sass?
-      - run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: "bundle"
-        run: "bundle install && yarn install"
-      - name: "rake db:setup"
-        run: "bundle exec rails db:setup"
-      - name: "test"
-        run: "bundle exec rails test"
+          context: .
+          push: false
+          load: true
+          target: test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: arquivo-test:latest
+      - name: run the test
+        run: docker run arquivo-test:latest
+
+
+  # run_rails_test:
+  #   runs-on: ubuntu-latest
+  #   name: "rails test"
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: ruby/setup-ruby@v1
+  #       with:
+  #         bundler-cache: true
+  #     - uses: actions/setup-python@v4 # for building node-sass?
+  #     - run: |
+  #         git config --global user.name "github-actions"
+  #         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  #     - name: "bundle"
+  #       run: "bundle install && yarn install"
+  #     - name: "rake db:setup"
+  #       run: "bundle exec rails db:setup"
+  #     - name: "test"
+  #       run: "bundle exec rails test"

@@ -12,7 +12,7 @@ class SyncToDisk
     raise ArgumentError.new("gotta pass in a Notebook") unless notebook.is_a?(Notebook)
     @notebook = notebook
     @notebook_path = @notebook.to_folder_path(arquivo_path)
-    @arquivo_path = arquivo_path || File.dirname(@notebook_path)
+    @arquivo_path = arquivo_path || File.dirname(@notebook_path, 2)
   end
 
   def write_notebook_file
@@ -72,7 +72,7 @@ class SyncToDisk
                                  blob.filename.to_s)
 
     File.open(actual_file_path, "wb") do |io|
-      io.puts blob.download
+      io.print blob.download
     end
   end
 

@@ -2,7 +2,7 @@ class SyncFromDisk
   attr_accessor :notebook_path, :override_notebook
 
   # pattern is notebook/year/month/day/identifier
-  NOTEBOOK_GLOB = "/*" #notebook
+  NOTEBOOK_GLOB = "notebooks/*" #notebook
   DIR_GLOB = "/[0-9][0-9][0-9][0-9]/*/*/*" #year/month/day/identifier
   def initialize(notebook_path, notebook = nil, override_notebook: false)
     @notebook_path = notebook_path
@@ -31,7 +31,7 @@ class SyncFromDisk
     # but it won't handle _file deletions_. so:
 
     deleted.each do |entry_yaml|
-      entry_attributes = YAML.load(entry_yaml, permitted_classes: Arquivo::PERMITTED_YAML)
+      entry_attributes = YAML.load(entry_yaml, permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
       entry = notebook.entries.find_by(identifier: entry_attributes["identifier"])
       entry.destroy
     end
@@ -75,7 +75,7 @@ class SyncFromDisk
 
       # load in the attr
       begin
-        entry_attributes = YAML.load(File.read(entry_yaml_path), permitted_classes: Arquivo::PERMITTED_YAML)
+        entry_attributes = YAML.load(File.read(entry_yaml_path), permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
 
         # avoid writing to git until all the entries are done
         entry_attributes.merge!(skip_local_sync: true)
@@ -118,11 +118,11 @@ class SyncFromDisk
       return @notebook
     end
     notebook_yaml_file = File.join(notebook_path, "notebook.yaml")
-    notebook_yaml = YAML.load(File.read(notebook_yaml_file), permitted_classes: Arquivo::PERMITTED_YAML)
+    notebook_yaml = YAML.load(File.read(notebook_yaml_file), permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
 
     notebook = Notebook.find_by(name: notebook_yaml["name"])
     if notebook.nil?
-      notebook = Notebook.create(notebook_yaml)
+      notebook = Notebook.create(notebook_yaml.merge(skip_local_sync: true))
     end
 
     notebook
@@ -134,7 +134,7 @@ class SyncFromDisk
     if File.directory?(entry_files_path)
       # list each yaml file, preserve the ordering they were uploaded in
       Dir[File.join(entry_files_path, "*yaml")].map do |f|
-        YAML.load_file(f, permitted_classes: Arquivo::PERMITTED_YAML)
+        YAML.load_file(f, permitted_classes: Arquivo::PERMITTED_YAML, aliases: true)
       end.sort_by do |h|
         h["created_at"]
       end.each do |file_attr|
@@ -157,8 +157,15 @@ class SyncFromDisk
 
       new_attachment_filepath = File.join(entry_files_path, blob_attr["filename"])
 
+      # when a blob is added to an attachment, the ActiveStorage::AnalyzeJob
+      # is enqueued unless analyzed is set to true. let's skip that job!
+      if !blob_attr["metadata"].is_a?(Hash)
+        blob_attr["metadata"] = {}
+      end
+      blob_attr["metadata"]["analyzed"] = true
+
       blob = ActiveStorage::Blob.create(blob_attr)
-      blob.upload(File.open(new_attachment_filepath))
+      blob.upload_without_unfurling(File.open(new_attachment_filepath))
 
       entry.files.create(blob_id: blob.id, created_at: blob.created_at)
     end
@@ -190,7 +197,6 @@ class SyncFromDisk
     if entry
       if entry.updated_at < entry_attributes["updated_at"]
         entry.update!(entry_attributes)
-
         updated = true
       end
 
