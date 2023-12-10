@@ -22,8 +22,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: arquivo-test:latest
-        - name: run the test
-          run: docker run arquivo-test:latest
+      - name: run the test
+        run: docker run arquivo-test:latest
 
 
   # run_rails_test:
