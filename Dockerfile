@@ -152,6 +152,13 @@ CMD ["./bin/rails", "server"]
 
 # } END development stage
 
+# { BEGIN test stage
+FROM development as test
+
+CMD ["./bin/rails", "test"]
+
+# } END test stage
+
 # ---------------
 
 # Final stage for app image
