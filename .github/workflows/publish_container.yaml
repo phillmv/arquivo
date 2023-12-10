@@ -58,7 +58,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: phillmv/arquivo:latest
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -68,7 +68,7 @@ jobs:
           context: .
           push: true
           target: development
-          tags: phillmv/arquivo-development:latest
+          tags: ghcr.io/phillmv/arquivo-development:latest
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
