@@ -19,8 +19,6 @@ jobs:
           push: false
           load: true
           target: test
-          cache-from: type=local,src=/tmp/.buildx-main-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-main-cache-new
           tags: arquivo-test:latest
       - name: run the test
         run: docker run arquivo-test:latest
