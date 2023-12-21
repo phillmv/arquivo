@@ -69,7 +69,11 @@ class EntryRendererTest < ActiveSupport::TestCase
 
     # of note: bar was not converted, and the generated urls
     # point to /test/timeline/search
-    assert_equal "<p data-sourcepos=\"1:1-1:13\"> <a href=\"/phillmv/test/timeline/search?query=%23foo\">#foo</a> bar <a href=\"/phillmv/test/timeline/search?query=%23baz\">#baz</a></p>", hashtag_markdown_html
+    if Arquivo.static?
+      assert_equal "<p data-sourcepos=\"1:1-1:13\"> <a href=\"/tags/foo\">#foo</a> bar <a href=\"/tags/baz\">#baz</a></p>", hashtag_markdown_html
+    else
+      assert_equal "<p data-sourcepos=\"1:1-1:13\"> <a href=\"/phillmv/test/timeline/search?query=%23foo\">#foo</a> bar <a href=\"/phillmv/test/timeline/search?query=%23baz\">#baz</a></p>", hashtag_markdown_html
+    end
   end
 
   test "parses contacts and links them" do
@@ -81,7 +85,12 @@ class EntryRendererTest < ActiveSupport::TestCase
     # of note: bar is not converted,
     # it points to /test/timeline/search
     # .user_mention class
-    assert_equal "<p data-sourcepos=\"1:1-1:13\"><a href=\"/phillmv/test/timeline/search?query=%40foo\" class=\"user-mention\">@foo</a> bar <a href=\"/phillmv/test/timeline/search?query=%40baz\" class=\"user-mention\">@baz</a></p>", contact_markdown_html
+
+    if Arquivo.static?
+      assert_equal "<p data-sourcepos=\"1:1-1:13\"><a href=\"/contacts/foo\" class=\"user-mention\">@foo</a> bar <a href=\"/contacts/baz\" class=\"user-mention\">@baz</a></p>", contact_markdown_html
+    else
+      assert_equal "<p data-sourcepos=\"1:1-1:13\"><a href=\"/phillmv/test/timeline/search?query=%40foo\" class=\"user-mention\">@foo</a> bar <a href=\"/phillmv/test/timeline/search?query=%40baz\" class=\"user-mention\">@baz</a></p>", contact_markdown_html
+    end
   end
 
   test "adds ids to headers" do
