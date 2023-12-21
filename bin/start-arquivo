@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PROJECT_FOLDER=`realpath $(dirname "$0")/..`
+DEV_DATA_FOLDER="$PROJECT_FOLDER"/tmp/data
+
+mkdir -p "$DEV_DATA_FOLDER"
+
+if [ -z ${ARQUIVO_PORT+x} ]; then
+  ARQUIVO_PORT=12346
+fi
+
+if [ "$#" -eq 0 ]; then
+  echo "Usage: $0 [console|server]"
+  exit 1
+else
+  if [ "$1" = "console" ]; then
+    shift
+    if [ "$#" -eq 0 ]; then
+      DOCKER_COMMAND="bash"
+    else
+      DOCKER_COMMAND="$@"
+    fi
+  elif [ "$1" = "server" ]; then
+    shift
+    # do the default
+    DOCKER_COMMAND=
+    export RAILS_ENV=development
+  fi
+fi
+
+export ARQUIVO_USER=phillmv
+export ARQUIVO_GIT_EMAIL=phillmv@okayfail.com
+export ARQUIVO_GIT_NAME="Phill MV"
+export RAILS_MASTER_KEY=$(cat "$PROJECT_FOLDER"/config/master.key)
+export RAILS_BIND=tcp://0.0.0.0:3001
+
+echo "Running arquivo while mounting local filesystem..."
+
+docker run -it -p "$ARQUIVO_PORT":3001 \
+  -e ARQUIVO_USER \
+  -e ARQUIVO_GIT_EMAIL \
+  -e ARQUIVO_GIT_NAME \
+  -e RAILS_ENV \
+  -e RAILS_BIND \
+  -e STATIC_PLS \
+  -v "$DEV_DATA_FOLDER":/data \
+  -v "$PROJECT_FOLDER":/arquivo \
+  arquivo-development:latest ${DOCKER_COMMAND}
