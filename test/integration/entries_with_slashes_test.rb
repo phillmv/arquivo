@@ -6,6 +6,10 @@ class EntriesWithSlashesTest < ActionDispatch::IntegrationTest
   end
 
   test "entries with slashes in their identifier can be saved to disk, and read from disk" do
+    if Arquivo.static?
+      return
+    end
+
     enable_local_sync do
       arquivo_path = Setting.get(:arquivo, :arquivo_path)
       entry = @current_notebook.entries.create(identifier: "hello/world", body: "this is my test entry")
