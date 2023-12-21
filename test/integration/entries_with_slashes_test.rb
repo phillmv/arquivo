@@ -60,7 +60,7 @@ class EntriesWithSlashesTest < ActionDispatch::IntegrationTest
       get timeline_path(@current_notebook)
       assert_response :success
 
-      expected_hrefs = entries.map do |e| "#{timeline_path(@current_notebook)}/#{e.identifier}" end.to_set
+      expected_hrefs = entries.map { |e| entry_path(e) }.to_set
       permalink_hrefs = css_select("a.permalink[href]").map do |a| a["href"] end.to_set
 
       assert_equal expected_hrefs, permalink_hrefs
@@ -69,22 +69,29 @@ class EntriesWithSlashesTest < ActionDispatch::IntegrationTest
       get entry_path(entries.last)
       assert_response :success
 
-      # the page displays and lists the identifier name in the timeline top thingy
-      assert_select("nav li[aria-current=page] h3", text: entries.last.identifier)
-      # and we're looking at the same right page
-      assert_select(".entry-body", text: entries.last.body)
+      if Arquivo.static?
+        assert_select("entry-subject", html: /#{entries.last.identifier}/)
+        assert_select("entry-body", text: entries.last.body)
+      else
+        # the page displays and lists the identifier name in the timeline top thingy
+        assert_select("nav li[aria-current=page] h3", text: entries.last.identifier)
+        # and we're looking at the same right page
+        assert_select(".entry-body", text: entries.last.body)
+      end
 
       # we can edit it:
-      get edit_entry_path(entries.last)
-      assert_response :success
-      assert_select("textarea#entry_body", text: entries.last.body)
+      if !Arquivo.static?
+        get edit_entry_path(entries.last)
+        assert_response :success
+        assert_select("textarea#entry_body", text: entries.last.body)
 
-      # we can see its thread
-      get threaded_entry_path(entries.last)
-      assert_response :success
+        # we can see its thread
+        get threaded_entry_path(entries.last)
+        assert_response :success
 
-      threaded_permalink_hrefs = css_select("a.permalink[href]").map do |a| a["href"] end.to_set
-      assert_equal expected_hrefs, threaded_permalink_hrefs
+        threaded_permalink_hrefs = css_select("a.permalink[href]").map do |a| a["href"] end.to_set
+        assert_equal expected_hrefs, threaded_permalink_hrefs
+      end
 
       # ran out of time, but feel confident about where we're at, so TODO:
       # - access /files/ path
