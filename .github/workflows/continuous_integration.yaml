@@ -26,6 +26,10 @@ jobs:
           tags: arquivo-test:latest
       - name: run the test
         run: docker run arquivo-test:latest
+      - name: run the test
+        run: STATIC_PLS=1 docker run -e STATIC_PLS arquivo-test:latest
+
+
 
 
   # run_rails_test:
