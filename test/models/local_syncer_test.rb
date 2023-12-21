@@ -91,6 +91,10 @@ class LocalSyncerTest < ActiveSupport::TestCase
   end
 
   test "when an entry is destroyed, we delete it from the local repo" do
+    if Arquivo.static?
+      return
+    end
+
     notebook = Notebook.create(name: "test-notebook")
     enable_local_sync do
       # in the beginning, there is no folder
