@@ -16,7 +16,16 @@ module UrlHelper
     name_with_path = "#{name}_path".to_sym
     define_method name_with_path do |entry, opts = {}|
       if Arquivo.static?
-        RailsUrlHelpers.send(name_with_path, entry, opts.except(:notebook).merge(format: "html"))
+        # A year and a half later, I don't remember _why_ I started forcing
+        # .html urls in links (isn't this breaking document downloads?)
+        # my impression is I made this distinction in order to force
+        # downloaded urls to be stored with .html extension so they can
+        # be served statically – but i'm not entirely sure this is The Correct Way
+        these_opts = opts.except(:notebook)
+        if entry.append_html_extension?
+          these_opts = these_opts.merge(format: "html")
+        end
+        RailsUrlHelpers.send(name_with_path, entry, these_opts)
       else
         RailsUrlHelpers.send(name_with_path, entry, opts.merge(UrlHelper.entry_params(entry)))
       end
