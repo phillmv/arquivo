@@ -53,7 +53,7 @@ Rails.application.routes.draw do
     # only here to keep the UrlHelper ticking
     get "/settings", to: "settings#index", as: :settings
     get "/*id/edit", to: "entries#edit", as: :edit_entry
-  else
+  else # END STATIC MODE
 
   resources :notebooks
   scope ':owner', defaults: { owner: "owner" } do
