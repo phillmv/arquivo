@@ -38,6 +38,8 @@ yarn-debug.log*
 /.nix-gems
 /.nix-node
 # /vendor/cache
+# we vendor the gems, but not the installed paths
+/vendor/ruby
 *.DS_Store
 
 # use this to customize your .env entries
