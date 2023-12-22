@@ -3,9 +3,12 @@
 set -euo pipefail
 
 PROJECT_FOLDER=`realpath $(dirname "$0")/..`
-DEV_DATA_FOLDER="$PROJECT_FOLDER"/tmp/data
 
-mkdir -p "$DEV_DATA_FOLDER"
+if [ -z ${DATA_FOLDER+x} ]; then
+  DATA_FOLDER="$PROJECT_FOLDER"/data
+fi
+
+mkdir -p "$DATA_FOLDER"
 
 if [ -z ${ARQUIVO_PORT+x} ]; then
   ARQUIVO_PORT=12346
@@ -27,6 +30,25 @@ else
     # do the default
     DOCKER_COMMAND=
     export RAILS_ENV=development
+  elif [ "$1" = "mawl" ]; then
+    shift
+
+    if [ -z "${1+x}" ]; then
+      echo "Usage: $0 mawl [input-folder] [output-folder]"
+      exit 1
+    else
+      MAWL_INPUT_PATH=`realpath "$1"`
+    fi
+
+    if [ -z "${2+x}" ]; then
+      MAWL_OUTPUT_PATH="$PROJECT_FOLDER"/tmp/mawl-output
+    else
+      MAWL_OUTPUT_PATH="$2"
+    fi
+
+    export STATIC_PLS=1
+    DOCKER_COMMAND=bash
+    # DOCKER_COMMAND="./bin/rails server -d && ./bin/rails static:import static:generate"
   fi
 fi
 
@@ -45,6 +67,8 @@ docker run -it -p "$ARQUIVO_PORT":3001 \
   -e RAILS_ENV \
   -e RAILS_BIND \
   -e STATIC_PLS \
-  -v "$DEV_DATA_FOLDER":/data \
+  -v "$MAWL_INPUT_PATH":/mawl-input \
+  -v "$DATA_FOLDER":/data \
+  -v "$MAWL_OUTPUT_PATH":/output \
   -v "$PROJECT_FOLDER":/arquivo \
   arquivo-development:latest ${DOCKER_COMMAND}
