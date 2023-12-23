@@ -47,7 +47,7 @@ else
     fi
 
     export STATIC_PLS=1
-    DOCKER_COMMAND=bash
+    DOCKER_COMMAND=/arquivo/bin/mawl-import-and-generate
     # DOCKER_COMMAND="./bin/rails server -d && ./bin/rails static:import static:generate"
   fi
 fi

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PROJECT_FOLDER=`realpath $(dirname "$0")/..` && cd "$PROJECT_FOLDER"
+
+PID=$(cat tmp/pids/server.pid 2>/dev/null) && ps -p $PID > /dev/null && kill $PID
+./bin/rails s -e production -d && ./bin/rails static:generate
