@@ -3,6 +3,9 @@ require "active_support/core_ext/integer/time"
 Rails.application.configure do
   config.hosts << "arquivo.io"
   config.hosts << "arquivo.localhost"
+  if Arquivo.static?
+    config.hosts << "localhost"
+  end
 
   # until we figure out how to multitenant this,
   config.active_storage.routes_prefix = ENV["ARQUIVO_USER"] || "/phillmv/_"

@@ -1,18 +1,25 @@
 namespace :static do
   desc 'Generate static site in ./out/ directory'
   task :import => :environment do
-    SyncFromDisk.new(ENV["NOTEBOOK_PATH"]).import!
+    if !Arquivo.static?
+      puts "Buddy, we're not in static mode! Quitting..."
+      exit 1
+    end
+
+    sync_path = ENV["MAWL_INPUT_PATH"] || "/mawl-input"
+    SyncFromDisk.new(sync_path).import!
   end
 
   task :generate do
-    if ENV["MAWB_OUTPUT"]
-      folder = ENV["MAWB_OUTPUT"]
-    else
-      folder = "out"
+    if !Arquivo.static?
+      puts "Buddy, we're not in static mode! Quitting..."
+      exit 1
     end
 
-    Dir.mkdir folder unless File.exist? folder
-    Dir.chdir folder do
+    output_path = ENV["MAWL_OUTPUT_PATH"] || "/output"
+
+    Dir.mkdir output_path unless File.exist? output_path
+    Dir.chdir output_path do
       puts `wget --version`
       puts "######\nwget --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH localhost:3000 localhost:3000/hidden_entries"
       `wget --domains localhost  --recursive  --page-requisites  --html-extension  --convert-links -nH localhost:3000 localhost:3000/hidden_entries`

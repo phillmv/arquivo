@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   def resync_with_remotes
     last_checked_at = session[:synced_remotes_at]
     if last_checked_at.nil? || last_checked_at < 15.minutes.ago
-      PullAllFromGit.perform_later
+      PullAllFromGit.perform_later unless Arquivo.static?
     end
     session[:synced_remotes_at] = Time.current
   end

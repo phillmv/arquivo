@@ -12,6 +12,7 @@ class EntriesController < ApplicationController
   # GET /entries/1.json
   def show
     if @entry.document?
+      # TODO: why import these at all why not just open the frigging thing?
       blob = @entry.files.blobs.first
       expires_in ActiveStorage.service_urls_expire_in
       redirect_to rails_blob_path(blob, disposition: params[:disposition])

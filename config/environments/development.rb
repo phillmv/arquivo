@@ -2,6 +2,11 @@ require "active_support/core_ext/integer/time"
 require 'socket'
 
 Rails.application.configure do
+  if Arquivo.static?
+    # TODO WRITE A TEST TO CHECK IF STUFF IN /ASSETS MAKE SIT THRU
+    # TO STATIC GENERATE
+    config.assets.compile = false
+  end
   config.hosts << "arquivo.io"
 
   # until we figure out how to multitenant this,
