@@ -31,6 +31,7 @@ else
     DOCKER_COMMAND=
     export RAILS_ENV=development
   elif [ "$1" = "mawl" ]; then
+    # TODO: rationalize into its own command, plus a server option
     shift
 
     if [ -z "${1+x}" ]; then
