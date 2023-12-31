@@ -213,6 +213,10 @@ class Entry < ApplicationRecord
   end
   # --
 
+  def append_html_extension?
+    note? || calendar? || bookmark?
+  end
+
   def note?
     kind.nil?
   end

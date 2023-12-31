@@ -23,6 +23,11 @@ class TimelineTest < ActionDispatch::IntegrationTest
   end
 
   test "timeline smoke test" do
+    # no search in static mode
+    if Arquivo.static?
+      return
+    end
+
     get search_path(@current_notebook, query: "is:everything")
     assert_response :success
 

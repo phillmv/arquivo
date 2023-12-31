@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+PROJECT_FOLDER=`realpath $(dirname "$0")/..` && cd "$PROJECT_FOLDER"
+./bin/rails static:import

@@ -29,7 +29,8 @@ class AdHocMarkdownImporter
     notebook = Notebook.find_by(name: notebook_name)
     if notebook.nil?
       notebook = Notebook.create(name: notebook_name,
-                                 import_path: notebook_path)
+                                 import_path: notebook_path,
+                                 skip_local_sync: true)
     else
       notebook.update(import_path: notebook_path)
     end
@@ -70,16 +71,10 @@ class AdHocMarkdownImporter
 
         filename = File.basename(identifier)
         if !entry.files.blobs.find_by(filename: filename)
-          # TODO 2023-11-23: mimic the same blob lifecycle handling from create_blob_and_file to avoid the async stuff noted below.
           blob = ActiveStorage::Blob.create_and_upload!(io: File.open(file_path),
-                                                        filename: filename)
+                                                        filename: filename,
+                                                        metadata: { "analyzed" => true })
 
-          # run analysis step synchronously, so we skip the async job.
-          # for reasons i don't comprehend, in dev mode at least
-          # ActiveStorage::AnalyzeJob just hangs there indefinitely, doing
-          # naught to improve our lot, and this is very frustrating and further
-          # i have close to zero desire to debug ActiveJob async shenanigans
-          blob.analyze
           entry.files.create(blob_id: blob.id, created_at: blob.created_at)
         end
       end

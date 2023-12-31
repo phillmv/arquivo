@@ -46,16 +46,19 @@ class EntryLinker
     end
 
     if Arquivo.static?
-      return []
+      contact_path = Rails.application.routes.url_helpers.contact_path(query: "")
+      tag_path = Rails.application.routes.url_helpers.tag_path(query: "")
+      @blacklisted_paths = [contact_path, tag_path]
+    else
+
+      # don't want to consider autogen tag and contact urls to be a "link"
+      # since we keep track of those references separately ¯\_(ツ)_/¯
+      # TODO: rewrite this to be handled in their respective pipelines (a data attr? a context variable?) so we're not doing this funny business
+      tag_search_path = Rails.application.routes.url_helpers.search_path(owner: notebook.owner, notebook: notebook, query: "#")
+      contact_search_path = Rails.application.routes.url_helpers.search_path(owner: notebook.owner, notebook: notebook, query: "@")
+
+      @blacklisted_paths = [tag_search_path, contact_search_path]
     end
-
-    # don't want to consider autogen tag and contact urls to be a "link"
-    # since we keep track of those references separately ¯\_(ツ)_/¯
-    # TODO: rewrite this to handle Arquivo.static urls
-    tag_search_path = Rails.application.routes.url_helpers.search_path(owner: notebook.owner, notebook: notebook, query: "#")
-    contact_search_path = Rails.application.routes.url_helpers.search_path(owner: notebook.owner, notebook: notebook, query: "@")
-
-    @blacklisted_paths = [tag_search_path, contact_search_path]
   end
 
   def link!

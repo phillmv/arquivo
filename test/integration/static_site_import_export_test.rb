@@ -96,7 +96,7 @@ class StaticSiteImportExportTest < ActionDispatch::IntegrationTest
     # i expect exactly two links:
     assert_equal 3, css_select("a").count
     assert_select "a[href='/youvechanged.jpg']"
-    assert_select "a[href='/about']"
+    assert_select "a[href='/about.html']"
     assert_select "a[href='/archive']"
 
     # try getting individual pages:

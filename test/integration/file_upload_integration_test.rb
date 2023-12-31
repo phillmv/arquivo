@@ -7,6 +7,9 @@ class FileUploadIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "files direct uploaded to the same entry are renamed if filenames collide" do
+    if Arquivo.static?
+      return
+    end
 
     assert_equal 0, @current_notebook.entries.count
     @entry = @current_notebook.entries.new

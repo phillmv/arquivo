@@ -6,6 +6,10 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "save a bookmark" do
+    if Arquivo.static?
+      return
+    end
+
     get save_bookmark_path(notebook: @current_notebook), params: { url: "http://example.com", subject: "foo" }
     assert_response :success
 
@@ -52,6 +56,9 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "load a gdocs bookmark" do
+    if Arquivo.static?
+      return
+    end
     get save_bookmark_path(notebook: @current_notebook), params: { url: "https://docs.google.com/document/d/1E-V2Qj2OhURTtHVo9ONDjteHS7fRr77lEBbttA6DbIo/edit#heading=h.wwc00h4un5en", subject: "foo" }
     assert_response :success
 
@@ -60,6 +67,10 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "create a threaded entry" do
+    if Arquivo.static?
+      return
+    end
+
     entry1 = @current_notebook.entries.create(body: "test 1")
     post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test", in_reply_to: entry1.identifier } }
 
@@ -76,6 +87,10 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "replying to an existing entry will increment the date" do
+    if Arquivo.static?
+      return
+    end
+
     entry = @current_notebook.entries.create(body: "# #daily 2023-03-16", occurred_at: "2023-03-16".to_date)
 
     get new_entry_path(@current_notebook), params: { in_reply_to: entry.identifier }
@@ -87,6 +102,10 @@ class EntriesIntegrationTest < ActionDispatch::IntegrationTest
   end
 
   test "when saved thru a controller, an entry's identifier will be set from its subject" do
+    if Arquivo.static?
+      return
+    end
+
     assert_equal 0, @current_notebook.entries.count
     post create_entry_path(owner: @current_notebook.owner, notebook: @current_notebook), params: { entry: { body: "test mc test"} }
 

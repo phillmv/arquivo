@@ -164,7 +164,7 @@ class SyncFromDisk
       end
       blob_attr["metadata"]["analyzed"] = true
 
-      blob = ActiveStorage::Blob.create(blob_attr)
+      blob = ActiveStorage::Blob.create!(blob_attr)
       blob.upload_without_unfurling(File.open(new_attachment_filepath))
 
       entry.files.create(blob_id: blob.id, created_at: blob.created_at)

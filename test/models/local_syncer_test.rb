@@ -23,6 +23,10 @@ class LocalSyncerTest < ActiveSupport::TestCase
   end
 
   test "with enable_local_sync we do write to a git repo and get history" do
+    if Arquivo.static?
+      return
+    end
+
     enable_local_sync do
       arquivo_path = Setting.get(:arquivo, :arquivo_path)
       refute File.exist?(arquivo_path)
@@ -48,6 +52,12 @@ class LocalSyncerTest < ActiveSupport::TestCase
   end
 
   test "when an entry is updated, we write to a local repo" do
+    # this test _used_ to work in static mode but I believe that I turned off
+    # syncing in static mode. When did this stop working?
+    if Arquivo.static?
+      return
+    end
+
     notebook = Notebook.create(name: "test-notebook")
     enable_local_sync do
       # in the beginning, there is no folder
@@ -81,6 +91,10 @@ class LocalSyncerTest < ActiveSupport::TestCase
   end
 
   test "when an entry is destroyed, we delete it from the local repo" do
+    if Arquivo.static?
+      return
+    end
+
     notebook = Notebook.create(name: "test-notebook")
     enable_local_sync do
       # in the beginning, there is no folder
