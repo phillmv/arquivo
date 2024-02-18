@@ -50,6 +50,12 @@ else
     export STATIC_PLS=1
     DOCKER_COMMAND=/arquivo/bin/mawl-import-and-generate
     # DOCKER_COMMAND="./bin/rails server -d && ./bin/rails static:import static:generate"
+  elif [ "$1" = "mawl-server" ]; then
+    MAWL_INPUT_PATH=`realpath "$2"`
+    MAWL_OUTPUT_PATH="$PROJECT_FOLDER"/tmp/mawl-output
+
+    export STATIC_PLS=1
+    DOCKER_COMMAND=/arquivo/bin/mawl-server
   fi
 fi
 
