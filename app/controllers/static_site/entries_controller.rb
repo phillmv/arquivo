@@ -87,7 +87,7 @@ module StaticSite
         end
 
         response.headers["Content-Type"] = content_type ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_TYPE
-        response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
+        # response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
       end
     end
   end

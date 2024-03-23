@@ -6,6 +6,11 @@ class EntryImporter
   end
 
   def resolve_and_import!(identifier)
+
+    case identifier
+    when "stylesheets/application"
+      return render_stylesheet
+    end
     # TODO: replace hacky & brittle with more well-defined search
     # i.e. exact lookups vs just fuzzy searching
     # ALSO: need to think about how this would interact with scss templates.
@@ -115,4 +120,40 @@ class EntryImporter
     entry
   end
 
+  def render_stylesheet
+    # okay lets do the dumbest thing possible
+    # reload the file everytime!!!!
+
+    scss_path = build_file_path("stylesheets/application.css.scss")
+
+    rendered_stylesheet = nil
+    if File.exist?(scss_path)
+      load_path = File.join(current_notebook.import_path, "stylesheets")
+
+      rendered_css = SassC::Engine.new(File.read(scss_path), {
+        filename: "application.css.scss",
+        syntax: :scss,
+        load_paths: [load_path],
+      }).render
+
+      # there can only be ONE application.css
+      if to_delete = current_notebook.entries.find_by(identifier: "stylesheets/application.css")
+        puts "Destroying extraneous stylesheets/application.css, so it can be replaced."
+        to_delete.destroy
+      end
+
+      rendered_stylesheet = current_notebook.entries.new
+      rendered_stylesheet.identifier = "stylesheets/application.css"
+      rendered_stylesheet.kind = :document
+      rendered_stylesheet.save!
+
+      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(rendered_css),
+                                                    metadata: { analyzed: true },
+                                                    filename: "application.css")
+      # blob.analyze
+      rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
+    end
+
+    rendered_stylesheet
+  end
 end
