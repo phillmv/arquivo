@@ -54,7 +54,7 @@ class AdHocMarkdownImporter
 
       identifier = path_to_relative_identifier(file_path, notebook.import_path)
 
-      entry_importer = EntryImporter.new(current_notebook)
+      entry_importer = EntryImporter.new(notebook)
       if skip_file_path?(identifier, file_path)
         # Do nothing.
       elsif looks_like_text?(file_path)

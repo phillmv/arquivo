@@ -49,10 +49,12 @@ module StaticSite
       #   vs the "adhoc" markdown
       # step 3: parse it & add it.
 
+      if Rails.env.development?
       @entry = EntryImporter.new(current_notebook).resolve_and_import!(params[:id])
 
       if @entry
         return
+      end
       end
 
       # quick terrible hack for routing document type entries

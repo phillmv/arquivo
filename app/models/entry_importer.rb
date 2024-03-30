@@ -7,15 +7,15 @@ class EntryImporter
 
   def resolve_and_import!(identifier)
 
-    case identifier
-    when "stylesheets/application"
-      return render_stylesheet
-    end
+    # case identifier
+    # when "stylesheets/application"
+      # return render_stylesheet
+    # end
     # TODO: replace hacky & brittle with more well-defined search
     # i.e. exact lookups vs just fuzzy searching
     # ALSO: need to think about how this would interact with scss templates.
     search_path = build_file_path(identifier) + "*"
-    file_path = Dir[search_path].first
+    file_path = Dir[search_path].reject {|f| File.directory?(f) }.first
     if file_path && looks_like_text?(file_path)
       # TODO: hrm, should the identifier come from the request? this will blow up somehow
       import!(identifier, file_path)
