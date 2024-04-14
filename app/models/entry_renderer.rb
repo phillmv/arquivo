@@ -33,6 +33,27 @@ class EntryRenderer
     end
   end
 
+  class EntryContext
+    include ActionView::Helpers
+    include ActionView::RoutingUrlFor
+    include Rails.application.routes.url_helpers
+    # include ActionDispatch::Routing::UrlFor
+    include UrlHelper
+
+    attr_reader :entry
+    def initialize(entry)
+      @entry = entry
+    end
+
+    def default_url_options
+      {}
+    end
+
+    def binding
+      super
+    end
+  end
+
   # do we take an attribute? we're rendering an entry when was the last fucking time i rendered something other than a body?
 
   def render(opt = {})
@@ -58,6 +79,10 @@ class EntryRenderer
     if !attribute
       ""
     else
+      if entry.template?
+        attribute = ERB.new(attribute).result(EntryContext.new(entry).binding).html_safe
+      end
+
       render_html(attribute, opt)
     end
   end

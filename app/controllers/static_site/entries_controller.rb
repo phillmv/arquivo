@@ -15,9 +15,9 @@ module StaticSite
       # TODO: make up my mind on how to handle templates.
       # elsif @entry.template?
         # don't love it but fix later, lol do not deploy this to untrusted user contexts???
-        # render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
+        # render inline: @entry.body, layout: "application"
 
-      elsif @entry.note? || @entry.bookmark?
+      elsif @entry.note? || @entry.bookmark? || @entry.template?
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry, remove_subject: true)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")

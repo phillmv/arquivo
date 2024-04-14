@@ -14,8 +14,9 @@ class EntryImporter
     # TODO: replace hacky & brittle with more well-defined search
     # i.e. exact lookups vs just fuzzy searching
     # ALSO: need to think about how this would interact with scss templates.
-    search_path = build_file_path(identifier) + "*"
-    file_path = Dir[search_path].reject {|f| File.directory?(f) }.first
+    file_path = build_file_path(identifier)
+    glob_path = file_path + "*"
+    file_path = Dir[glob_path].select { |f| f =~ /#{file_path}(\.html|\.md|\.markdown)+/ }.reject {|f| File.directory?(f) }.first
     if file_path && looks_like_text?(file_path)
       # TODO: hrm, should the identifier come from the request? this will blow up somehow
       import!(identifier, file_path)
@@ -32,7 +33,7 @@ class EntryImporter
   end
 
   def looks_like_text?(file_path)
-    file_path =~ /\.(md|markdown|html)$/
+    file_path =~ /\.(md|markdown|html|erb)$/
   end
 
   def build_file_path(path_info)
@@ -64,6 +65,7 @@ class EntryImporter
       end
     end
 
+    # TODO: DON'T DO THIS GIT DOESN"T SET CTIME!!!!!!
     created_at = parsed_file["created_at"] || File.ctime(md_path)
     updated_at = parsed_file["updated_at"] || File.mtime(md_path)
 
@@ -73,14 +75,22 @@ class EntryImporter
     # files, loosely slapped together!
     #
     # then, we lop off `.md`, `.markdown` and `html` from the suffix
-    entry_source = identifier # store the unmodified identifier as the "source"
-    identifier = identifier.gsub(/\.(md|markdown|html)/, "")
+    entry_source = md_path # store the unmodified identifier as the "source"
+    identifier = identifier.gsub(/\.(md|markdown|html|erb)/, "")
+
+    # TODO: test this behaviour
+    if entry_source =~ /\.erb$/
+      entry_kind = "template"
+    else
+      entry_kind = nil
+    end
 
     entry_attributes = parsed_file.front_matter.merge({
       "identifier" => identifier,
       "source" => entry_source,
       "occurred_at" => occurred_at,
       "body" => parsed_file.content,
+      "kind" => entry_kind,
       "created_at" => created_at,
       "updated_at" => updated_at,
       skip_local_sync: true
