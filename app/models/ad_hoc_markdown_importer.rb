@@ -90,7 +90,7 @@ class AdHocMarkdownImporter
   end
 
   def looks_like_text?(file_path)
-    file_path =~ /\.(md|markdown|html)$/
+    file_path =~ /\.(md|markdown|html|erb)$/
   end
 
   def entry_attributes_from_document(identifier, file_path)
