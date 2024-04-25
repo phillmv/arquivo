@@ -34,6 +34,7 @@ class EntryRenderer
   end
 
   class EntryContext
+    include ActionView::Context
     include ActionView::Helpers
     include ActionView::RoutingUrlFor
     include Rails.application.routes.url_helpers
@@ -46,7 +47,7 @@ class EntryRenderer
     end
 
     def default_url_options
-      {}
+      {format: "html"}
     end
 
     def binding
