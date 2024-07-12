@@ -83,8 +83,10 @@ FROM install-node-modules as install-gems
 COPY --link Gemfile Gemfile.lock .
 COPY --link vendor ./vendor
 
+RUN ls -lah
 RUN bundle config set app_config .bundle && \
     bundle config set path vendor && \
+    bundle env && \
     bundle install --local && \
     bundle clean
 
