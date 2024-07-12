@@ -64,8 +64,8 @@ FROM install-node as install-node-modules
 ## Contrary to the template, here we copy the app code *before* fetching the gems
 ## and running yarn install because our repo vendors these dependencies; if we copy
 ## the app code *after* installing deps we'll then overwrite these folders.
-COPY --link package.json yarn.lock .
-COPY --link node_modules ./node_modules
+COPY package.json yarn.lock .
+COPY node_modules ./node_modules
 
 # Install node modules
 RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
@@ -80,8 +80,8 @@ FROM install-node-modules as install-gems
 ## because we already have a `vendor` folder we copied above, when we copied over
 ## our application code.
 
-COPY --link Gemfile Gemfile.lock .
-COPY --link vendor ./vendor
+COPY Gemfile Gemfile.lock .
+COPY vendor ./vendor
 
 RUN bundle config set app_config .bundle && \
     bundle config set path vendor && \
