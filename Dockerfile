@@ -66,6 +66,9 @@ FROM install-node as install-node-modules
 ## the app code *after* installing deps we'll then overwrite these folders.
 COPY --link package.json yarn.lock .
 COPY --link node_modules ./node_modules
+RUN ls -lah
+RUN pwd
+RUN ls /arquivo
 
 # Install node modules
 RUN --mount=type=cache,id=bld-yarn-cache,target=/root/.yarn \
@@ -84,6 +87,8 @@ COPY --link Gemfile Gemfile.lock .
 COPY --link vendor ./vendor
 
 RUN ls -lah
+RUN pwd
+RUN ls /arquivo
 RUN bundle config set app_config .bundle && \
     bundle config set path vendor && \
     bundle env && \
