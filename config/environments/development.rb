@@ -10,7 +10,7 @@ Rails.application.configure do
   config.hosts << "arquivo.io"
 
   # until we figure out how to multitenant this,
-  config.active_storage.routes_prefix = ENV["ARQUIVO_USER"] || "/phillmv/_"
+  config.active_storage.routes_prefix = "#{ENV['ARQUIVO_USER']}/_" || "/phillmv/_"
 
   # Settings specified here will take precedence over those in config/application.rb.
 
