@@ -48,4 +48,5 @@ docker run -it -p "$ARQUIVO_PORT":3001 \
   -e RAILS_ENV \
   -e RAILS_BIND \
   -v "$DATA_FOLDER":/data \
+  -v "$PROJECT_FOLDER":/arquivo \
   ghcr.io/phillmv/arquivo-development:latest ${DOCKER_COMMAND}
