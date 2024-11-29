@@ -33,6 +33,28 @@ class EntryRenderer
     end
   end
 
+  class EntryContext
+    include ActionView::Context
+    include ActionView::Helpers
+    include ActionView::RoutingUrlFor
+    include Rails.application.routes.url_helpers
+    # include ActionDispatch::Routing::UrlFor
+    include UrlHelper
+
+    attr_reader :entry
+    def initialize(entry)
+      @entry = entry
+    end
+
+    def default_url_options
+      {format: "html"}
+    end
+
+    def binding
+      super
+    end
+  end
+
   # do we take an attribute? we're rendering an entry when was the last fucking time i rendered something other than a body?
 
   def render(opt = {})
@@ -58,6 +80,10 @@ class EntryRenderer
     if !attribute
       ""
     else
+      if entry.template?
+        attribute = ERB.new(attribute).result(EntryContext.new(entry).binding).html_safe
+      end
+
       render_html(attribute, opt)
     end
   end
@@ -148,6 +174,7 @@ class EntryRenderer
     PipelineFilter::MarkdownFilter, # convert to HTML
     PipelineFilter::WikiLinkFilter,
     HTML::Pipeline::SanitizationFilter, # strip scary tags
+    PipelineFilter::LinkRelativizer,
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags
     PipelineFilter::MentionFilter, # link mentions
@@ -165,6 +192,7 @@ class EntryRenderer
     PipelineFilter::MarkdownFilter, # convert to HTML
     PipelineFilter::SubjectExtractorFilter,
     PipelineFilter::WikiLinkFilter,
+    PipelineFilter::LinkRelativizer,
     # Here we commented out: HTML::Pipeline::SanitizationFilte
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags

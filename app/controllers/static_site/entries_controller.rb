@@ -10,14 +10,14 @@ module StaticSite
         serve_blob(blob)
 
       elsif @entry.manifest?
-        render plain: @entry.body
+        render plain: @entry.render_stylesheet!, content_type: 'text/css'
 
       # TODO: make up my mind on how to handle templates.
       # elsif @entry.template?
         # don't love it but fix later, lol do not deploy this to untrusted user contexts???
-        # render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
+        # render inline: @entry.body, layout: "application"
 
-      elsif @entry.note? || @entry.bookmark?
+      elsif @entry.note? || @entry.bookmark? || @entry.template?
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry, remove_subject: true)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
@@ -38,6 +38,25 @@ module StaticSite
 
     private
     def set_entry
+
+      # TODO: live-reloading
+      # see if the file exists and if it does, import it
+
+      # step 1: does it exist as a file?
+      # step 2: is it markdown or yaml?
+      #   step 2.1: actually this is harder to untangle
+      #   will have to think about how i want to support the "normal" dump o yaml
+      #   vs the "adhoc" markdown
+      # step 3: parse it & add it.
+
+      if Rails.env.development?
+      @entry = EntryImporter.new(current_notebook).resolve_and_import!(params[:id])
+
+      if @entry
+        return
+      end
+      end
+
       # quick terrible hack for routing document type entries
       if params[:format]
         identifier = "#{params[:id]}.#{params[:format]}"
@@ -70,7 +89,7 @@ module StaticSite
         end
 
         response.headers["Content-Type"] = content_type ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_TYPE
-        response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
+        # response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
       end
     end
   end

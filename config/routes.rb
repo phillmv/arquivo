@@ -56,11 +56,9 @@ Rails.application.routes.draw do
   else # END STATIC MODE
 
   resources :notebooks
-  scope ':owner', defaults: { owner: "owner" } do
-    # lambda used exclusively to handle ActiveStorage urls while mounting the whole app
-    # on a /user subdirectory, cos we've defined the ActiveStorage route prefix to be
-    # /user/_/ in config/environment/*
-    scope ':notebook', defaults: { notebook: "journal" }, constraints: lambda { |req| req.path.split("/")[2] != "_" } do
+  # lambda used exclusively to handle ActiveStorage urls
+  scope ':owner', defaults: { owner: "owner" }, constraints: lambda { |req| req.path.index("/_/") != 0 } do
+    scope ':notebook', defaults: { notebook: "journal" } do
       get '/', to: "timeline#index", as: :timeline
       get '/page/:page', to: "timeline#index"
       get '/agenda', to: "timeline#agenda", as: :agenda

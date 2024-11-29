@@ -1,6 +1,6 @@
 class EntriesController < ApplicationController
   before_action :find_or_build_entry, only: [:show, :edit]
-  before_action :find_entry, only: [:update, :destroy, :files, :copy]
+  before_action :find_entry, only: [:update, :destroy, :copy]
 
   # GET /entries
   # GET /entries.json
@@ -159,7 +159,22 @@ class EntriesController < ApplicationController
   end
 
   def files
-    blob = @entry.files.blobs.find_by!(filename: params[:filename])
+    # TODO: test this obviously insane behaviour
+    # are we dealing with a document entry with `files` in the identifier?
+    doc_identifier = File.join(params["id"], "files", params["filename"])
+    @entry = current_notebook.entries.find_by(identifier: doc_identifier)
+
+    if @entry.nil?
+      @entry = current_notebook.entries.find_by!(identifier: params[:id])
+    end
+
+    # TODO: undo this when we move documents to just reading the file off disk
+    if @entry.document?
+      blob = @entry.files.blobs.first
+    else
+      blob = @entry.files.blobs.find_by(filename: params[:filename])
+    end
+
     expires_in ActiveStorage.service_urls_expire_in
     redirect_to rails_blob_path(blob, disposition: params[:disposition])
   end
