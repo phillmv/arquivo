@@ -10,7 +10,7 @@ module StaticSite
         serve_blob(blob)
 
       elsif @entry.manifest?
-        render plain: @entry.body
+        render plain: @entry.render_stylesheet!, content_type: 'text/css'
 
       # TODO: make up my mind on how to handle templates.
       # elsif @entry.template?

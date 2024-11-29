@@ -103,7 +103,6 @@ class AdHocMarkdownImporter
     if identifier == "stylesheets/application.css.scss"
       # TODO: should this also be a "template"? doesn't super matter.
       entry_kind = :manifest
-      entry_body = File.read(file_path)
     elsif identifier =~ /\.erb$/
       # idea is that templates are rendered from within context of a
       # controller, which is too painful to setup here
@@ -140,29 +139,15 @@ class AdHocMarkdownImporter
     # if there is a stylesheets/application.css.scss we want to render the
     # Sass and convert it to a stylesheets/application.css
     if stylesheet = notebook.entries.manifests.find_by(identifier: "stylesheets/application.css.scss")
-      load_path = File.join(notebook.import_path, "stylesheets")
-
-      rendered_css = SassC::Engine.new(stylesheet.body, {
-        filename: "application.css.scss",
-        syntax: :scss,
-        load_paths: [load_path],
-      }).render
-
       # there can only be ONE application.css
       if to_delete = notebook.entries.find_by(identifier: "stylesheets/application.css")
         puts "Destroying extraneous stylesheets/application.css, so it can be replaced."
         to_delete.destroy
       end
 
-      rendered_stylesheet = notebook.entries.new(stylesheet.export_attributes)
-      rendered_stylesheet.identifier = "stylesheets/application.css"
-      rendered_stylesheet.kind = :document
-      rendered_stylesheet.save!
-
-      blob = ActiveStorage::Blob.create_and_upload!(io: StringIO.new(rendered_css),
-                                                    filename: "application.css")
-      blob.analyze
-      rendered_stylesheet.files.create(blob_id: blob.id, created_at: blob.created_at)
+      stylesheet.identifier = "stylesheets/application.css"
+      stylesheet.render_stylesheet!
+      stylesheet.save
     end
   end
 
