@@ -36,7 +36,7 @@ gem 'rexml'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'commonmarker', '0.23.7'
+gem 'commonmarker', '0.23.10'
 # Octicons' have since shifted / removed some icons i use, so:
 gem 'octicons', '9.4.0'
 gem 'octicons_helper', '9.4.0'
