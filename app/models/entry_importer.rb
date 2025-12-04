@@ -61,13 +61,13 @@ class EntryImporter
 
       # if still nil, let's look at the file itself
       if occurred_at.nil?
+        # TODO: should throw an error maybe? Git does not set ctime.
         occurred_at = File.ctime(md_path)
       end
     end
 
-    # TODO: DON'T DO THIS GIT DOESN"T SET CTIME!!!!!!
-    created_at = parsed_file["created_at"] || File.ctime(md_path)
-    updated_at = parsed_file["updated_at"] || File.mtime(md_path)
+    created_at = parsed_file["created_at"] || occurred_at
+    updated_at = parsed_file["updated_at"] || occurred_at
 
     # if we're parsing front-mattered markdown, you don't get to define an
     # identifier separate from the file's relative path, don't want to deal
