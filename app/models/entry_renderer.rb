@@ -174,7 +174,6 @@ class EntryRenderer
     PipelineFilter::MarkdownFilter, # convert to HTML
     PipelineFilter::WikiLinkFilter,
     HTML::Pipeline::SanitizationFilter, # strip scary tags
-    PipelineFilter::LinkRelativizer,
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags
     PipelineFilter::MentionFilter, # link mentions
@@ -192,7 +191,6 @@ class EntryRenderer
     PipelineFilter::MarkdownFilter, # convert to HTML
     PipelineFilter::SubjectExtractorFilter,
     PipelineFilter::WikiLinkFilter,
-    PipelineFilter::LinkRelativizer,
     # Here we commented out: HTML::Pipeline::SanitizationFilte
     PipelineFilter::MyTaskListFilter, # convert task markdown to html
     PipelineFilter::HashtagFilter, # link hashtags
