@@ -38,18 +38,7 @@ module StaticSite
 
     private
     def set_entry
-
-      # TODO: live-reloading
-      # see if the file exists and if it does, import it
-
-      # step 1: does it exist as a file?
-      # step 2: is it markdown or yaml?
-      #   step 2.1: actually this is harder to untangle
-      #   will have to think about how i want to support the "normal" dump o yaml
-      #   vs the "adhoc" markdown
-      # step 3: parse it & add it.
-
-      if Rails.env.development?
+      if ENV["FFLAG_RELOAD"]
       @entry = EntryImporter.new(current_notebook).resolve_and_import!(params[:id])
 
       if @entry
@@ -89,7 +78,7 @@ module StaticSite
         end
 
         response.headers["Content-Type"] = content_type ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_TYPE
-        # response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
+        response.headers["Content-Disposition"] = disposition ||  ActiveStorage::BaseController::DEFAULT_SEND_FILE_DISPOSITION
       end
     end
   end
