@@ -2,5 +2,6 @@
 
 set -euo pipefail
 
+./bin/rails db:prepare
 PROJECT_FOLDER=`realpath $(dirname "$0")/..` && cd "$PROJECT_FOLDER"
 ./bin/mawl-import && ./bin/mawl-generate

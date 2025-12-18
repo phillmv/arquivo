@@ -1,7 +1,7 @@
 require 'task_list/filter'
 class EntryRenderer
   attr_accessor :entry, :output, :html
-  
+
   # avail options:
   # todo_only: true
   # smart_punctuation: true
@@ -33,6 +33,28 @@ class EntryRenderer
     end
   end
 
+  # used for rendering ERB but with access to helpers
+  class EntryContext
+    include ActionView::Context
+    include ActionView::Helpers
+    include ActionView::RoutingUrlFor
+    include Rails.application.routes.url_helpers
+    include UrlHelper
+
+    attr_reader :entry
+    def initialize(entry)
+      @entry = entry
+    end
+
+    def default_url_options
+      {format: "html"}
+    end
+
+    def binding
+      super
+    end
+  end
+
   # do we take an attribute? we're rendering an entry when was the last fucking time i rendered something other than a body?
 
   def render(opt = {})
@@ -58,6 +80,10 @@ class EntryRenderer
     if !attribute
       ""
     else
+      if entry.template?
+        attribute = ERB.new(attribute).result(EntryContext.new(entry).binding).html_safe
+      end
+
       render_html(attribute, opt)
     end
   end

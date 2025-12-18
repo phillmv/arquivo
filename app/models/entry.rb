@@ -442,4 +442,28 @@ class Entry < ApplicationRecord
      "state",
      "hide"]
   end
+
+  # ---- hack
+  SCSS_MANIFEST = "application.css.scss"
+  def render_stylesheet!
+    if self.manifest?
+      load_path = File.join(parent_notebook.import_path, "stylesheets")
+      manifest_path = File.join(load_path, SCSS_MANIFEST)
+
+      if File.exist?(manifest_path)
+        if body.nil? || File.mtime(manifest_path) > updated_at
+          rendered_css = SassC::Engine.new(File.read(manifest_path), {
+            filename: SCSS_MANIFEST,
+            syntax: :scss,
+            load_paths: [load_path],
+          }).render
+
+          self.body = rendered_css
+          self.save!
+        end
+      end
+    end
+
+    self.body
+  end
 end

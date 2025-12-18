@@ -7,10 +7,9 @@ Rails.application.configure do
     config.hosts << "localhost"
   end
 
-  # until we figure out how to multitenant this,
-  config.active_storage.routes_prefix =  "#{ENV['ARQUIVO_USER']}/_"  || "/phillmv/_"
-  # config.active_storage.routes_prefix = "/#{User.current}/_"
-  # config.assets.prefix = "/#{User.current}/_"
+  config.active_record.sqlite3_production_warning=false
+
+  config.active_storage.routes_prefix = "_"
 
   # Settings specified here will take precedence over those in config/application.rb.
 

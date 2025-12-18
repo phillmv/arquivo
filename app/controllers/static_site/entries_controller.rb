@@ -10,17 +10,13 @@ module StaticSite
         serve_blob(blob)
 
       elsif @entry.manifest?
-        render plain: @entry.body
+        render plain: @entry.render_stylesheet!, content_type: 'text/css'
 
-      # TODO: make up my mind on how to handle templates.
-      # elsif @entry.template?
-        # don't love it but fix later, lol do not deploy this to untrusted user contexts???
-        # render inline: File.read(File.join(current_notebook.import_path, @entry.source)), layout: "application"
-
-      elsif @entry.note? || @entry.bookmark?
+      elsif @entry.note? || @entry.bookmark? || @entry.template?
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry, remove_subject: true)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
+
       else
         render plain: "", status: 404
       end
@@ -38,6 +34,14 @@ module StaticSite
 
     private
     def set_entry
+      if ENV["FFLAG_RELOAD"]
+      @entry = EntryImporter.new(current_notebook).resolve_and_import!(params[:id])
+
+      if @entry
+        return
+      end
+      end
+
       # quick terrible hack for routing document type entries
       if params[:format]
         identifier = "#{params[:id]}.#{params[:format]}"
