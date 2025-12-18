@@ -12,15 +12,11 @@ module StaticSite
       elsif @entry.manifest?
         render plain: @entry.render_stylesheet!, content_type: 'text/css'
 
-      # TODO: make up my mind on how to handle templates.
-      # elsif @entry.template?
-        # don't love it but fix later, lol do not deploy this to untrusted user contexts???
-        # render inline: @entry.body, layout: "application"
-
       elsif @entry.note? || @entry.bookmark? || @entry.template?
         @show_thread = params[:thread].present?
         @renderer = EntryRenderer.new(@entry, remove_subject: true)
         @current_date = @entry.occurred_at.strftime("%Y-%m-%d")
+
       else
         render plain: "", status: 404
       end

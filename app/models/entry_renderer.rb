@@ -1,7 +1,7 @@
 require 'task_list/filter'
 class EntryRenderer
   attr_accessor :entry, :output, :html
-  
+
   # avail options:
   # todo_only: true
   # smart_punctuation: true
@@ -33,12 +33,12 @@ class EntryRenderer
     end
   end
 
+  # used for rendering ERB but with access to helpers
   class EntryContext
     include ActionView::Context
     include ActionView::Helpers
     include ActionView::RoutingUrlFor
     include Rails.application.routes.url_helpers
-    # include ActionDispatch::Routing::UrlFor
     include UrlHelper
 
     attr_reader :entry
